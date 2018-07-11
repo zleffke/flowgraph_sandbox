@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 ##################################################
 # GNU Radio Python Flow Graph
-# Title: Fox1D Playback
-# Generated: Wed Jul 11 15:54:08 2018
+# Title: FOX1D Receiver, Pipe to FoxTelem
+# Generated: Wed Jul 11 16:15:08 2018
 ##################################################
 
 if __name__ == '__main__':
@@ -34,12 +34,12 @@ import sys
 from gnuradio import qtgui
 
 
-class fox1d_playback(gr.top_block, Qt.QWidget):
+class fox1d_rx_pipe(gr.top_block, Qt.QWidget):
 
     def __init__(self, meta_rate=10):
-        gr.top_block.__init__(self, "Fox1D Playback")
+        gr.top_block.__init__(self, "FOX1D Receiver, Pipe to FoxTelem")
         Qt.QWidget.__init__(self)
-        self.setWindowTitle("Fox1D Playback")
+        self.setWindowTitle("FOX1D Receiver, Pipe to FoxTelem")
         qtgui.util.check_set_qss()
         try:
             self.setWindowIcon(Qt.QIcon.fromTheme('gnuradio-grc'))
@@ -57,7 +57,7 @@ class fox1d_playback(gr.top_block, Qt.QWidget):
         self.top_grid_layout = Qt.QGridLayout()
         self.top_layout.addLayout(self.top_grid_layout)
 
-        self.settings = Qt.QSettings("GNU Radio", "fox1d_playback")
+        self.settings = Qt.QSettings("GNU Radio", "fox1d_rx_pipe")
         self.restoreGeometry(self.settings.value("geometry").toByteArray())
 
 
@@ -73,19 +73,18 @@ class fox1d_playback(gr.top_block, Qt.QWidget):
         self.decim = decim = 5
         self.baud = baud = 9600
 
-        self.xlate_taps_old = xlate_taps_old = firdes.low_pass(1.0, samp_rate, samp_rate/2, 1000, firdes.WIN_HAMMING, 6.76)
-
-
         self.xlate_taps = xlate_taps = firdes.low_pass(1.0, samp_rate, 15e3, 1000, firdes.WIN_HAMMING, 6.76)
 
         self.volume = volume = 0.01
         self.throttle_factor = throttle_factor = 1
         self.samps_per_symb = samps_per_symb = samp_rate/decim/ baud
+        self.rx_gain = rx_gain = 20
+        self.rx_freq = rx_freq = 145.88e6
         self.rf_lpf_cutoff = rf_lpf_cutoff = 8e3
         self.fsk_deviation_hz = fsk_deviation_hz = 4000
         self.fll_loop_bw_fine = fll_loop_bw_fine = 0.0001
         self.fll_loop_bw = fll_loop_bw = math.pi/200
-        self.audio_lpf_cutoff = audio_lpf_cutoff = 7e3
+        self.audio_lpf_cutoff = audio_lpf_cutoff = 6e3
 
         ##################################################
         # Blocks
@@ -132,6 +131,20 @@ class fox1d_playback(gr.top_block, Qt.QWidget):
         self._audio_lpf_cutoff_line_edit.returnPressed.connect(
         	lambda: self.set_audio_lpf_cutoff(eng_notation.str_to_num(str(self._audio_lpf_cutoff_line_edit.text().toAscii()))))
         self.top_grid_layout.addWidget(self._audio_lpf_cutoff_tool_bar, 7,0,1,2)
+        self._rx_gain_tool_bar = Qt.QToolBar(self)
+        self._rx_gain_tool_bar.addWidget(Qt.QLabel('GAIN'+": "))
+        self._rx_gain_line_edit = Qt.QLineEdit(str(self.rx_gain))
+        self._rx_gain_tool_bar.addWidget(self._rx_gain_line_edit)
+        self._rx_gain_line_edit.returnPressed.connect(
+        	lambda: self.set_rx_gain(eng_notation.str_to_num(str(self._rx_gain_line_edit.text().toAscii()))))
+        self.top_layout.addWidget(self._rx_gain_tool_bar)
+        self._rx_freq_tool_bar = Qt.QToolBar(self)
+        self._rx_freq_tool_bar.addWidget(Qt.QLabel('FREQ'+": "))
+        self._rx_freq_line_edit = Qt.QLineEdit(str(self.rx_freq))
+        self._rx_freq_tool_bar.addWidget(self._rx_freq_line_edit)
+        self._rx_freq_line_edit.returnPressed.connect(
+        	lambda: self.set_rx_freq(eng_notation.str_to_num(str(self._rx_freq_line_edit.text().toAscii()))))
+        self.top_grid_layout.addWidget(self._rx_freq_tool_bar, 7,6,1,2)
         self.rational_resampler_xxx_1 = filter.rational_resampler_ccc(
                 interpolation=1,
                 decimation=4,
@@ -401,7 +414,7 @@ class fox1d_playback(gr.top_block, Qt.QWidget):
         self.blocks_keep_one_in_n_0_0_0 = blocks.keep_one_in_n(gr.sizeof_float*1, int(samp_rate/decim /meta_rate))
         self.blocks_keep_one_in_n_0_0 = blocks.keep_one_in_n(gr.sizeof_float*1, int(samp_rate*meta_rate))
         self.blocks_keep_one_in_n_0 = blocks.keep_one_in_n(gr.sizeof_float*1, int(samp_rate/4*meta_rate))
-        self.blocks_file_source_0 = blocks.file_source(gr.sizeof_gr_complex*1, '/home/zleffke/captures/fox1d/FOX-1D_USRP_20180711_150839.718170_UTC_250k.fc32', False)
+        self.blocks_file_source_0 = blocks.file_source(gr.sizeof_gr_complex*1, '/home/zleffke/captures/fox1d/FOX-1D_USRP_20180113_161106.862011_UTC_250k.fc32', False)
         self.blocks_file_source_0.set_begin_tag(pmt.PMT_NIL)
         self.blocks_file_sink_0 = blocks.file_sink(gr.sizeof_float*1, '/home/zleffke/captures/fox1d/FOX-1D_USRP_20180113_161106.862011_UTC_10sps.f32', False)
         self.blocks_file_sink_0.set_unbuffered(False)
@@ -462,7 +475,7 @@ class fox1d_playback(gr.top_block, Qt.QWidget):
         self.connect((self.rational_resampler_xxx_1, 0), (self.blocks_complex_to_mag_squared_0_0, 0))
 
     def closeEvent(self, event):
-        self.settings = Qt.QSettings("GNU Radio", "fox1d_playback")
+        self.settings = Qt.QSettings("GNU Radio", "fox1d_rx_pipe")
         self.settings.setValue("geometry", self.saveGeometry())
         event.accept()
 
@@ -518,12 +531,6 @@ class fox1d_playback(gr.top_block, Qt.QWidget):
         self.baud = baud
         self.set_samps_per_symb(self.samp_rate/self.decim/ self.baud)
 
-    def get_xlate_taps_old(self):
-        return self.xlate_taps_old
-
-    def set_xlate_taps_old(self, xlate_taps_old):
-        self.xlate_taps_old = xlate_taps_old
-
     def get_xlate_taps(self):
         return self.xlate_taps
 
@@ -552,6 +559,20 @@ class fox1d_playback(gr.top_block, Qt.QWidget):
 
     def set_samps_per_symb(self, samps_per_symb):
         self.samps_per_symb = samps_per_symb
+
+    def get_rx_gain(self):
+        return self.rx_gain
+
+    def set_rx_gain(self, rx_gain):
+        self.rx_gain = rx_gain
+        Qt.QMetaObject.invokeMethod(self._rx_gain_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.rx_gain)))
+
+    def get_rx_freq(self):
+        return self.rx_freq
+
+    def set_rx_freq(self, rx_freq):
+        self.rx_freq = rx_freq
+        Qt.QMetaObject.invokeMethod(self._rx_freq_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.rx_freq)))
 
     def get_rf_lpf_cutoff(self):
         return self.rf_lpf_cutoff
@@ -601,7 +622,7 @@ def argument_parser():
     return parser
 
 
-def main(top_block_cls=fox1d_playback, options=None):
+def main(top_block_cls=fox1d_rx_pipe, options=None):
     if options is None:
         options, _ = argument_parser().parse_args()
 

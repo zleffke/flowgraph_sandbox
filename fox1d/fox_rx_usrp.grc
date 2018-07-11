@@ -46,7 +46,7 @@
     </param>
     <param>
       <key>id</key>
-      <value>radiosonde_rx_usrp</value>
+      <value>fox1d_capture_usrp</value>
     </param>
     <param>
       <key>max_nouts</key>
@@ -82,7 +82,7 @@
     </param>
     <param>
       <key>title</key>
-      <value>LMS6 Radiosonde Receiver, USRP</value>
+      <value>USRP Based Fox-1D capture flowgraph</value>
     </param>
     <param>
       <key>placement</key>

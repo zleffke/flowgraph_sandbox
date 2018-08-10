@@ -3,7 +3,7 @@
 ##################################################
 # GNU Radio Python Flow Graph
 # Title: Fosphor Spectrum 2
-# Generated: Tue Apr 17 19:01:54 2018
+# Generated: Fri Aug  3 12:47:57 2018
 ##################################################
 
 if __name__ == '__main__':
@@ -85,28 +85,44 @@ class fosphor_spectrum_2(gr.top_block, Qt.QWidget):
         self._samp_rate_tool_bar.addWidget(self._samp_rate_line_edit)
         self._samp_rate_line_edit.returnPressed.connect(
         	lambda: self.set_samp_rate(eng_notation.str_to_num(str(self._samp_rate_line_edit.text().toAscii()))))
-        self.top_grid_layout.addWidget(self._samp_rate_tool_bar, 9,0,1,1)
+        self.top_grid_layout.addWidget(self._samp_rate_tool_bar, 9, 0, 1, 1)
+        for r in range(9, 10):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(0, 1):
+            self.top_grid_layout.setColumnStretch(c, 1)
         self._rx_gain_tool_bar = Qt.QToolBar(self)
         self._rx_gain_tool_bar.addWidget(Qt.QLabel('GAIN'+": "))
         self._rx_gain_line_edit = Qt.QLineEdit(str(self.rx_gain))
         self._rx_gain_tool_bar.addWidget(self._rx_gain_line_edit)
         self._rx_gain_line_edit.returnPressed.connect(
         	lambda: self.set_rx_gain(eng_notation.str_to_num(str(self._rx_gain_line_edit.text().toAscii()))))
-        self.top_grid_layout.addWidget(self._rx_gain_tool_bar, 9,3,1,1)
+        self.top_grid_layout.addWidget(self._rx_gain_tool_bar, 9, 3, 1, 1)
+        for r in range(9, 10):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(3, 4):
+            self.top_grid_layout.setColumnStretch(c, 1)
         self._rx_freq_tool_bar = Qt.QToolBar(self)
         self._rx_freq_tool_bar.addWidget(Qt.QLabel('FREQ'+": "))
         self._rx_freq_line_edit = Qt.QLineEdit(str(self.rx_freq))
         self._rx_freq_tool_bar.addWidget(self._rx_freq_line_edit)
         self._rx_freq_line_edit.returnPressed.connect(
         	lambda: self.set_rx_freq(eng_notation.str_to_num(str(self._rx_freq_line_edit.text().toAscii()))))
-        self.top_grid_layout.addWidget(self._rx_freq_tool_bar, 9,1,1,1)
+        self.top_grid_layout.addWidget(self._rx_freq_tool_bar, 9, 1, 1, 1)
+        for r in range(9, 10):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(1, 2):
+            self.top_grid_layout.setColumnStretch(c, 1)
         self._offset_tool_bar = Qt.QToolBar(self)
         self._offset_tool_bar.addWidget(Qt.QLabel('offset'+": "))
         self._offset_line_edit = Qt.QLineEdit(str(self.offset))
         self._offset_tool_bar.addWidget(self._offset_line_edit)
         self._offset_line_edit.returnPressed.connect(
         	lambda: self.set_offset(eng_notation.str_to_num(str(self._offset_line_edit.text().toAscii()))))
-        self.top_grid_layout.addWidget(self._offset_tool_bar, 9,2,1,1)
+        self.top_grid_layout.addWidget(self._offset_tool_bar, 9, 2, 1, 1)
+        for r in range(9, 10):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(2, 3):
+            self.top_grid_layout.setColumnStretch(c, 1)
         self.uhd_usrp_source_0_0 = uhd.usrp_source(
         	",".join(("", "")),
         	uhd.stream_args(

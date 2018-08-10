@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 ##################################################
 # GNU Radio Python Flow Graph
-# Title: Fosphor Spectrum 1
-# Generated: Fri Aug  3 12:44:21 2018
+# Title: 4F3_30CF9D2_20180810_054520.591873_UTC_1M.fc32
+# Generated: Fri Aug 10 01:45:22 2018
 ##################################################
 
 if __name__ == '__main__':
@@ -17,6 +17,7 @@ if __name__ == '__main__':
             print "Warning: failed to XInitThreads()"
 
 from PyQt4 import Qt
+from datetime import datetime as dt; import string
 from gnuradio import analog
 from gnuradio import blocks
 from gnuradio import eng_notation
@@ -27,7 +28,6 @@ from gnuradio import uhd
 from gnuradio.eng_option import eng_option
 from gnuradio.fft import window
 from gnuradio.filter import firdes
-from gnuradio.qtgui import Range, RangeWidget
 from optparse import OptionParser
 import sip
 import sys
@@ -35,12 +35,12 @@ import time
 from gnuradio import qtgui
 
 
-class fosphor_spectrum_1(gr.top_block, Qt.QWidget):
+class inmarsat_cband_fosphor(gr.top_block, Qt.QWidget):
 
-    def __init__(self, fsk_dev=5000):
-        gr.top_block.__init__(self, "Fosphor Spectrum 1")
+    def __init__(self, radio_id='30CF9D2', sat_name='4F3'):
+        gr.top_block.__init__(self, "4F3_30CF9D2_20180810_054520.591873_UTC_1M.fc32")
         Qt.QWidget.__init__(self)
-        self.setWindowTitle("Fosphor Spectrum 1")
+        self.setWindowTitle("4F3_30CF9D2_20180810_054520.591873_UTC_1M.fc32")
         qtgui.util.check_set_qss()
         try:
             self.setWindowIcon(Qt.QIcon.fromTheme('gnuradio-grc'))
@@ -58,26 +58,28 @@ class fosphor_spectrum_1(gr.top_block, Qt.QWidget):
         self.top_grid_layout = Qt.QGridLayout()
         self.top_layout.addLayout(self.top_grid_layout)
 
-        self.settings = Qt.QSettings("GNU Radio", "fosphor_spectrum_1")
+        self.settings = Qt.QSettings("GNU Radio", "inmarsat_cband_fosphor")
         self.restoreGeometry(self.settings.value("geometry").toByteArray())
 
 
         ##################################################
         # Parameters
         ##################################################
-        self.fsk_dev = fsk_dev
+        self.radio_id = radio_id
+        self.sat_name = sat_name
 
         ##################################################
         # Variables
         ##################################################
-        self.samp_rate = samp_rate = 12e6
-        self.interp = interp = 48
-        self.decim = decim = 50
-        self.baud = baud = 4800
-        self.samps_per_symb = samps_per_symb = samp_rate/10/decim*interp/baud
-        self.rx_gain = rx_gain = 60
-        self.rx_freq = rx_freq = 907.2
+        self.rf_freq = rf_freq = 3650e6
+        self.hs_lo = hs_lo = 5150e6
+        self.ts_str = ts_str = dt.strftime(dt.utcnow(), "%Y%m%d_%H%M%S.%f" )+'_UTC'
+        self.samp_rate = samp_rate = 1e6
+        self.if_freq = if_freq = hs_lo-rf_freq
+        self.rx_gain = rx_gain = 25
         self.offset = offset = -1500
+        self.if_freq_lbl = if_freq_lbl = if_freq
+        self.fn = fn = "{:s}_{:s}_{:s}_{:s}M.fc32".format(sat_name, radio_id, ts_str, str(int(samp_rate/1e6)))
 
         ##################################################
         # Blocks
@@ -104,9 +106,17 @@ class fosphor_spectrum_1(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setRowStretch(r, 1)
         for c in range(3, 4):
             self.top_grid_layout.setColumnStretch(c, 1)
-        self._rx_freq_range = Range(900, 930, .05, 907.2, 200)
-        self._rx_freq_win = RangeWidget(self._rx_freq_range, self.set_rx_freq, "rx_freq", "counter_slider", float)
-        self.top_grid_layout.addWidget(self._rx_freq_win)
+        self._rf_freq_tool_bar = Qt.QToolBar(self)
+        self._rf_freq_tool_bar.addWidget(Qt.QLabel("rf_freq"+": "))
+        self._rf_freq_line_edit = Qt.QLineEdit(str(self.rf_freq))
+        self._rf_freq_tool_bar.addWidget(self._rf_freq_line_edit)
+        self._rf_freq_line_edit.returnPressed.connect(
+        	lambda: self.set_rf_freq(eng_notation.str_to_num(str(self._rf_freq_line_edit.text().toAscii()))))
+        self.top_grid_layout.addWidget(self._rf_freq_tool_bar, 10, 0, 1, 1)
+        for r in range(10, 11):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(0, 1):
+            self.top_grid_layout.setColumnStretch(c, 1)
         self._offset_tool_bar = Qt.QToolBar(self)
         self._offset_tool_bar.addWidget(Qt.QLabel('offset'+": "))
         self._offset_line_edit = Qt.QLineEdit(str(self.offset))
@@ -126,7 +136,8 @@ class fosphor_spectrum_1(gr.top_block, Qt.QWidget):
         	),
         )
         self.uhd_usrp_source_0_0.set_samp_rate(samp_rate)
-        self.uhd_usrp_source_0_0.set_center_freq(uhd.tune_request(rx_freq*1e6, samp_rate/2), 0)
+        self.uhd_usrp_source_0_0.set_time_now(uhd.time_spec(time.time()), uhd.ALL_MBOARDS)
+        self.uhd_usrp_source_0_0.set_center_freq(uhd.tune_request(if_freq), 0)
         self.uhd_usrp_source_0_0.set_gain(rx_gain, 0)
         self.uhd_usrp_source_0_0.set_antenna('RX2', 0)
         self.qtgui_waterfall_sink_x_0 = qtgui.waterfall_sink_c(
@@ -149,7 +160,7 @@ class fosphor_spectrum_1(gr.top_block, Qt.QWidget):
 
         labels = ['', '', '', '', '',
                   '', '', '', '', '']
-        colors = [0, 0, 0, 0, 0,
+        colors = [1, 0, 0, 0, 0,
                   0, 0, 0, 0, 0]
         alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
                   1.0, 1.0, 1.0, 1.0, 1.0]
@@ -161,7 +172,7 @@ class fosphor_spectrum_1(gr.top_block, Qt.QWidget):
             self.qtgui_waterfall_sink_x_0.set_color_map(i, colors[i])
             self.qtgui_waterfall_sink_x_0.set_line_alpha(i, alphas[i])
 
-        self.qtgui_waterfall_sink_x_0.set_intensity_range(-140, 10)
+        self.qtgui_waterfall_sink_x_0.set_intensity_range(-90, -40)
 
         self._qtgui_waterfall_sink_x_0_win = sip.wrapinstance(self.qtgui_waterfall_sink_x_0.pyqwidget(), Qt.QWidget)
         self.top_grid_layout.addWidget(self._qtgui_waterfall_sink_x_0_win, 4, 0, 4, 4)
@@ -178,12 +189,12 @@ class fosphor_spectrum_1(gr.top_block, Qt.QWidget):
         	1 #number of inputs
         )
         self.qtgui_freq_sink_x_0.set_update_time(0.010)
-        self.qtgui_freq_sink_x_0.set_y_axis(-80, 10)
+        self.qtgui_freq_sink_x_0.set_y_axis(-90, -40)
         self.qtgui_freq_sink_x_0.set_y_label('Relative Gain', 'dB')
         self.qtgui_freq_sink_x_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, 0.0, 0, "")
         self.qtgui_freq_sink_x_0.enable_autoscale(False)
         self.qtgui_freq_sink_x_0.enable_grid(True)
-        self.qtgui_freq_sink_x_0.set_fft_average(1.0)
+        self.qtgui_freq_sink_x_0.set_fft_average(0.2)
         self.qtgui_freq_sink_x_0.enable_axis_labels(True)
         self.qtgui_freq_sink_x_0.enable_control_panel(False)
 
@@ -216,10 +227,28 @@ class fosphor_spectrum_1(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setRowStretch(r, 1)
         for c in range(0, 4):
             self.top_grid_layout.setColumnStretch(c, 1)
+        self._if_freq_lbl_tool_bar = Qt.QToolBar(self)
+
+        if None:
+          self._if_freq_lbl_formatter = None
+        else:
+          self._if_freq_lbl_formatter = lambda x: eng_notation.num_to_str(x)
+
+        self._if_freq_lbl_tool_bar.addWidget(Qt.QLabel('IF [MHz]'+": "))
+        self._if_freq_lbl_label = Qt.QLabel(str(self._if_freq_lbl_formatter(self.if_freq_lbl)))
+        self._if_freq_lbl_tool_bar.addWidget(self._if_freq_lbl_label)
+        self.top_grid_layout.addWidget(self._if_freq_lbl_tool_bar, 10, 1, 1, 1)
+        for r in range(10, 11):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(1, 2):
+            self.top_grid_layout.setColumnStretch(c, 1)
         self.fosphor_glfw_sink_c_0 = fosphor.glfw_sink_c()
         self.fosphor_glfw_sink_c_0.set_fft_window(window.WIN_BLACKMAN_hARRIS)
-        self.fosphor_glfw_sink_c_0.set_frequency_range(rx_freq*1e6, samp_rate)
+        self.fosphor_glfw_sink_c_0.set_frequency_range(rf_freq, samp_rate)
         self.blocks_multiply_xx_0 = blocks.multiply_vcc(1)
+        self.blocks_multiply_const_vxx_0 = blocks.multiply_const_vff((-1, ))
+        self.blocks_float_to_complex_0 = blocks.float_to_complex(1)
+        self.blocks_complex_to_float_0 = blocks.complex_to_float(1)
         self.analog_sig_source_x_0 = analog.sig_source_c(samp_rate, analog.GR_COS_WAVE, -1*offset, 1, 0)
 
 
@@ -228,21 +257,56 @@ class fosphor_spectrum_1(gr.top_block, Qt.QWidget):
         # Connections
         ##################################################
         self.connect((self.analog_sig_source_x_0, 0), (self.blocks_multiply_xx_0, 1))
-        self.connect((self.blocks_multiply_xx_0, 0), (self.fosphor_glfw_sink_c_0, 0))
-        self.connect((self.blocks_multiply_xx_0, 0), (self.qtgui_freq_sink_x_0, 0))
-        self.connect((self.blocks_multiply_xx_0, 0), (self.qtgui_waterfall_sink_x_0, 0))
+        self.connect((self.blocks_complex_to_float_0, 0), (self.blocks_float_to_complex_0, 0))
+        self.connect((self.blocks_complex_to_float_0, 1), (self.blocks_multiply_const_vxx_0, 0))
+        self.connect((self.blocks_float_to_complex_0, 0), (self.fosphor_glfw_sink_c_0, 0))
+        self.connect((self.blocks_float_to_complex_0, 0), (self.qtgui_freq_sink_x_0, 0))
+        self.connect((self.blocks_float_to_complex_0, 0), (self.qtgui_waterfall_sink_x_0, 0))
+        self.connect((self.blocks_multiply_const_vxx_0, 0), (self.blocks_float_to_complex_0, 1))
+        self.connect((self.blocks_multiply_xx_0, 0), (self.blocks_complex_to_float_0, 0))
         self.connect((self.uhd_usrp_source_0_0, 0), (self.blocks_multiply_xx_0, 0))
 
     def closeEvent(self, event):
-        self.settings = Qt.QSettings("GNU Radio", "fosphor_spectrum_1")
+        self.settings = Qt.QSettings("GNU Radio", "inmarsat_cband_fosphor")
         self.settings.setValue("geometry", self.saveGeometry())
         event.accept()
 
-    def get_fsk_dev(self):
-        return self.fsk_dev
+    def get_radio_id(self):
+        return self.radio_id
 
-    def set_fsk_dev(self, fsk_dev):
-        self.fsk_dev = fsk_dev
+    def set_radio_id(self, radio_id):
+        self.radio_id = radio_id
+        self.set_fn("{:s}_{:s}_{:s}_{:s}M.fc32".format(self.sat_name, self.radio_id, self.ts_str, str(int(self.samp_rate/1e6))))
+
+    def get_sat_name(self):
+        return self.sat_name
+
+    def set_sat_name(self, sat_name):
+        self.sat_name = sat_name
+        self.set_fn("{:s}_{:s}_{:s}_{:s}M.fc32".format(self.sat_name, self.radio_id, self.ts_str, str(int(self.samp_rate/1e6))))
+
+    def get_rf_freq(self):
+        return self.rf_freq
+
+    def set_rf_freq(self, rf_freq):
+        self.rf_freq = rf_freq
+        Qt.QMetaObject.invokeMethod(self._rf_freq_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.rf_freq)))
+        self.set_if_freq(self.hs_lo-self.rf_freq)
+        self.fosphor_glfw_sink_c_0.set_frequency_range(self.rf_freq, self.samp_rate)
+
+    def get_hs_lo(self):
+        return self.hs_lo
+
+    def set_hs_lo(self, hs_lo):
+        self.hs_lo = hs_lo
+        self.set_if_freq(self.hs_lo-self.rf_freq)
+
+    def get_ts_str(self):
+        return self.ts_str
+
+    def set_ts_str(self, ts_str):
+        self.ts_str = ts_str
+        self.set_fn("{:s}_{:s}_{:s}_{:s}M.fc32".format(self.sat_name, self.radio_id, self.ts_str, str(int(self.samp_rate/1e6))))
 
     def get_samp_rate(self):
         return self.samp_rate
@@ -251,39 +315,19 @@ class fosphor_spectrum_1(gr.top_block, Qt.QWidget):
         self.samp_rate = samp_rate
         Qt.QMetaObject.invokeMethod(self._samp_rate_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.samp_rate)))
         self.uhd_usrp_source_0_0.set_samp_rate(self.samp_rate)
-        self.uhd_usrp_source_0_0.set_center_freq(uhd.tune_request(self.rx_freq*1e6, self.samp_rate/2), 0)
-        self.set_samps_per_symb(self.samp_rate/10/self.decim*self.interp/self.baud)
         self.qtgui_waterfall_sink_x_0.set_frequency_range(0, self.samp_rate)
         self.qtgui_freq_sink_x_0.set_frequency_range(0, self.samp_rate)
-        self.fosphor_glfw_sink_c_0.set_frequency_range(self.rx_freq*1e6, self.samp_rate)
+        self.fosphor_glfw_sink_c_0.set_frequency_range(self.rf_freq, self.samp_rate)
+        self.set_fn("{:s}_{:s}_{:s}_{:s}M.fc32".format(self.sat_name, self.radio_id, self.ts_str, str(int(self.samp_rate/1e6))))
         self.analog_sig_source_x_0.set_sampling_freq(self.samp_rate)
 
-    def get_interp(self):
-        return self.interp
+    def get_if_freq(self):
+        return self.if_freq
 
-    def set_interp(self, interp):
-        self.interp = interp
-        self.set_samps_per_symb(self.samp_rate/10/self.decim*self.interp/self.baud)
-
-    def get_decim(self):
-        return self.decim
-
-    def set_decim(self, decim):
-        self.decim = decim
-        self.set_samps_per_symb(self.samp_rate/10/self.decim*self.interp/self.baud)
-
-    def get_baud(self):
-        return self.baud
-
-    def set_baud(self, baud):
-        self.baud = baud
-        self.set_samps_per_symb(self.samp_rate/10/self.decim*self.interp/self.baud)
-
-    def get_samps_per_symb(self):
-        return self.samps_per_symb
-
-    def set_samps_per_symb(self, samps_per_symb):
-        self.samps_per_symb = samps_per_symb
+    def set_if_freq(self, if_freq):
+        self.if_freq = if_freq
+        self.uhd_usrp_source_0_0.set_center_freq(uhd.tune_request(self.if_freq), 0)
+        self.set_if_freq_lbl(self._if_freq_lbl_formatter(self.if_freq))
 
     def get_rx_gain(self):
         return self.rx_gain
@@ -294,14 +338,6 @@ class fosphor_spectrum_1(gr.top_block, Qt.QWidget):
         self.uhd_usrp_source_0_0.set_gain(self.rx_gain, 0)
 
 
-    def get_rx_freq(self):
-        return self.rx_freq
-
-    def set_rx_freq(self, rx_freq):
-        self.rx_freq = rx_freq
-        self.uhd_usrp_source_0_0.set_center_freq(uhd.tune_request(self.rx_freq*1e6, self.samp_rate/2), 0)
-        self.fosphor_glfw_sink_c_0.set_frequency_range(self.rx_freq*1e6, self.samp_rate)
-
     def get_offset(self):
         return self.offset
 
@@ -310,16 +346,32 @@ class fosphor_spectrum_1(gr.top_block, Qt.QWidget):
         Qt.QMetaObject.invokeMethod(self._offset_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.offset)))
         self.analog_sig_source_x_0.set_frequency(-1*self.offset)
 
+    def get_if_freq_lbl(self):
+        return self.if_freq_lbl
+
+    def set_if_freq_lbl(self, if_freq_lbl):
+        self.if_freq_lbl = if_freq_lbl
+        Qt.QMetaObject.invokeMethod(self._if_freq_lbl_label, "setText", Qt.Q_ARG("QString", self.if_freq_lbl))
+
+    def get_fn(self):
+        return self.fn
+
+    def set_fn(self, fn):
+        self.fn = fn
+
 
 def argument_parser():
     parser = OptionParser(usage="%prog: [options]", option_class=eng_option)
     parser.add_option(
-        "", "--fsk-dev", dest="fsk_dev", type="eng_float", default=eng_notation.num_to_str(5000),
-        help="Set FSK Deviation [default=%default]")
+        "", "--radio-id", dest="radio_id", type="string", default='30CF9D2',
+        help="Set radio_id [default=%default]")
+    parser.add_option(
+        "", "--sat-name", dest="sat_name", type="string", default='4F3',
+        help="Set sat_name [default=%default]")
     return parser
 
 
-def main(top_block_cls=fosphor_spectrum_1, options=None):
+def main(top_block_cls=inmarsat_cband_fosphor, options=None):
     if options is None:
         options, _ = argument_parser().parse_args()
 
@@ -329,7 +381,7 @@ def main(top_block_cls=fosphor_spectrum_1, options=None):
         Qt.QApplication.setGraphicsSystem(style)
     qapp = Qt.QApplication(sys.argv)
 
-    tb = top_block_cls(fsk_dev=options.fsk_dev)
+    tb = top_block_cls(radio_id=options.radio_id, sat_name=options.sat_name)
     tb.start()
     tb.show()
 

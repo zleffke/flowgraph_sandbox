@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 ##################################################
 # GNU Radio Python Flow Graph
-# Title: 4F3_30CF9D2_20180810_054520.591873_UTC_1M.fc32
-# Generated: Fri Aug 10 01:45:22 2018
+# Title: 4F3_30CF9D2_20180811_060728.867460_UTC_1M.fc32
+# Generated: Sat Aug 11 02:07:30 2018
 ##################################################
 
 if __name__ == '__main__':
@@ -38,9 +38,9 @@ from gnuradio import qtgui
 class inmarsat_cband_fosphor(gr.top_block, Qt.QWidget):
 
     def __init__(self, radio_id='30CF9D2', sat_name='4F3'):
-        gr.top_block.__init__(self, "4F3_30CF9D2_20180810_054520.591873_UTC_1M.fc32")
+        gr.top_block.__init__(self, "4F3_30CF9D2_20180811_060728.867460_UTC_1M.fc32")
         Qt.QWidget.__init__(self)
-        self.setWindowTitle("4F3_30CF9D2_20180810_054520.591873_UTC_1M.fc32")
+        self.setWindowTitle("4F3_30CF9D2_20180811_060728.867460_UTC_1M.fc32")
         qtgui.util.check_set_qss()
         try:
             self.setWindowIcon(Qt.QIcon.fromTheme('gnuradio-grc'))
@@ -77,7 +77,7 @@ class inmarsat_cband_fosphor(gr.top_block, Qt.QWidget):
         self.samp_rate = samp_rate = 1e6
         self.if_freq = if_freq = hs_lo-rf_freq
         self.rx_gain = rx_gain = 25
-        self.offset = offset = -1500
+        self.offset = offset = 0
         self.if_freq_lbl = if_freq_lbl = if_freq
         self.fn = fn = "{:s}_{:s}_{:s}_{:s}M.fc32".format(sat_name, radio_id, ts_str, str(int(samp_rate/1e6)))
 
@@ -135,6 +135,8 @@ class inmarsat_cband_fosphor(gr.top_block, Qt.QWidget):
         		channels=range(1),
         	),
         )
+        self.uhd_usrp_source_0_0.set_clock_source('external', 0)
+        self.uhd_usrp_source_0_0.set_time_source('external', 0)
         self.uhd_usrp_source_0_0.set_samp_rate(samp_rate)
         self.uhd_usrp_source_0_0.set_time_now(uhd.time_spec(time.time()), uhd.ALL_MBOARDS)
         self.uhd_usrp_source_0_0.set_center_freq(uhd.tune_request(if_freq), 0)

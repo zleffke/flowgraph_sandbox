@@ -5,8 +5,8 @@
 #
 ##################################################
 # GNU Radio Python Flow Graph
-# Title: 4F3_30CF9D2_20180903_004102.961639_UTC_100M.fc32
-# Generated: Sun Sep  2 20:41:05 2018
+# Title: 4F3_30CF9D2_20180903_014434.273793_UTC_50M.fc32
+# Generated: Sun Sep  2 21:44:40 2018
 # GNU Radio version: 3.7.12.0
 ##################################################
 
@@ -25,9 +25,9 @@ from datetime import datetime as dt; import string
 from gnuradio import analog
 from gnuradio import blocks
 from gnuradio import eng_notation
+from gnuradio import filter
 from gnuradio import fosphor
 from gnuradio import gr
-from gnuradio import qtgui
 from gnuradio import uhd
 from gnuradio.eng_option import eng_option
 from gnuradio.fft import window
@@ -39,12 +39,12 @@ import time
 from gnuradio import qtgui
 
 
-class inmarsat_cband_fosphor(gr.top_block, Qt.QWidget):
+class inmarsat_cband_x310(gr.top_block, Qt.QWidget):
 
-    def __init__(self, radio_id='30CF9D2', sat_name='4F3'):
-        gr.top_block.__init__(self, "4F3_30CF9D2_20180903_004102.961639_UTC_100M.fc32")
+    def __init__(self, decim=5, decim2=10, radio_id='30CF9D2', sat_name='4F3'):
+        gr.top_block.__init__(self, "4F3_30CF9D2_20180903_014434.273793_UTC_50M.fc32")
         Qt.QWidget.__init__(self)
-        self.setWindowTitle("4F3_30CF9D2_20180903_004102.961639_UTC_100M.fc32")
+        self.setWindowTitle("4F3_30CF9D2_20180903_014434.273793_UTC_50M.fc32")
         qtgui.util.check_set_qss()
         try:
             self.setWindowIcon(Qt.QIcon.fromTheme('gnuradio-grc'))
@@ -62,28 +62,31 @@ class inmarsat_cband_fosphor(gr.top_block, Qt.QWidget):
         self.top_grid_layout = Qt.QGridLayout()
         self.top_layout.addLayout(self.top_grid_layout)
 
-        self.settings = Qt.QSettings("GNU Radio", "inmarsat_cband_fosphor")
+        self.settings = Qt.QSettings("GNU Radio", "inmarsat_cband_x310")
         self.restoreGeometry(self.settings.value("geometry").toByteArray())
 
 
         ##################################################
         # Parameters
         ##################################################
+        self.decim = decim
+        self.decim2 = decim2
         self.radio_id = radio_id
         self.sat_name = sat_name
 
         ##################################################
         # Variables
         ##################################################
-        self.rf_freq = rf_freq = 3650e6
+        self.rf_freq = rf_freq = 3625e6
         self.hs_lo = hs_lo = 5150e6
         self.ts_str = ts_str = dt.strftime(dt.utcnow(), "%Y%m%d_%H%M%S.%f" )+'_UTC'
-        self.samp_rate = samp_rate = 100e6
+        self.samp_rate = samp_rate = 50e6
         self.if_freq = if_freq = hs_lo-rf_freq
-        self.rx_gain = rx_gain = 25
+        self.rx_gain = rx_gain = 10
         self.offset = offset = 0
         self.if_freq_lbl = if_freq_lbl = if_freq
         self.fn = fn = "{:s}_{:s}_{:s}_{:s}M.fc32".format(sat_name, radio_id, ts_str, str(int(samp_rate/1e6)))
+        self.chan_offset = chan_offset = 0
 
         ##################################################
         # Blocks
@@ -132,6 +135,17 @@ class inmarsat_cband_fosphor(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setRowStretch(r, 1)
         for c in range(2, 3):
             self.top_grid_layout.setColumnStretch(c, 1)
+        self._chan_offset_tool_bar = Qt.QToolBar(self)
+        self._chan_offset_tool_bar.addWidget(Qt.QLabel('chan_offset'+": "))
+        self._chan_offset_line_edit = Qt.QLineEdit(str(self.chan_offset))
+        self._chan_offset_tool_bar.addWidget(self._chan_offset_line_edit)
+        self._chan_offset_line_edit.returnPressed.connect(
+        	lambda: self.set_chan_offset(eng_notation.str_to_num(str(self._chan_offset_line_edit.text().toAscii()))))
+        self.top_grid_layout.addWidget(self._chan_offset_tool_bar, 9, 4, 1, 2)
+        for r in range(9, 10):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(4, 6):
+            self.top_grid_layout.setColumnStretch(c, 1)
         self.uhd_usrp_source_0 = uhd.usrp_source(
         	",".join(("addr=192.168.40.2", "")),
         	uhd.stream_args(
@@ -144,96 +158,21 @@ class inmarsat_cband_fosphor(gr.top_block, Qt.QWidget):
         self.uhd_usrp_source_0.set_subdev_spec('A:0', 0)
         self.uhd_usrp_source_0.set_samp_rate(samp_rate)
         self.uhd_usrp_source_0.set_time_now(uhd.time_spec(time.time()), uhd.ALL_MBOARDS)
-        self.uhd_usrp_source_0.set_center_freq(uhd.tune_request(rf_freq, samp_rate/2), 0)
+        self.uhd_usrp_source_0.set_center_freq(if_freq, 0)
         self.uhd_usrp_source_0.set_gain(rx_gain, 0)
         self.uhd_usrp_source_0.set_antenna('RX2', 0)
-        self.qtgui_waterfall_sink_x_0 = qtgui.waterfall_sink_c(
-        	2048, #size
-        	firdes.WIN_BLACKMAN_hARRIS, #wintype
-        	0, #fc
-        	samp_rate, #bw
-        	"", #name
-                1 #number of inputs
+        self.rational_resampler_xxx_0_0 = filter.rational_resampler_ccc(
+                interpolation=1,
+                decimation=decim2,
+                taps=None,
+                fractional_bw=None,
         )
-        self.qtgui_waterfall_sink_x_0.set_update_time(0.010)
-        self.qtgui_waterfall_sink_x_0.enable_grid(False)
-        self.qtgui_waterfall_sink_x_0.enable_axis_labels(True)
-
-        if not True:
-          self.qtgui_waterfall_sink_x_0.disable_legend()
-
-        if "complex" == "float" or "complex" == "msg_float":
-          self.qtgui_waterfall_sink_x_0.set_plot_pos_half(not True)
-
-        labels = ['', '', '', '', '',
-                  '', '', '', '', '']
-        colors = [1, 0, 0, 0, 0,
-                  0, 0, 0, 0, 0]
-        alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
-                  1.0, 1.0, 1.0, 1.0, 1.0]
-        for i in xrange(1):
-            if len(labels[i]) == 0:
-                self.qtgui_waterfall_sink_x_0.set_line_label(i, "Data {0}".format(i))
-            else:
-                self.qtgui_waterfall_sink_x_0.set_line_label(i, labels[i])
-            self.qtgui_waterfall_sink_x_0.set_color_map(i, colors[i])
-            self.qtgui_waterfall_sink_x_0.set_line_alpha(i, alphas[i])
-
-        self.qtgui_waterfall_sink_x_0.set_intensity_range(-90, -40)
-
-        self._qtgui_waterfall_sink_x_0_win = sip.wrapinstance(self.qtgui_waterfall_sink_x_0.pyqwidget(), Qt.QWidget)
-        self.top_grid_layout.addWidget(self._qtgui_waterfall_sink_x_0_win, 4, 0, 4, 4)
-        for r in range(4, 8):
-            self.top_grid_layout.setRowStretch(r, 1)
-        for c in range(0, 4):
-            self.top_grid_layout.setColumnStretch(c, 1)
-        self.qtgui_freq_sink_x_0 = qtgui.freq_sink_c(
-        	2048, #size
-        	firdes.WIN_BLACKMAN_hARRIS, #wintype
-        	0, #fc
-        	samp_rate, #bw
-        	"", #name
-        	1 #number of inputs
+        self.rational_resampler_xxx_0 = filter.rational_resampler_ccc(
+                interpolation=1,
+                decimation=decim,
+                taps=None,
+                fractional_bw=None,
         )
-        self.qtgui_freq_sink_x_0.set_update_time(0.010)
-        self.qtgui_freq_sink_x_0.set_y_axis(-90, -40)
-        self.qtgui_freq_sink_x_0.set_y_label('Relative Gain', 'dB')
-        self.qtgui_freq_sink_x_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, 0.0, 0, "")
-        self.qtgui_freq_sink_x_0.enable_autoscale(False)
-        self.qtgui_freq_sink_x_0.enable_grid(True)
-        self.qtgui_freq_sink_x_0.set_fft_average(0.2)
-        self.qtgui_freq_sink_x_0.enable_axis_labels(True)
-        self.qtgui_freq_sink_x_0.enable_control_panel(False)
-
-        if not True:
-          self.qtgui_freq_sink_x_0.disable_legend()
-
-        if "complex" == "float" or "complex" == "msg_float":
-          self.qtgui_freq_sink_x_0.set_plot_pos_half(not True)
-
-        labels = ['', '', '', '', '',
-                  '', '', '', '', '']
-        widths = [1, 1, 1, 1, 1,
-                  1, 1, 1, 1, 1]
-        colors = ["blue", "red", "green", "black", "cyan",
-                  "magenta", "yellow", "dark red", "dark green", "dark blue"]
-        alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
-                  1.0, 1.0, 1.0, 1.0, 1.0]
-        for i in xrange(1):
-            if len(labels[i]) == 0:
-                self.qtgui_freq_sink_x_0.set_line_label(i, "Data {0}".format(i))
-            else:
-                self.qtgui_freq_sink_x_0.set_line_label(i, labels[i])
-            self.qtgui_freq_sink_x_0.set_line_width(i, widths[i])
-            self.qtgui_freq_sink_x_0.set_line_color(i, colors[i])
-            self.qtgui_freq_sink_x_0.set_line_alpha(i, alphas[i])
-
-        self._qtgui_freq_sink_x_0_win = sip.wrapinstance(self.qtgui_freq_sink_x_0.pyqwidget(), Qt.QWidget)
-        self.top_grid_layout.addWidget(self._qtgui_freq_sink_x_0_win, 0, 0, 4, 4)
-        for r in range(0, 4):
-            self.top_grid_layout.setRowStretch(r, 1)
-        for c in range(0, 4):
-            self.top_grid_layout.setColumnStretch(c, 1)
         self._if_freq_lbl_tool_bar = Qt.QToolBar(self)
 
         if None:
@@ -249,13 +188,33 @@ class inmarsat_cband_fosphor(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setRowStretch(r, 1)
         for c in range(1, 2):
             self.top_grid_layout.setColumnStretch(c, 1)
+        self.fosphor_qt_sink_c_0_0 = fosphor.qt_sink_c()
+        self.fosphor_qt_sink_c_0_0.set_fft_window(window.WIN_BLACKMAN_hARRIS)
+        self.fosphor_qt_sink_c_0_0.set_frequency_range(rf_freq + offset + chan_offset, samp_rate/decim/decim2)
+        self._fosphor_qt_sink_c_0_0_win = sip.wrapinstance(self.fosphor_qt_sink_c_0_0.pyqwidget(), Qt.QWidget)
+        self.top_grid_layout.addWidget(self._fosphor_qt_sink_c_0_0_win, 0, 4, 8, 4)
+        for r in range(0, 8):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(4, 8):
+            self.top_grid_layout.setColumnStretch(c, 1)
+        self.fosphor_qt_sink_c_0 = fosphor.qt_sink_c()
+        self.fosphor_qt_sink_c_0.set_fft_window(window.WIN_BLACKMAN_hARRIS)
+        self.fosphor_qt_sink_c_0.set_frequency_range(rf_freq + offset, samp_rate/decim)
+        self._fosphor_qt_sink_c_0_win = sip.wrapinstance(self.fosphor_qt_sink_c_0.pyqwidget(), Qt.QWidget)
+        self.top_grid_layout.addWidget(self._fosphor_qt_sink_c_0_win, 0, 0, 8, 4)
+        for r in range(0, 8):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(0, 4):
+            self.top_grid_layout.setColumnStretch(c, 1)
         self.fosphor_glfw_sink_c_0 = fosphor.glfw_sink_c()
         self.fosphor_glfw_sink_c_0.set_fft_window(window.WIN_BLACKMAN_hARRIS)
         self.fosphor_glfw_sink_c_0.set_frequency_range(rf_freq, samp_rate)
+        self.blocks_multiply_xx_0_0 = blocks.multiply_vcc(1)
         self.blocks_multiply_xx_0 = blocks.multiply_vcc(1)
         self.blocks_multiply_const_vxx_0 = blocks.multiply_const_vff((-1, ))
         self.blocks_float_to_complex_0 = blocks.float_to_complex(1)
         self.blocks_complex_to_float_0 = blocks.complex_to_float(1)
+        self.analog_sig_source_x_0_0 = analog.sig_source_c(samp_rate, analog.GR_COS_WAVE, -1*(decim*chan_offset), 1, 0)
         self.analog_sig_source_x_0 = analog.sig_source_c(samp_rate, analog.GR_COS_WAVE, -1*offset, 1, 0)
 
 
@@ -264,19 +223,39 @@ class inmarsat_cband_fosphor(gr.top_block, Qt.QWidget):
         # Connections
         ##################################################
         self.connect((self.analog_sig_source_x_0, 0), (self.blocks_multiply_xx_0, 1))
+        self.connect((self.analog_sig_source_x_0_0, 0), (self.blocks_multiply_xx_0_0, 1))
         self.connect((self.blocks_complex_to_float_0, 0), (self.blocks_float_to_complex_0, 0))
         self.connect((self.blocks_complex_to_float_0, 1), (self.blocks_multiply_const_vxx_0, 0))
+        self.connect((self.blocks_float_to_complex_0, 0), (self.blocks_multiply_xx_0, 0))
         self.connect((self.blocks_float_to_complex_0, 0), (self.fosphor_glfw_sink_c_0, 0))
-        self.connect((self.blocks_float_to_complex_0, 0), (self.qtgui_freq_sink_x_0, 0))
-        self.connect((self.blocks_float_to_complex_0, 0), (self.qtgui_waterfall_sink_x_0, 0))
         self.connect((self.blocks_multiply_const_vxx_0, 0), (self.blocks_float_to_complex_0, 1))
-        self.connect((self.blocks_multiply_xx_0, 0), (self.blocks_complex_to_float_0, 0))
-        self.connect((self.uhd_usrp_source_0, 0), (self.blocks_multiply_xx_0, 0))
+        self.connect((self.blocks_multiply_xx_0, 0), (self.rational_resampler_xxx_0, 0))
+        self.connect((self.blocks_multiply_xx_0_0, 0), (self.rational_resampler_xxx_0_0, 0))
+        self.connect((self.rational_resampler_xxx_0, 0), (self.blocks_multiply_xx_0_0, 0))
+        self.connect((self.rational_resampler_xxx_0, 0), (self.fosphor_qt_sink_c_0, 0))
+        self.connect((self.rational_resampler_xxx_0_0, 0), (self.fosphor_qt_sink_c_0_0, 0))
+        self.connect((self.uhd_usrp_source_0, 0), (self.blocks_complex_to_float_0, 0))
 
     def closeEvent(self, event):
-        self.settings = Qt.QSettings("GNU Radio", "inmarsat_cband_fosphor")
+        self.settings = Qt.QSettings("GNU Radio", "inmarsat_cband_x310")
         self.settings.setValue("geometry", self.saveGeometry())
         event.accept()
+
+    def get_decim(self):
+        return self.decim
+
+    def set_decim(self, decim):
+        self.decim = decim
+        self.fosphor_qt_sink_c_0_0.set_frequency_range(self.rf_freq + self.offset + self.chan_offset, self.samp_rate/self.decim/self.decim2)
+        self.fosphor_qt_sink_c_0.set_frequency_range(self.rf_freq + self.offset, self.samp_rate/self.decim)
+        self.analog_sig_source_x_0_0.set_frequency(-1*(self.decim*self.chan_offset))
+
+    def get_decim2(self):
+        return self.decim2
+
+    def set_decim2(self, decim2):
+        self.decim2 = decim2
+        self.fosphor_qt_sink_c_0_0.set_frequency_range(self.rf_freq + self.offset + self.chan_offset, self.samp_rate/self.decim/self.decim2)
 
     def get_radio_id(self):
         return self.radio_id
@@ -298,8 +277,9 @@ class inmarsat_cband_fosphor(gr.top_block, Qt.QWidget):
     def set_rf_freq(self, rf_freq):
         self.rf_freq = rf_freq
         Qt.QMetaObject.invokeMethod(self._rf_freq_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.rf_freq)))
-        self.uhd_usrp_source_0.set_center_freq(uhd.tune_request(self.rf_freq, self.samp_rate/2), 0)
         self.set_if_freq(self.hs_lo-self.rf_freq)
+        self.fosphor_qt_sink_c_0_0.set_frequency_range(self.rf_freq + self.offset + self.chan_offset, self.samp_rate/self.decim/self.decim2)
+        self.fosphor_qt_sink_c_0.set_frequency_range(self.rf_freq + self.offset, self.samp_rate/self.decim)
         self.fosphor_glfw_sink_c_0.set_frequency_range(self.rf_freq, self.samp_rate)
 
     def get_hs_lo(self):
@@ -323,11 +303,11 @@ class inmarsat_cband_fosphor(gr.top_block, Qt.QWidget):
         self.samp_rate = samp_rate
         Qt.QMetaObject.invokeMethod(self._samp_rate_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.samp_rate)))
         self.uhd_usrp_source_0.set_samp_rate(self.samp_rate)
-        self.uhd_usrp_source_0.set_center_freq(uhd.tune_request(self.rf_freq, self.samp_rate/2), 0)
-        self.qtgui_waterfall_sink_x_0.set_frequency_range(0, self.samp_rate)
-        self.qtgui_freq_sink_x_0.set_frequency_range(0, self.samp_rate)
+        self.fosphor_qt_sink_c_0_0.set_frequency_range(self.rf_freq + self.offset + self.chan_offset, self.samp_rate/self.decim/self.decim2)
+        self.fosphor_qt_sink_c_0.set_frequency_range(self.rf_freq + self.offset, self.samp_rate/self.decim)
         self.fosphor_glfw_sink_c_0.set_frequency_range(self.rf_freq, self.samp_rate)
         self.set_fn("{:s}_{:s}_{:s}_{:s}M.fc32".format(self.sat_name, self.radio_id, self.ts_str, str(int(self.samp_rate/1e6))))
+        self.analog_sig_source_x_0_0.set_sampling_freq(self.samp_rate)
         self.analog_sig_source_x_0.set_sampling_freq(self.samp_rate)
 
     def get_if_freq(self):
@@ -335,6 +315,7 @@ class inmarsat_cband_fosphor(gr.top_block, Qt.QWidget):
 
     def set_if_freq(self, if_freq):
         self.if_freq = if_freq
+        self.uhd_usrp_source_0.set_center_freq(self.if_freq, 0)
         self.set_if_freq_lbl(self._if_freq_lbl_formatter(self.if_freq))
 
     def get_rx_gain(self):
@@ -352,6 +333,8 @@ class inmarsat_cband_fosphor(gr.top_block, Qt.QWidget):
     def set_offset(self, offset):
         self.offset = offset
         Qt.QMetaObject.invokeMethod(self._offset_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.offset)))
+        self.fosphor_qt_sink_c_0_0.set_frequency_range(self.rf_freq + self.offset + self.chan_offset, self.samp_rate/self.decim/self.decim2)
+        self.fosphor_qt_sink_c_0.set_frequency_range(self.rf_freq + self.offset, self.samp_rate/self.decim)
         self.analog_sig_source_x_0.set_frequency(-1*self.offset)
 
     def get_if_freq_lbl(self):
@@ -367,9 +350,24 @@ class inmarsat_cband_fosphor(gr.top_block, Qt.QWidget):
     def set_fn(self, fn):
         self.fn = fn
 
+    def get_chan_offset(self):
+        return self.chan_offset
+
+    def set_chan_offset(self, chan_offset):
+        self.chan_offset = chan_offset
+        Qt.QMetaObject.invokeMethod(self._chan_offset_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.chan_offset)))
+        self.fosphor_qt_sink_c_0_0.set_frequency_range(self.rf_freq + self.offset + self.chan_offset, self.samp_rate/self.decim/self.decim2)
+        self.analog_sig_source_x_0_0.set_frequency(-1*(self.decim*self.chan_offset))
+
 
 def argument_parser():
     parser = OptionParser(usage="%prog: [options]", option_class=eng_option)
+    parser.add_option(
+        "", "--decim", dest="decim", type="intx", default=5,
+        help="Set decim [default=%default]")
+    parser.add_option(
+        "", "--decim2", dest="decim2", type="intx", default=10,
+        help="Set decim2 [default=%default]")
     parser.add_option(
         "", "--radio-id", dest="radio_id", type="string", default='30CF9D2',
         help="Set radio_id [default=%default]")
@@ -379,7 +377,7 @@ def argument_parser():
     return parser
 
 
-def main(top_block_cls=inmarsat_cband_fosphor, options=None):
+def main(top_block_cls=inmarsat_cband_x310, options=None):
     if options is None:
         options, _ = argument_parser().parse_args()
 
@@ -389,7 +387,7 @@ def main(top_block_cls=inmarsat_cband_fosphor, options=None):
         Qt.QApplication.setGraphicsSystem(style)
     qapp = Qt.QApplication(sys.argv)
 
-    tb = top_block_cls(radio_id=options.radio_id, sat_name=options.sat_name)
+    tb = top_block_cls(decim=options.decim, decim2=options.decim2, radio_id=options.radio_id, sat_name=options.sat_name)
     tb.start()
     tb.show()
 

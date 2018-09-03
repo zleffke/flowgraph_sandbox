@@ -5,8 +5,8 @@
 #
 ##################################################
 # GNU Radio Python Flow Graph
-# Title: 4F3_30CF9D2_20180903_014434.273793_UTC_50M.fc32
-# Generated: Sun Sep  2 21:44:40 2018
+# Title: 4F3_30CF9D2_20180903_054255.650380_UTC_50M.fc32
+# Generated: Mon Sep  3 02:08:00 2018
 # GNU Radio version: 3.7.12.0
 ##################################################
 
@@ -42,9 +42,9 @@ from gnuradio import qtgui
 class inmarsat_cband_x310(gr.top_block, Qt.QWidget):
 
     def __init__(self, decim=5, decim2=10, radio_id='30CF9D2', sat_name='4F3'):
-        gr.top_block.__init__(self, "4F3_30CF9D2_20180903_014434.273793_UTC_50M.fc32")
+        gr.top_block.__init__(self, "4F3_30CF9D2_20180903_054255.650380_UTC_50M.fc32")
         Qt.QWidget.__init__(self)
-        self.setWindowTitle("4F3_30CF9D2_20180903_014434.273793_UTC_50M.fc32")
+        self.setWindowTitle("4F3_30CF9D2_20180903_054255.650380_UTC_50M.fc32")
         qtgui.util.check_set_qss()
         try:
             self.setWindowIcon(Qt.QIcon.fromTheme('gnuradio-grc'))

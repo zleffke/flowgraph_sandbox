@@ -21,6 +21,10 @@
       <value></value>
     </param>
     <param>
+      <key>copyright</key>
+      <value></value>
+    </param>
+    <param>
       <key>description</key>
       <value></value>
     </param>
@@ -753,11 +757,11 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>0</value>
+      <value>1</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(456, 812)</value>
+      <value>(440, 812)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -847,7 +851,7 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>1</value>
+      <value>0</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -1023,7 +1027,7 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>1</value>
+      <value>0</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -1109,11 +1113,11 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>0</value>
+      <value>1</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(736, 808)</value>
+      <value>(736, 816)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1160,7 +1164,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1048, 428)</value>
+      <value>(1040, 428)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1701,7 +1705,7 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>1</value>
+      <value>0</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -1795,11 +1799,11 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>0</value>
+      <value>1</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(776, 840)</value>
+      <value>(776, 848)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2450,11 +2454,11 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>0</value>
+      <value>1</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(600, 808)</value>
+      <value>(592, 816)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2528,7 +2532,7 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>1</value>
+      <value>0</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -2571,7 +2575,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1112, 1048)</value>
+      <value>(1216, 1048)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2665,6 +2669,10 @@
       <value>0</value>
     </param>
     <param>
+      <key>threshold_method</key>
+      <value>digital.corr_est_cc.THRESHOLD_ABSOLUTE</value>
+    </param>
+    <param>
       <key>threshold</key>
       <value>0.9</value>
     </param>
@@ -2718,6 +2726,10 @@
     <param>
       <key>mark_delay</key>
       <value>0</value>
+    </param>
+    <param>
+      <key>threshold_method</key>
+      <value>digital.corr_est_cc.THRESHOLD_ABSOLUTE</value>
     </param>
     <param>
       <key>threshold</key>
@@ -2775,6 +2787,10 @@
       <value>0</value>
     </param>
     <param>
+      <key>threshold_method</key>
+      <value>digital.corr_est_cc.THRESHOLD_ABSOLUTE</value>
+    </param>
+    <param>
       <key>threshold</key>
       <value>0.9</value>
     </param>
@@ -2795,7 +2811,7 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>1</value>
+      <value>0</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -2828,6 +2844,10 @@
     <param>
       <key>mark_delay</key>
       <value>0</value>
+    </param>
+    <param>
+      <key>threshold_method</key>
+      <value>digital.corr_est_cc.THRESHOLD_ABSOLUTE</value>
     </param>
     <param>
       <key>threshold</key>
@@ -2885,6 +2905,10 @@
       <value>0</value>
     </param>
     <param>
+      <key>threshold_method</key>
+      <value>digital.corr_est_cc.THRESHOLD_ABSOLUTE</value>
+    </param>
+    <param>
       <key>threshold</key>
       <value>0.9</value>
     </param>
@@ -2905,7 +2929,7 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>0</value>
+      <value>1</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -2938,6 +2962,10 @@
     <param>
       <key>mark_delay</key>
       <value>0</value>
+    </param>
+    <param>
+      <key>threshold_method</key>
+      <value>digital.corr_est_cc.THRESHOLD_ABSOLUTE</value>
     </param>
     <param>
       <key>threshold</key>
@@ -3948,6 +3976,10 @@
       <value>samp_rate</value>
     </param>
     <param>
+      <key>stemplot</key>
+      <value>False</value>
+    </param>
+    <param>
       <key>tr_chan</key>
       <value>0</value>
     </param>
@@ -4311,6 +4343,10 @@
       <value>samp_rate</value>
     </param>
     <param>
+      <key>stemplot</key>
+      <value>False</value>
+    </param>
+    <param>
       <key>tr_chan</key>
       <value>0</value>
     </param>
@@ -4588,6 +4624,12 @@
   <connection>
     <source_block_id>blocks_char_to_float_0</source_block_id>
     <sink_block_id>virtual_sink_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>blocks_char_to_float_1_0_0_0</source_block_id>
+    <sink_block_id>qtgui_time_sink_x_1</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>

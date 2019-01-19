@@ -21,6 +21,10 @@
       <value></value>
     </param>
     <param>
+      <key>copyright</key>
+      <value></value>
+    </param>
+    <param>
       <key>description</key>
       <value></value>
     </param>
@@ -2209,45 +2213,6 @@
     </param>
   </block>
   <block>
-    <key>digital_binary_slicer_fb</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(1160, 864)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>digital_binary_slicer_fb_1</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
-    </param>
-  </block>
-  <block>
     <key>digital_costas_loop_cc</key>
     <param>
       <key>alias</key>
@@ -2347,49 +2312,6 @@
     <param>
       <key>use_snr</key>
       <value>False</value>
-    </param>
-  </block>
-  <block>
-    <key>digital_diff_decoder_bb</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(1320, 860)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>digital_diff_decoder_bb_0</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>modulus</key>
-      <value>2</value>
     </param>
   </block>
   <block>
@@ -2862,53 +2784,6 @@
     <param>
       <key>win</key>
       <value>firdes.WIN_HAMMING</value>
-    </param>
-  </block>
-  <block>
-    <key>mapper_demapper_soft</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(928, 852)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>mapper_demapper_soft_0</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>modtype</key>
-      <value>mapper.BPSK</value>
-    </param>
-    <param>
-      <key>symbol_values</key>
-      <value>[0,1]</value>
     </param>
   </block>
   <block>
@@ -4402,6 +4277,10 @@
       <value>baud</value>
     </param>
     <param>
+      <key>stemplot</key>
+      <value>False</value>
+    </param>
+    <param>
       <key>tr_chan</key>
       <value>0</value>
     </param>
@@ -4765,6 +4644,10 @@
       <value>baud</value>
     </param>
     <param>
+      <key>stemplot</key>
+      <value>False</value>
+    </param>
+    <param>
       <key>tr_chan</key>
       <value>0</value>
     </param>
@@ -5126,6 +5009,10 @@
     <param>
       <key>srate</key>
       <value>samp_rate</value>
+    </param>
+    <param>
+      <key>stemplot</key>
+      <value>False</value>
     </param>
     <param>
       <key>tr_chan</key>
@@ -5728,18 +5615,6 @@
     <sink_key>0</sink_key>
   </connection>
   <connection>
-    <source_block_id>digital_binary_slicer_fb_1</source_block_id>
-    <sink_block_id>digital_diff_decoder_bb_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>digital_costas_loop_cc_0</source_block_id>
-    <sink_block_id>mapper_demapper_soft_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
-  </connection>
-  <connection>
     <source_block_id>digital_costas_loop_cc_0</source_block_id>
     <sink_block_id>qtgui_const_sink_x_0</sink_block_id>
     <source_key>0</source_key>
@@ -5816,12 +5691,6 @@
     <sink_block_id>qtgui_freq_sink_x_0_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>1</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>mapper_demapper_soft_0</source_block_id>
-    <sink_block_id>digital_binary_slicer_fb_1</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
   </connection>
   <connection>
     <source_block_id>root_raised_cosine_filter_0_0</source_block_id>

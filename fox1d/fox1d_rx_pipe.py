@@ -1,9 +1,13 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
+#
+# SPDX-License-Identifier: GPL-3.0
+#
 ##################################################
 # GNU Radio Python Flow Graph
 # Title: FOX1D Receiver, Pipe to FoxTelem
-# Generated: Wed Jul 11 16:15:08 2018
+# Generated: Sat Sep 15 16:59:36 2018
+# GNU Radio version: 3.7.12.0
 ##################################################
 
 if __name__ == '__main__':
@@ -17,26 +21,29 @@ if __name__ == '__main__':
             print "Warning: failed to XInitThreads()"
 
 from PyQt4 import Qt
+from datetime import datetime as dt; import string
 from gnuradio import analog
+from gnuradio import audio
 from gnuradio import blocks
 from gnuradio import digital
 from gnuradio import eng_notation
 from gnuradio import filter
 from gnuradio import gr
 from gnuradio import qtgui
+from gnuradio import uhd
 from gnuradio.eng_option import eng_option
 from gnuradio.filter import firdes
 from optparse import OptionParser
 import math
-import pmt
 import sip
 import sys
+import time
 from gnuradio import qtgui
 
 
 class fox1d_rx_pipe(gr.top_block, Qt.QWidget):
 
-    def __init__(self, meta_rate=10):
+    def __init__(self, meta_rate=10, radio_id='USRP', sat_name='FOX-1D'):
         gr.top_block.__init__(self, "FOX1D Receiver, Pipe to FoxTelem")
         Qt.QWidget.__init__(self)
         self.setWindowTitle("FOX1D Receiver, Pipe to FoxTelem")
@@ -65,11 +72,16 @@ class fox1d_rx_pipe(gr.top_block, Qt.QWidget):
         # Parameters
         ##################################################
         self.meta_rate = meta_rate
+        self.radio_id = radio_id
+        self.sat_name = sat_name
 
         ##################################################
         # Variables
         ##################################################
+        self.ts_str = ts_str = dt.strftime(dt.utcnow(), "%Y%m%d_%H%M%S.%f" )+'_UTC'
         self.samp_rate = samp_rate = 250e3
+        self.fn_wav = fn_wav = "{:s}_{:s}_{:s}_{:s}k.wav".format(sat_name, radio_id, ts_str, str(int(48000)/1000))
+        self.fn = fn = "{:s}_{:s}_{:s}_{:s}k.fc32".format(sat_name, radio_id, ts_str, str(int(samp_rate)/1000))
         self.decim = decim = 5
         self.baud = baud = 9600
 
@@ -82,6 +94,8 @@ class fox1d_rx_pipe(gr.top_block, Qt.QWidget):
         self.rx_freq = rx_freq = 145.88e6
         self.rf_lpf_cutoff = rf_lpf_cutoff = 8e3
         self.fsk_deviation_hz = fsk_deviation_hz = 4000
+        self.fp_wav = fp_wav = "/home/zleffke/captures/fox1d/{:s}".format(fn_wav)
+        self.fp = fp = "/home/zleffke/captures/fox1d/{:s}".format(fn)
         self.fll_loop_bw_fine = fll_loop_bw_fine = 0.0001
         self.fll_loop_bw = fll_loop_bw = math.pi/200
         self.audio_lpf_cutoff = audio_lpf_cutoff = 6e3
@@ -95,56 +109,102 @@ class fox1d_rx_pipe(gr.top_block, Qt.QWidget):
         self._volume_tool_bar.addWidget(self._volume_line_edit)
         self._volume_line_edit.returnPressed.connect(
         	lambda: self.set_volume(eng_notation.str_to_num(str(self._volume_line_edit.text().toAscii()))))
-        self.top_grid_layout.addWidget(self._volume_tool_bar, 7,4,1,2)
-        self._throttle_factor_tool_bar = Qt.QToolBar(self)
-        self._throttle_factor_tool_bar.addWidget(Qt.QLabel("throttle_factor"+": "))
-        self._throttle_factor_line_edit = Qt.QLineEdit(str(self.throttle_factor))
-        self._throttle_factor_tool_bar.addWidget(self._throttle_factor_line_edit)
-        self._throttle_factor_line_edit.returnPressed.connect(
-        	lambda: self.set_throttle_factor(eng_notation.str_to_num(str(self._throttle_factor_line_edit.text().toAscii()))))
-        self.top_grid_layout.addWidget(self._throttle_factor_tool_bar, 6,4,1,2)
-        self._rf_lpf_cutoff_tool_bar = Qt.QToolBar(self)
-        self._rf_lpf_cutoff_tool_bar.addWidget(Qt.QLabel("rf_lpf_cutoff"+": "))
-        self._rf_lpf_cutoff_line_edit = Qt.QLineEdit(str(self.rf_lpf_cutoff))
-        self._rf_lpf_cutoff_tool_bar.addWidget(self._rf_lpf_cutoff_line_edit)
-        self._rf_lpf_cutoff_line_edit.returnPressed.connect(
-        	lambda: self.set_rf_lpf_cutoff(eng_notation.str_to_num(str(self._rf_lpf_cutoff_line_edit.text().toAscii()))))
-        self.top_grid_layout.addWidget(self._rf_lpf_cutoff_tool_bar, 6,0,1,2)
-        self._fll_loop_bw_fine_tool_bar = Qt.QToolBar(self)
-        self._fll_loop_bw_fine_tool_bar.addWidget(Qt.QLabel("fll_loop_bw_fine"+": "))
-        self._fll_loop_bw_fine_line_edit = Qt.QLineEdit(str(self.fll_loop_bw_fine))
-        self._fll_loop_bw_fine_tool_bar.addWidget(self._fll_loop_bw_fine_line_edit)
-        self._fll_loop_bw_fine_line_edit.returnPressed.connect(
-        	lambda: self.set_fll_loop_bw_fine(eng_notation.str_to_num(str(self._fll_loop_bw_fine_line_edit.text().toAscii()))))
-        self.top_grid_layout.addWidget(self._fll_loop_bw_fine_tool_bar, 7,2,1,2)
-        self._fll_loop_bw_tool_bar = Qt.QToolBar(self)
-        self._fll_loop_bw_tool_bar.addWidget(Qt.QLabel("fll_loop_bw"+": "))
-        self._fll_loop_bw_line_edit = Qt.QLineEdit(str(self.fll_loop_bw))
-        self._fll_loop_bw_tool_bar.addWidget(self._fll_loop_bw_line_edit)
-        self._fll_loop_bw_line_edit.returnPressed.connect(
-        	lambda: self.set_fll_loop_bw(eng_notation.str_to_num(str(self._fll_loop_bw_line_edit.text().toAscii()))))
-        self.top_grid_layout.addWidget(self._fll_loop_bw_tool_bar, 6,2,1,2)
-        self._audio_lpf_cutoff_tool_bar = Qt.QToolBar(self)
-        self._audio_lpf_cutoff_tool_bar.addWidget(Qt.QLabel("audio_lpf_cutoff"+": "))
-        self._audio_lpf_cutoff_line_edit = Qt.QLineEdit(str(self.audio_lpf_cutoff))
-        self._audio_lpf_cutoff_tool_bar.addWidget(self._audio_lpf_cutoff_line_edit)
-        self._audio_lpf_cutoff_line_edit.returnPressed.connect(
-        	lambda: self.set_audio_lpf_cutoff(eng_notation.str_to_num(str(self._audio_lpf_cutoff_line_edit.text().toAscii()))))
-        self.top_grid_layout.addWidget(self._audio_lpf_cutoff_tool_bar, 7,0,1,2)
+        self.top_grid_layout.addWidget(self._volume_tool_bar, 7, 4, 1, 2)
+        for r in range(7, 8):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(4, 6):
+            self.top_grid_layout.setColumnStretch(c, 1)
         self._rx_gain_tool_bar = Qt.QToolBar(self)
         self._rx_gain_tool_bar.addWidget(Qt.QLabel('GAIN'+": "))
         self._rx_gain_line_edit = Qt.QLineEdit(str(self.rx_gain))
         self._rx_gain_tool_bar.addWidget(self._rx_gain_line_edit)
         self._rx_gain_line_edit.returnPressed.connect(
         	lambda: self.set_rx_gain(eng_notation.str_to_num(str(self._rx_gain_line_edit.text().toAscii()))))
-        self.top_layout.addWidget(self._rx_gain_tool_bar)
+        self.top_grid_layout.addWidget(self._rx_gain_tool_bar, 8, 0, 1, 2)
+        for r in range(8, 9):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(0, 2):
+            self.top_grid_layout.setColumnStretch(c, 1)
         self._rx_freq_tool_bar = Qt.QToolBar(self)
         self._rx_freq_tool_bar.addWidget(Qt.QLabel('FREQ'+": "))
         self._rx_freq_line_edit = Qt.QLineEdit(str(self.rx_freq))
         self._rx_freq_tool_bar.addWidget(self._rx_freq_line_edit)
         self._rx_freq_line_edit.returnPressed.connect(
         	lambda: self.set_rx_freq(eng_notation.str_to_num(str(self._rx_freq_line_edit.text().toAscii()))))
-        self.top_grid_layout.addWidget(self._rx_freq_tool_bar, 7,6,1,2)
+        self.top_grid_layout.addWidget(self._rx_freq_tool_bar, 7, 6, 1, 2)
+        for r in range(7, 8):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(6, 8):
+            self.top_grid_layout.setColumnStretch(c, 1)
+        self._rf_lpf_cutoff_tool_bar = Qt.QToolBar(self)
+        self._rf_lpf_cutoff_tool_bar.addWidget(Qt.QLabel("rf_lpf_cutoff"+": "))
+        self._rf_lpf_cutoff_line_edit = Qt.QLineEdit(str(self.rf_lpf_cutoff))
+        self._rf_lpf_cutoff_tool_bar.addWidget(self._rf_lpf_cutoff_line_edit)
+        self._rf_lpf_cutoff_line_edit.returnPressed.connect(
+        	lambda: self.set_rf_lpf_cutoff(eng_notation.str_to_num(str(self._rf_lpf_cutoff_line_edit.text().toAscii()))))
+        self.top_grid_layout.addWidget(self._rf_lpf_cutoff_tool_bar, 6, 0, 1, 2)
+        for r in range(6, 7):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(0, 2):
+            self.top_grid_layout.setColumnStretch(c, 1)
+        self._fll_loop_bw_fine_tool_bar = Qt.QToolBar(self)
+        self._fll_loop_bw_fine_tool_bar.addWidget(Qt.QLabel("fll_loop_bw_fine"+": "))
+        self._fll_loop_bw_fine_line_edit = Qt.QLineEdit(str(self.fll_loop_bw_fine))
+        self._fll_loop_bw_fine_tool_bar.addWidget(self._fll_loop_bw_fine_line_edit)
+        self._fll_loop_bw_fine_line_edit.returnPressed.connect(
+        	lambda: self.set_fll_loop_bw_fine(eng_notation.str_to_num(str(self._fll_loop_bw_fine_line_edit.text().toAscii()))))
+        self.top_grid_layout.addWidget(self._fll_loop_bw_fine_tool_bar, 7, 2, 1, 2)
+        for r in range(7, 8):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(2, 4):
+            self.top_grid_layout.setColumnStretch(c, 1)
+        self._fll_loop_bw_tool_bar = Qt.QToolBar(self)
+        self._fll_loop_bw_tool_bar.addWidget(Qt.QLabel("fll_loop_bw"+": "))
+        self._fll_loop_bw_line_edit = Qt.QLineEdit(str(self.fll_loop_bw))
+        self._fll_loop_bw_tool_bar.addWidget(self._fll_loop_bw_line_edit)
+        self._fll_loop_bw_line_edit.returnPressed.connect(
+        	lambda: self.set_fll_loop_bw(eng_notation.str_to_num(str(self._fll_loop_bw_line_edit.text().toAscii()))))
+        self.top_grid_layout.addWidget(self._fll_loop_bw_tool_bar, 6, 2, 1, 2)
+        for r in range(6, 7):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(2, 4):
+            self.top_grid_layout.setColumnStretch(c, 1)
+        self._audio_lpf_cutoff_tool_bar = Qt.QToolBar(self)
+        self._audio_lpf_cutoff_tool_bar.addWidget(Qt.QLabel("audio_lpf_cutoff"+": "))
+        self._audio_lpf_cutoff_line_edit = Qt.QLineEdit(str(self.audio_lpf_cutoff))
+        self._audio_lpf_cutoff_tool_bar.addWidget(self._audio_lpf_cutoff_line_edit)
+        self._audio_lpf_cutoff_line_edit.returnPressed.connect(
+        	lambda: self.set_audio_lpf_cutoff(eng_notation.str_to_num(str(self._audio_lpf_cutoff_line_edit.text().toAscii()))))
+        self.top_grid_layout.addWidget(self._audio_lpf_cutoff_tool_bar, 7, 0, 1, 2)
+        for r in range(7, 8):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(0, 2):
+            self.top_grid_layout.setColumnStretch(c, 1)
+        self.uhd_usrp_source_0 = uhd.usrp_source(
+        	",".join(("", "")),
+        	uhd.stream_args(
+        		cpu_format="fc32",
+        		channels=range(1),
+        	),
+        )
+        self.uhd_usrp_source_0.set_clock_source('external', 0)
+        self.uhd_usrp_source_0.set_time_source('external', 0)
+        self.uhd_usrp_source_0.set_samp_rate(samp_rate)
+        self.uhd_usrp_source_0.set_time_now(uhd.time_spec(time.time()), uhd.ALL_MBOARDS)
+        self.uhd_usrp_source_0.set_center_freq(uhd.tune_request(rx_freq, samp_rate/2), 0)
+        self.uhd_usrp_source_0.set_gain(rx_gain, 0)
+        self.uhd_usrp_source_0.set_antenna('RX2', 0)
+        self._throttle_factor_tool_bar = Qt.QToolBar(self)
+        self._throttle_factor_tool_bar.addWidget(Qt.QLabel("throttle_factor"+": "))
+        self._throttle_factor_line_edit = Qt.QLineEdit(str(self.throttle_factor))
+        self._throttle_factor_tool_bar.addWidget(self._throttle_factor_line_edit)
+        self._throttle_factor_line_edit.returnPressed.connect(
+        	lambda: self.set_throttle_factor(eng_notation.str_to_num(str(self._throttle_factor_line_edit.text().toAscii()))))
+        self.top_grid_layout.addWidget(self._throttle_factor_tool_bar, 6, 4, 1, 2)
+        for r in range(6, 7):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(4, 6):
+            self.top_grid_layout.setColumnStretch(c, 1)
         self.rational_resampler_xxx_1 = filter.rational_resampler_ccc(
                 interpolation=1,
                 decimation=4,
@@ -198,7 +258,11 @@ class fox1d_rx_pipe(gr.top_block, Qt.QWidget):
         self.qtgui_waterfall_sink_x_0_0.set_intensity_range(-80, 0)
 
         self._qtgui_waterfall_sink_x_0_0_win = sip.wrapinstance(self.qtgui_waterfall_sink_x_0_0.pyqwidget(), Qt.QWidget)
-        self.top_grid_layout.addWidget(self._qtgui_waterfall_sink_x_0_0_win, 2,4,2,4)
+        self.top_grid_layout.addWidget(self._qtgui_waterfall_sink_x_0_0_win, 2, 4, 2, 4)
+        for r in range(2, 4):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(4, 8):
+            self.top_grid_layout.setColumnStretch(c, 1)
         self.qtgui_waterfall_sink_x_0 = qtgui.waterfall_sink_c(
         	2048, #size
         	firdes.WIN_BLACKMAN_hARRIS, #wintype
@@ -234,7 +298,11 @@ class fox1d_rx_pipe(gr.top_block, Qt.QWidget):
         self.qtgui_waterfall_sink_x_0.set_intensity_range(-80, 0)
 
         self._qtgui_waterfall_sink_x_0_win = sip.wrapinstance(self.qtgui_waterfall_sink_x_0.pyqwidget(), Qt.QWidget)
-        self.top_grid_layout.addWidget(self._qtgui_waterfall_sink_x_0_win, 0,4,2,4)
+        self.top_grid_layout.addWidget(self._qtgui_waterfall_sink_x_0_win, 0, 4, 2, 4)
+        for r in range(0, 2):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(4, 8):
+            self.top_grid_layout.setColumnStretch(c, 1)
         self.qtgui_time_sink_x_0 = qtgui.time_sink_f(
         	1024, #size
         	samp_rate / decim / 50 * 48, #samp_rate
@@ -249,7 +317,7 @@ class fox1d_rx_pipe(gr.top_block, Qt.QWidget):
         self.qtgui_time_sink_x_0.enable_tags(-1, True)
         self.qtgui_time_sink_x_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, qtgui.TRIG_SLOPE_POS, 0.0, 0, 0, "")
         self.qtgui_time_sink_x_0.enable_autoscale(False)
-        self.qtgui_time_sink_x_0.enable_grid(False)
+        self.qtgui_time_sink_x_0.enable_grid(True)
         self.qtgui_time_sink_x_0.enable_axis_labels(True)
         self.qtgui_time_sink_x_0.enable_control_panel(False)
         self.qtgui_time_sink_x_0.enable_stem_plot(False)
@@ -282,7 +350,11 @@ class fox1d_rx_pipe(gr.top_block, Qt.QWidget):
             self.qtgui_time_sink_x_0.set_line_alpha(i, alphas[i])
 
         self._qtgui_time_sink_x_0_win = sip.wrapinstance(self.qtgui_time_sink_x_0.pyqwidget(), Qt.QWidget)
-        self.top_layout.addWidget(self._qtgui_time_sink_x_0_win)
+        self.top_grid_layout.addWidget(self._qtgui_time_sink_x_0_win, 8, 2, 1, 6)
+        for r in range(8, 9):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(2, 8):
+            self.top_grid_layout.setColumnStretch(c, 1)
         self.qtgui_number_sink_0_0_0_0_0 = qtgui.number_sink(
             gr.sizeof_float,
             0,
@@ -313,7 +385,11 @@ class fox1d_rx_pipe(gr.top_block, Qt.QWidget):
 
         self.qtgui_number_sink_0_0_0_0_0.enable_autoscale(False)
         self._qtgui_number_sink_0_0_0_0_0_win = sip.wrapinstance(self.qtgui_number_sink_0_0_0_0_0.pyqwidget(), Qt.QWidget)
-        self.top_grid_layout.addWidget(self._qtgui_number_sink_0_0_0_0_0_win, 6,6,1,1)
+        self.top_grid_layout.addWidget(self._qtgui_number_sink_0_0_0_0_0_win, 6, 6, 1, 1)
+        for r in range(6, 7):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(6, 7):
+            self.top_grid_layout.setColumnStretch(c, 1)
         self.qtgui_number_sink_0_0_0_0 = qtgui.number_sink(
             gr.sizeof_float,
             0,
@@ -344,7 +420,11 @@ class fox1d_rx_pipe(gr.top_block, Qt.QWidget):
 
         self.qtgui_number_sink_0_0_0_0.enable_autoscale(False)
         self._qtgui_number_sink_0_0_0_0_win = sip.wrapinstance(self.qtgui_number_sink_0_0_0_0.pyqwidget(), Qt.QWidget)
-        self.top_grid_layout.addWidget(self._qtgui_number_sink_0_0_0_0_win, 6,7,1,1)
+        self.top_grid_layout.addWidget(self._qtgui_number_sink_0_0_0_0_win, 6, 7, 1, 1)
+        for r in range(6, 7):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(7, 8):
+            self.top_grid_layout.setColumnStretch(c, 1)
         self.qtgui_freq_sink_x_0 = qtgui.freq_sink_c(
         	2048, #size
         	firdes.WIN_BLACKMAN_hARRIS, #wintype
@@ -387,7 +467,11 @@ class fox1d_rx_pipe(gr.top_block, Qt.QWidget):
             self.qtgui_freq_sink_x_0.set_line_alpha(i, alphas[i])
 
         self._qtgui_freq_sink_x_0_win = sip.wrapinstance(self.qtgui_freq_sink_x_0.pyqwidget(), Qt.QWidget)
-        self.top_grid_layout.addWidget(self._qtgui_freq_sink_x_0_win, 0,0,4,4)
+        self.top_grid_layout.addWidget(self._qtgui_freq_sink_x_0_win, 0, 0, 4, 4)
+        for r in range(0, 4):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(0, 4):
+            self.top_grid_layout.setColumnStretch(c, 1)
         self.low_pass_filter_0_0_0 = filter.fir_filter_fff(1, firdes.low_pass(
         	1, samp_rate/decim/50*48, audio_lpf_cutoff, 2e3, firdes.WIN_HAMMING, 6.76))
         self.low_pass_filter_0_0 = filter.fir_filter_ccf(1, firdes.low_pass(
@@ -395,8 +479,7 @@ class fox1d_rx_pipe(gr.top_block, Qt.QWidget):
         self.freq_xlating_fir_filter_xxx_0 = filter.freq_xlating_fir_filter_ccc(decim, (xlate_taps), 0, samp_rate)
         self.digital_fll_band_edge_cc_0_0 = digital.fll_band_edge_cc(samps_per_symb, .5, 1024, fll_loop_bw_fine)
         self.digital_fll_band_edge_cc_0 = digital.fll_band_edge_cc(samps_per_symb, .5, 1024, fll_loop_bw)
-        self.blocks_wavfile_sink_0 = blocks.wavfile_sink('/home/zleffke/captures/fox1d/FOX-1D_USRP_20180711_150839.718170_UTC_48k.wav', 1, 48000, 16)
-        self.blocks_throttle_0 = blocks.throttle(gr.sizeof_gr_complex*1, samp_rate*throttle_factor,True)
+        self.blocks_wavfile_sink_0 = blocks.wavfile_sink(fp_wav, 1, 48000, 16)
         self.blocks_tagged_stream_to_pdu_0_0 = blocks.tagged_stream_to_pdu(blocks.float_t, 'snr')
         self.blocks_tagged_stream_to_pdu_0 = blocks.tagged_stream_to_pdu(blocks.float_t, 'rfo')
         self.blocks_stream_to_tagged_stream_0_0 = blocks.stream_to_tagged_stream(gr.sizeof_float, 1, 1, "snr")
@@ -411,16 +494,14 @@ class fox1d_rx_pipe(gr.top_block, Qt.QWidget):
         self.blocks_multiply_const_vxx_0 = blocks.multiply_const_vff((volume, ))
         self.blocks_moving_average_xx_0_0_1 = blocks.moving_average_ff(10000, 0.0001, 4000, 1)
         self.blocks_moving_average_xx_0 = blocks.moving_average_ff(100000, 0.00001, 4000, 1)
-        self.blocks_keep_one_in_n_0_0_0 = blocks.keep_one_in_n(gr.sizeof_float*1, int(samp_rate/decim /meta_rate))
         self.blocks_keep_one_in_n_0_0 = blocks.keep_one_in_n(gr.sizeof_float*1, int(samp_rate*meta_rate))
         self.blocks_keep_one_in_n_0 = blocks.keep_one_in_n(gr.sizeof_float*1, int(samp_rate/4*meta_rate))
-        self.blocks_file_source_0 = blocks.file_source(gr.sizeof_gr_complex*1, '/home/zleffke/captures/fox1d/FOX-1D_USRP_20180113_161106.862011_UTC_250k.fc32', False)
-        self.blocks_file_source_0.set_begin_tag(pmt.PMT_NIL)
-        self.blocks_file_sink_0 = blocks.file_sink(gr.sizeof_float*1, '/home/zleffke/captures/fox1d/FOX-1D_USRP_20180113_161106.862011_UTC_10sps.f32', False)
-        self.blocks_file_sink_0.set_unbuffered(False)
+        self.blocks_file_sink_0_0 = blocks.file_sink(gr.sizeof_gr_complex*1, fp, False)
+        self.blocks_file_sink_0_0.set_unbuffered(False)
         self.blocks_divide_xx_0 = blocks.divide_ff(1)
         self.blocks_complex_to_mag_squared_0_0 = blocks.complex_to_mag_squared(1)
         self.blocks_complex_to_mag_squared_0 = blocks.complex_to_mag_squared(1)
+        self.audio_sink_0 = audio.sink(48000, '', True)
         self.analog_sig_source_x_0 = analog.sig_source_c(samp_rate, analog.GR_COS_WAVE, samp_rate/2, 1, 0)
         self.analog_quadrature_demod_cf_0 = analog.quadrature_demod_cf(samp_rate/(2*math.pi*fsk_deviation_hz/8.0))
         self.analog_agc2_xx_0 = analog.agc2_cc(1e-1, 1e-2, 1.0, 1.0)
@@ -439,23 +520,20 @@ class fox1d_rx_pipe(gr.top_block, Qt.QWidget):
         self.connect((self.blocks_complex_to_mag_squared_0, 0), (self.blocks_divide_xx_0, 0))
         self.connect((self.blocks_complex_to_mag_squared_0_0, 0), (self.blocks_divide_xx_0, 1))
         self.connect((self.blocks_divide_xx_0, 0), (self.blocks_nlog10_ff_0_1, 0))
-        self.connect((self.blocks_file_source_0, 0), (self.blocks_throttle_0, 0))
         self.connect((self.blocks_keep_one_in_n_0, 0), (self.blocks_stream_to_tagged_stream_0_0, 0))
         self.connect((self.blocks_keep_one_in_n_0_0, 0), (self.blocks_stream_to_tagged_stream_0, 0))
-        self.connect((self.blocks_keep_one_in_n_0_0_0, 0), (self.blocks_file_sink_0, 0))
         self.connect((self.blocks_moving_average_xx_0, 0), (self.blocks_keep_one_in_n_0_0, 0))
         self.connect((self.blocks_moving_average_xx_0, 0), (self.qtgui_number_sink_0_0_0_0, 0))
         self.connect((self.blocks_moving_average_xx_0_0_1, 0), (self.blocks_keep_one_in_n_0, 0))
         self.connect((self.blocks_moving_average_xx_0_0_1, 0), (self.qtgui_number_sink_0_0_0_0_0, 0))
+        self.connect((self.blocks_multiply_const_vxx_0, 0), (self.audio_sink_0, 0))
         self.connect((self.blocks_multiply_const_vxx_0, 0), (self.blocks_wavfile_sink_0, 0))
         self.connect((self.blocks_multiply_const_vxx_0, 0), (self.qtgui_time_sink_x_0, 0))
-        self.connect((self.blocks_multiply_const_vxx_1, 0), (self.blocks_keep_one_in_n_0_0_0, 0))
         self.connect((self.blocks_multiply_const_vxx_1, 0), (self.blocks_moving_average_xx_0, 0))
         self.connect((self.blocks_multiply_xx_0, 0), (self.rational_resampler_xxx_1, 0))
         self.connect((self.blocks_nlog10_ff_0_1, 0), (self.blocks_moving_average_xx_0_0_1, 0))
         self.connect((self.blocks_stream_to_tagged_stream_0, 0), (self.blocks_tagged_stream_to_pdu_0, 0))
         self.connect((self.blocks_stream_to_tagged_stream_0_0, 0), (self.blocks_tagged_stream_to_pdu_0_0, 0))
-        self.connect((self.blocks_throttle_0, 0), (self.analog_agc2_xx_0, 0))
         self.connect((self.digital_fll_band_edge_cc_0, 1), (self.blocks_multiply_const_vxx_1, 0))
         self.connect((self.digital_fll_band_edge_cc_0, 0), (self.blocks_multiply_xx_0, 0))
         self.connect((self.digital_fll_band_edge_cc_0, 2), (self.blocks_null_sink_0, 0))
@@ -473,6 +551,8 @@ class fox1d_rx_pipe(gr.top_block, Qt.QWidget):
         self.connect((self.rational_resampler_xxx_0, 0), (self.analog_quadrature_demod_cf_0, 0))
         self.connect((self.rational_resampler_xxx_0_0, 0), (self.blocks_complex_to_mag_squared_0, 0))
         self.connect((self.rational_resampler_xxx_1, 0), (self.blocks_complex_to_mag_squared_0_0, 0))
+        self.connect((self.uhd_usrp_source_0, 0), (self.analog_agc2_xx_0, 0))
+        self.connect((self.uhd_usrp_source_0, 0), (self.blocks_file_sink_0_0, 0))
 
     def closeEvent(self, event):
         self.settings = Qt.QSettings("GNU Radio", "fox1d_rx_pipe")
@@ -484,9 +564,32 @@ class fox1d_rx_pipe(gr.top_block, Qt.QWidget):
 
     def set_meta_rate(self, meta_rate):
         self.meta_rate = meta_rate
-        self.blocks_keep_one_in_n_0_0_0.set_n(int(self.samp_rate/self.decim /self.meta_rate))
         self.blocks_keep_one_in_n_0_0.set_n(int(self.samp_rate*self.meta_rate))
         self.blocks_keep_one_in_n_0.set_n(int(self.samp_rate/4*self.meta_rate))
+
+    def get_radio_id(self):
+        return self.radio_id
+
+    def set_radio_id(self, radio_id):
+        self.radio_id = radio_id
+        self.set_fn_wav("{:s}_{:s}_{:s}_{:s}k.wav".format(self.sat_name, self.radio_id, self.ts_str, str(int(48000)/1000)))
+        self.set_fn("{:s}_{:s}_{:s}_{:s}k.fc32".format(self.sat_name, self.radio_id, self.ts_str, str(int(self.samp_rate)/1000)))
+
+    def get_sat_name(self):
+        return self.sat_name
+
+    def set_sat_name(self, sat_name):
+        self.sat_name = sat_name
+        self.set_fn_wav("{:s}_{:s}_{:s}_{:s}k.wav".format(self.sat_name, self.radio_id, self.ts_str, str(int(48000)/1000)))
+        self.set_fn("{:s}_{:s}_{:s}_{:s}k.fc32".format(self.sat_name, self.radio_id, self.ts_str, str(int(self.samp_rate)/1000)))
+
+    def get_ts_str(self):
+        return self.ts_str
+
+    def set_ts_str(self, ts_str):
+        self.ts_str = ts_str
+        self.set_fn_wav("{:s}_{:s}_{:s}_{:s}k.wav".format(self.sat_name, self.radio_id, self.ts_str, str(int(48000)/1000)))
+        self.set_fn("{:s}_{:s}_{:s}_{:s}k.fc32".format(self.sat_name, self.radio_id, self.ts_str, str(int(self.samp_rate)/1000)))
 
     def get_samp_rate(self):
         return self.samp_rate
@@ -494,20 +597,35 @@ class fox1d_rx_pipe(gr.top_block, Qt.QWidget):
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
         self.set_samps_per_symb(self.samp_rate/self.decim/ self.baud)
+        self.uhd_usrp_source_0.set_samp_rate(self.samp_rate)
+        self.uhd_usrp_source_0.set_center_freq(uhd.tune_request(self.rx_freq, self.samp_rate/2), 0)
         self.qtgui_waterfall_sink_x_0_0.set_frequency_range(0, self.samp_rate/self.decim)
         self.qtgui_waterfall_sink_x_0.set_frequency_range(0, self.samp_rate/self.decim)
         self.qtgui_time_sink_x_0.set_samp_rate(self.samp_rate / self.decim / 50 * 48)
         self.qtgui_freq_sink_x_0.set_frequency_range(0, self.samp_rate/self.decim)
         self.low_pass_filter_0_0_0.set_taps(firdes.low_pass(1, self.samp_rate/self.decim/50*48, self.audio_lpf_cutoff, 2e3, firdes.WIN_HAMMING, 6.76))
         self.low_pass_filter_0_0.set_taps(firdes.low_pass(1, self.samp_rate/self.decim, self.rf_lpf_cutoff, 2e3, firdes.WIN_HAMMING, 6.76))
-        self.blocks_throttle_0.set_sample_rate(self.samp_rate*self.throttle_factor)
+        self.set_fn("{:s}_{:s}_{:s}_{:s}k.fc32".format(self.sat_name, self.radio_id, self.ts_str, str(int(self.samp_rate)/1000)))
         self.blocks_multiply_const_vxx_1.set_k((-1*self.samp_rate/self.decim/(2*math.pi), ))
-        self.blocks_keep_one_in_n_0_0_0.set_n(int(self.samp_rate/self.decim /self.meta_rate))
         self.blocks_keep_one_in_n_0_0.set_n(int(self.samp_rate*self.meta_rate))
         self.blocks_keep_one_in_n_0.set_n(int(self.samp_rate/4*self.meta_rate))
         self.analog_sig_source_x_0.set_sampling_freq(self.samp_rate)
         self.analog_sig_source_x_0.set_frequency(self.samp_rate/2)
         self.analog_quadrature_demod_cf_0.set_gain(self.samp_rate/(2*math.pi*self.fsk_deviation_hz/8.0))
+
+    def get_fn_wav(self):
+        return self.fn_wav
+
+    def set_fn_wav(self, fn_wav):
+        self.fn_wav = fn_wav
+        self.set_fp_wav("/home/zleffke/captures/fox1d/{:s}".format(self.fn_wav))
+
+    def get_fn(self):
+        return self.fn
+
+    def set_fn(self, fn):
+        self.fn = fn
+        self.set_fp("/home/zleffke/captures/fox1d/{:s}".format(self.fn))
 
     def get_decim(self):
         return self.decim
@@ -522,7 +640,6 @@ class fox1d_rx_pipe(gr.top_block, Qt.QWidget):
         self.low_pass_filter_0_0_0.set_taps(firdes.low_pass(1, self.samp_rate/self.decim/50*48, self.audio_lpf_cutoff, 2e3, firdes.WIN_HAMMING, 6.76))
         self.low_pass_filter_0_0.set_taps(firdes.low_pass(1, self.samp_rate/self.decim, self.rf_lpf_cutoff, 2e3, firdes.WIN_HAMMING, 6.76))
         self.blocks_multiply_const_vxx_1.set_k((-1*self.samp_rate/self.decim/(2*math.pi), ))
-        self.blocks_keep_one_in_n_0_0_0.set_n(int(self.samp_rate/self.decim /self.meta_rate))
 
     def get_baud(self):
         return self.baud
@@ -552,7 +669,6 @@ class fox1d_rx_pipe(gr.top_block, Qt.QWidget):
     def set_throttle_factor(self, throttle_factor):
         self.throttle_factor = throttle_factor
         Qt.QMetaObject.invokeMethod(self._throttle_factor_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.throttle_factor)))
-        self.blocks_throttle_0.set_sample_rate(self.samp_rate*self.throttle_factor)
 
     def get_samps_per_symb(self):
         return self.samps_per_symb
@@ -566,6 +682,8 @@ class fox1d_rx_pipe(gr.top_block, Qt.QWidget):
     def set_rx_gain(self, rx_gain):
         self.rx_gain = rx_gain
         Qt.QMetaObject.invokeMethod(self._rx_gain_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.rx_gain)))
+        self.uhd_usrp_source_0.set_gain(self.rx_gain, 0)
+
 
     def get_rx_freq(self):
         return self.rx_freq
@@ -573,6 +691,7 @@ class fox1d_rx_pipe(gr.top_block, Qt.QWidget):
     def set_rx_freq(self, rx_freq):
         self.rx_freq = rx_freq
         Qt.QMetaObject.invokeMethod(self._rx_freq_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.rx_freq)))
+        self.uhd_usrp_source_0.set_center_freq(uhd.tune_request(self.rx_freq, self.samp_rate/2), 0)
 
     def get_rf_lpf_cutoff(self):
         return self.rf_lpf_cutoff
@@ -588,6 +707,20 @@ class fox1d_rx_pipe(gr.top_block, Qt.QWidget):
     def set_fsk_deviation_hz(self, fsk_deviation_hz):
         self.fsk_deviation_hz = fsk_deviation_hz
         self.analog_quadrature_demod_cf_0.set_gain(self.samp_rate/(2*math.pi*self.fsk_deviation_hz/8.0))
+
+    def get_fp_wav(self):
+        return self.fp_wav
+
+    def set_fp_wav(self, fp_wav):
+        self.fp_wav = fp_wav
+        self.blocks_wavfile_sink_0.open(self.fp_wav)
+
+    def get_fp(self):
+        return self.fp
+
+    def set_fp(self, fp):
+        self.fp = fp
+        self.blocks_file_sink_0_0.open(self.fp)
 
     def get_fll_loop_bw_fine(self):
         return self.fll_loop_bw_fine
@@ -619,6 +752,12 @@ def argument_parser():
     parser.add_option(
         "", "--meta-rate", dest="meta_rate", type="eng_float", default=eng_notation.num_to_str(10),
         help="Set meta_rate [default=%default]")
+    parser.add_option(
+        "", "--radio-id", dest="radio_id", type="string", default='USRP',
+        help="Set radio_id [default=%default]")
+    parser.add_option(
+        "", "--sat-name", dest="sat_name", type="string", default='FOX-1D',
+        help="Set sat_name [default=%default]")
     return parser
 
 
@@ -632,7 +771,7 @@ def main(top_block_cls=fox1d_rx_pipe, options=None):
         Qt.QApplication.setGraphicsSystem(style)
     qapp = Qt.QApplication(sys.argv)
 
-    tb = top_block_cls(meta_rate=options.meta_rate)
+    tb = top_block_cls(meta_rate=options.meta_rate, radio_id=options.radio_id, sat_name=options.sat_name)
     tb.start()
     tb.show()
 

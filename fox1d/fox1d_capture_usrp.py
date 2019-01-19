@@ -1,9 +1,13 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
+#
+# SPDX-License-Identifier: GPL-3.0
+#
 ##################################################
 # GNU Radio Python Flow Graph
 # Title: USRP Based Fox-1D capture flowgraph
-# Generated: Wed Jul 11 13:00:43 2018
+# Generated: Wed Sep 12 17:40:28 2018
+# GNU Radio version: 3.7.12.0
 ##################################################
 
 if __name__ == '__main__':
@@ -89,21 +93,21 @@ class fox1d_capture_usrp(gr.top_block, Qt.QWidget):
         self._rx_gain_tool_bar.addWidget(self._rx_gain_line_edit)
         self._rx_gain_line_edit.returnPressed.connect(
         	lambda: self.set_rx_gain(eng_notation.str_to_num(str(self._rx_gain_line_edit.text().toAscii()))))
-        self.top_layout.addWidget(self._rx_gain_tool_bar)
+        self.top_grid_layout.addWidget(self._rx_gain_tool_bar)
         self._rx_freq_tool_bar = Qt.QToolBar(self)
         self._rx_freq_tool_bar.addWidget(Qt.QLabel('FREQ'+": "))
         self._rx_freq_line_edit = Qt.QLineEdit(str(self.rx_freq))
         self._rx_freq_tool_bar.addWidget(self._rx_freq_line_edit)
         self._rx_freq_line_edit.returnPressed.connect(
         	lambda: self.set_rx_freq(eng_notation.str_to_num(str(self._rx_freq_line_edit.text().toAscii()))))
-        self.top_layout.addWidget(self._rx_freq_tool_bar)
+        self.top_grid_layout.addWidget(self._rx_freq_tool_bar)
         self._offset_tool_bar = Qt.QToolBar(self)
         self._offset_tool_bar.addWidget(Qt.QLabel('OFFSET'+": "))
         self._offset_line_edit = Qt.QLineEdit(str(self.offset))
         self._offset_tool_bar.addWidget(self._offset_line_edit)
         self._offset_line_edit.returnPressed.connect(
         	lambda: self.set_offset(eng_notation.str_to_num(str(self._offset_line_edit.text().toAscii()))))
-        self.top_layout.addWidget(self._offset_tool_bar)
+        self.top_grid_layout.addWidget(self._offset_tool_bar)
         self.uhd_usrp_source_0 = uhd.usrp_source(
         	",".join(("", "")),
         	uhd.stream_args(
@@ -150,7 +154,11 @@ class fox1d_capture_usrp(gr.top_block, Qt.QWidget):
         self.qtgui_waterfall_sink_x_0.set_intensity_range(-140, -40)
 
         self._qtgui_waterfall_sink_x_0_win = sip.wrapinstance(self.qtgui_waterfall_sink_x_0.pyqwidget(), Qt.QWidget)
-        self.top_grid_layout.addWidget(self._qtgui_waterfall_sink_x_0_win, 6,0,2,6)
+        self.top_grid_layout.addWidget(self._qtgui_waterfall_sink_x_0_win, 6, 0, 2, 6)
+        for r in range(6, 8):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(0, 6):
+            self.top_grid_layout.setColumnStretch(c, 1)
         self.qtgui_freq_sink_x_0 = qtgui.freq_sink_c(
         	2048, #size
         	firdes.WIN_BLACKMAN_hARRIS, #wintype
@@ -193,7 +201,11 @@ class fox1d_capture_usrp(gr.top_block, Qt.QWidget):
             self.qtgui_freq_sink_x_0.set_line_alpha(i, alphas[i])
 
         self._qtgui_freq_sink_x_0_win = sip.wrapinstance(self.qtgui_freq_sink_x_0.pyqwidget(), Qt.QWidget)
-        self.top_grid_layout.addWidget(self._qtgui_freq_sink_x_0_win, 0,0,6,6)
+        self.top_grid_layout.addWidget(self._qtgui_freq_sink_x_0_win, 0, 0, 6, 6)
+        for r in range(0, 6):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(0, 6):
+            self.top_grid_layout.setColumnStretch(c, 1)
         self.low_pass_filter_0 = filter.fir_filter_ccf(decim, firdes.low_pass(
         	1, samp_rate, 25e3, 2e3, firdes.WIN_HAMMING, 6.76))
         self.freq_xlating_fir_filter_xxx_0 = filter.freq_xlating_fir_filter_ccc(1, (xlate_taps), offset, samp_rate)

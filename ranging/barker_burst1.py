@@ -1,9 +1,13 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
+#
+# SPDX-License-Identifier: GPL-3.0
+#
 ##################################################
 # GNU Radio Python Flow Graph
 # Title: Barker Burst1
-# Generated: Fri Mar  2 01:29:02 2018
+# Generated: Sat Nov  3 14:13:57 2018
+# GNU Radio version: 3.7.12.0
 ##################################################
 
 if __name__ == '__main__':
@@ -92,17 +96,17 @@ class barker_burst1(gr.top_block, Qt.QWidget):
         ##################################################
         self._noise_amp_range = Range(0, 1, 0.001, 0.01, 200)
         self._noise_amp_win = RangeWidget(self._noise_amp_range, self.set_noise_amp, "noise_amp", "counter_slider", float)
-        self.top_layout.addWidget(self._noise_amp_win)
+        self.top_grid_layout.addWidget(self._noise_amp_win)
         self._delay_range = Range(0, 10000, 1, 0, 200)
         self._delay_win = RangeWidget(self._delay_range, self.set_delay, "delay", "counter_slider", int)
-        self.top_layout.addWidget(self._delay_win)
+        self.top_grid_layout.addWidget(self._delay_win)
         self._chan_delay_tool_bar = Qt.QToolBar(self)
         self._chan_delay_tool_bar.addWidget(Qt.QLabel("chan_delay"+": "))
         self._chan_delay_line_edit = Qt.QLineEdit(str(self.chan_delay))
         self._chan_delay_tool_bar.addWidget(self._chan_delay_line_edit)
         self._chan_delay_line_edit.returnPressed.connect(
         	lambda: self.set_chan_delay(int(str(self._chan_delay_line_edit.text().toAscii()))))
-        self.top_layout.addWidget(self._chan_delay_tool_bar)
+        self.top_grid_layout.addWidget(self._chan_delay_tool_bar)
         self.qtgui_time_sink_x_0_0 = qtgui.time_sink_f(
         	1024, #size
         	baud, #samp_rate
@@ -120,6 +124,7 @@ class barker_burst1(gr.top_block, Qt.QWidget):
         self.qtgui_time_sink_x_0_0.enable_grid(False)
         self.qtgui_time_sink_x_0_0.enable_axis_labels(True)
         self.qtgui_time_sink_x_0_0.enable_control_panel(False)
+        self.qtgui_time_sink_x_0_0.enable_stem_plot(False)
 
         if not True:
           self.qtgui_time_sink_x_0_0.disable_legend()
@@ -149,7 +154,7 @@ class barker_burst1(gr.top_block, Qt.QWidget):
             self.qtgui_time_sink_x_0_0.set_line_alpha(i, alphas[i])
 
         self._qtgui_time_sink_x_0_0_win = sip.wrapinstance(self.qtgui_time_sink_x_0_0.pyqwidget(), Qt.QWidget)
-        self.top_layout.addWidget(self._qtgui_time_sink_x_0_0_win)
+        self.top_grid_layout.addWidget(self._qtgui_time_sink_x_0_0_win)
         self.qtgui_time_sink_x_0 = qtgui.time_sink_f(
         	fft_size/2, #size
         	baud, #samp_rate
@@ -167,6 +172,7 @@ class barker_burst1(gr.top_block, Qt.QWidget):
         self.qtgui_time_sink_x_0.enable_grid(False)
         self.qtgui_time_sink_x_0.enable_axis_labels(True)
         self.qtgui_time_sink_x_0.enable_control_panel(False)
+        self.qtgui_time_sink_x_0.enable_stem_plot(False)
 
         if not True:
           self.qtgui_time_sink_x_0.disable_legend()
@@ -196,7 +202,7 @@ class barker_burst1(gr.top_block, Qt.QWidget):
             self.qtgui_time_sink_x_0.set_line_alpha(i, alphas[i])
 
         self._qtgui_time_sink_x_0_win = sip.wrapinstance(self.qtgui_time_sink_x_0.pyqwidget(), Qt.QWidget)
-        self.top_layout.addWidget(self._qtgui_time_sink_x_0_win)
+        self.top_grid_layout.addWidget(self._qtgui_time_sink_x_0_win)
         self.qtgui_freq_sink_x_0_0 = qtgui.freq_sink_c(
         	1024*4, #size
         	firdes.WIN_BLACKMAN_hARRIS, #wintype
@@ -239,7 +245,11 @@ class barker_burst1(gr.top_block, Qt.QWidget):
             self.qtgui_freq_sink_x_0_0.set_line_alpha(i, alphas[i])
 
         self._qtgui_freq_sink_x_0_0_win = sip.wrapinstance(self.qtgui_freq_sink_x_0_0.pyqwidget(), Qt.QWidget)
-        self.top_grid_layout.addWidget(self._qtgui_freq_sink_x_0_0_win, 0,0,4,4)
+        self.top_grid_layout.addWidget(self._qtgui_freq_sink_x_0_0_win, 0, 0, 4, 4)
+        for r in range(0, 4):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(0, 4):
+            self.top_grid_layout.setColumnStretch(c, 1)
         self.qtgui_freq_sink_x_0 = qtgui.freq_sink_c(
         	fft_size, #size
         	firdes.WIN_BLACKMAN_hARRIS, #wintype
@@ -282,7 +292,7 @@ class barker_burst1(gr.top_block, Qt.QWidget):
             self.qtgui_freq_sink_x_0.set_line_alpha(i, alphas[i])
 
         self._qtgui_freq_sink_x_0_win = sip.wrapinstance(self.qtgui_freq_sink_x_0.pyqwidget(), Qt.QWidget)
-        self.top_layout.addWidget(self._qtgui_freq_sink_x_0_win)
+        self.top_grid_layout.addWidget(self._qtgui_freq_sink_x_0_win)
         self.qtgui_const_sink_x_0 = qtgui.const_sink_c(
         	1024, #size
         	"", #name
@@ -323,7 +333,11 @@ class barker_burst1(gr.top_block, Qt.QWidget):
             self.qtgui_const_sink_x_0.set_line_alpha(i, alphas[i])
 
         self._qtgui_const_sink_x_0_win = sip.wrapinstance(self.qtgui_const_sink_x_0.pyqwidget(), Qt.QWidget)
-        self.top_grid_layout.addWidget(self._qtgui_const_sink_x_0_win, 0,4,4,4)
+        self.top_grid_layout.addWidget(self._qtgui_const_sink_x_0_win, 0, 4, 4, 4)
+        for r in range(0, 4):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(4, 8):
+            self.top_grid_layout.setColumnStretch(c, 1)
         self.low_pass_filter_0_0 = filter.fir_filter_ccf(1, firdes.low_pass(
         	1, samp_rate, (baud *(1+alpha) )/2, 1000, firdes.WIN_HAMMING, 6.76))
         self.fft_vxx_0_0_0 = fft.fft_vcc(fft_size, True, (window.blackmanharris(fft_size)), False, 1)

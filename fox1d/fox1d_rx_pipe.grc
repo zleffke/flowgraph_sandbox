@@ -21,6 +21,10 @@
       <value></value>
     </param>
     <param>
+      <key>copyright</key>
+      <value></value>
+    </param>
+    <param>
       <key>description</key>
       <value></value>
     </param>
@@ -921,7 +925,7 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>0</value>
+      <value>1</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -1105,7 +1109,7 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>1</value>
+      <value>0</value>
     </param>
     <param>
       <key>file</key>
@@ -1160,7 +1164,7 @@
     </param>
     <param>
       <key>file</key>
-      <value>/home/zleffke/captures/fox1d/FOX-1D_USRP_20180113_161106.862011_UTC_250k.fc32</value>
+      <value>/home/zleffke/captures/fox1d/20180914/FOX-1D_USRP_20180914_145014.657610_UTC_250k.fc32</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -1313,7 +1317,7 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>1</value>
+      <value>0</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -2161,11 +2165,11 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>1</value>
+      <value>0</value>
     </param>
     <param>
       <key>file</key>
-      <value>/home/zleffke/captures/fox1d/FOX-1D_USRP_20180711_150839.718170_UTC_48k.wav</value>
+      <value>/home/zleffke/captures/fox1d/FOX-1D_USRP_20180712_144823.980295_UTC_48k.wav</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -2963,7 +2967,7 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>0</value>
+      <value>1</value>
     </param>
     <param>
       <key>fftsize</key>
@@ -2971,11 +2975,11 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1064, 924)</value>
+      <value>(448, 812)</value>
     </param>
     <param>
       <key>gui_hint</key>
-      <value></value>
+      <value>10,2,1,6</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -3724,7 +3728,7 @@
     </param>
     <param>
       <key>gui_hint</key>
-      <value></value>
+      <value>8,2,1,6</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -6269,6 +6273,12 @@
     <sink_key>0</sink_key>
   </connection>
   <connection>
+    <source_block_id>analog_quadrature_demod_cf_0</source_block_id>
+    <sink_block_id>qtgui_freq_sink_x_1</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
     <source_block_id>analog_sig_source_x_0</source_block_id>
     <sink_block_id>blocks_multiply_xx_0</sink_block_id>
     <source_key>0</source_key>
@@ -6349,12 +6359,6 @@
   <connection>
     <source_block_id>blocks_multiply_const_vxx_0</source_block_id>
     <sink_block_id>blocks_wavfile_sink_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>blocks_multiply_const_vxx_0</source_block_id>
-    <sink_block_id>qtgui_freq_sink_x_1</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>

@@ -1,9 +1,13 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
+#
+# SPDX-License-Identifier: GPL-3.0
+#
 ##################################################
 # GNU Radio Python Flow Graph
 # Title: LMS6 Radiosonde Receiver, USRP
-# Generated: Sat Dec  2 20:17:24 2017
+# Generated: Fri Feb 22 12:42:59 2019
+# GNU Radio version: 3.7.12.0
 ##################################################
 
 if __name__ == '__main__':
@@ -20,10 +24,12 @@ from PyQt4 import Qt
 from datetime import datetime as dt; import string
 from gnuradio import eng_notation
 from gnuradio import filter
+from gnuradio import fosphor
 from gnuradio import gr
 from gnuradio import qtgui
 from gnuradio import uhd
 from gnuradio.eng_option import eng_option
+from gnuradio.fft import window
 from gnuradio.filter import firdes
 from optparse import OptionParser
 import sip
@@ -70,7 +76,7 @@ class radiosonde_rx_usrp(gr.top_block, Qt.QWidget):
         ##################################################
         self.ts_str = ts_str = dt.strftime(dt.utcnow(), "%Y%m%d_%H%M%S.%f" )+'_UTC'
         self.samp_rate = samp_rate = 250e3
-        self.decim = decim = 5
+        self.decim = decim = 1
         self.fn = fn = "{:s}_{:s}_{:s}_{:s}k.fc32".format(sat_name, radio_id, ts_str, str(int(samp_rate/decim)/1000))
 
         self.xlate_taps = xlate_taps = firdes.low_pass(1.0, samp_rate, samp_rate/2, 1000, firdes.WIN_HAMMING, 6.76)
@@ -83,27 +89,50 @@ class radiosonde_rx_usrp(gr.top_block, Qt.QWidget):
         ##################################################
         # Blocks
         ##################################################
+        self._samp_rate_tool_bar = Qt.QToolBar(self)
+        self._samp_rate_tool_bar.addWidget(Qt.QLabel("samp_rate"+": "))
+        self._samp_rate_line_edit = Qt.QLineEdit(str(self.samp_rate))
+        self._samp_rate_tool_bar.addWidget(self._samp_rate_line_edit)
+        self._samp_rate_line_edit.returnPressed.connect(
+        	lambda: self.set_samp_rate(eng_notation.str_to_num(str(self._samp_rate_line_edit.text().toAscii()))))
+        self.top_grid_layout.addWidget(self._samp_rate_tool_bar, 8, 3, 1, 1)
+        for r in range(8, 9):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(3, 4):
+            self.top_grid_layout.setColumnStretch(c, 1)
         self._rx_gain_tool_bar = Qt.QToolBar(self)
         self._rx_gain_tool_bar.addWidget(Qt.QLabel('GAIN'+": "))
         self._rx_gain_line_edit = Qt.QLineEdit(str(self.rx_gain))
         self._rx_gain_tool_bar.addWidget(self._rx_gain_line_edit)
         self._rx_gain_line_edit.returnPressed.connect(
         	lambda: self.set_rx_gain(eng_notation.str_to_num(str(self._rx_gain_line_edit.text().toAscii()))))
-        self.top_layout.addWidget(self._rx_gain_tool_bar)
+        self.top_grid_layout.addWidget(self._rx_gain_tool_bar, 8, 2, 1, 1)
+        for r in range(8, 9):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(2, 3):
+            self.top_grid_layout.setColumnStretch(c, 1)
         self._rx_freq_tool_bar = Qt.QToolBar(self)
         self._rx_freq_tool_bar.addWidget(Qt.QLabel('FREQ'+": "))
         self._rx_freq_line_edit = Qt.QLineEdit(str(self.rx_freq))
         self._rx_freq_tool_bar.addWidget(self._rx_freq_line_edit)
         self._rx_freq_line_edit.returnPressed.connect(
         	lambda: self.set_rx_freq(eng_notation.str_to_num(str(self._rx_freq_line_edit.text().toAscii()))))
-        self.top_layout.addWidget(self._rx_freq_tool_bar)
+        self.top_grid_layout.addWidget(self._rx_freq_tool_bar, 8, 0, 1, 1)
+        for r in range(8, 9):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(0, 1):
+            self.top_grid_layout.setColumnStretch(c, 1)
         self._offset_tool_bar = Qt.QToolBar(self)
         self._offset_tool_bar.addWidget(Qt.QLabel('OFFSET'+": "))
         self._offset_line_edit = Qt.QLineEdit(str(self.offset))
         self._offset_tool_bar.addWidget(self._offset_line_edit)
         self._offset_line_edit.returnPressed.connect(
         	lambda: self.set_offset(eng_notation.str_to_num(str(self._offset_line_edit.text().toAscii()))))
-        self.top_layout.addWidget(self._offset_tool_bar)
+        self.top_grid_layout.addWidget(self._offset_tool_bar, 8, 1, 1, 1)
+        for r in range(8, 9):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(1, 2):
+            self.top_grid_layout.setColumnStretch(c, 1)
         self.uhd_usrp_source_0 = uhd.usrp_source(
         	",".join(("", "")),
         	uhd.stream_args(
@@ -150,7 +179,11 @@ class radiosonde_rx_usrp(gr.top_block, Qt.QWidget):
         self.qtgui_waterfall_sink_x_0.set_intensity_range(-140, -40)
 
         self._qtgui_waterfall_sink_x_0_win = sip.wrapinstance(self.qtgui_waterfall_sink_x_0.pyqwidget(), Qt.QWidget)
-        self.top_grid_layout.addWidget(self._qtgui_waterfall_sink_x_0_win, 6,0,2,6)
+        self.top_grid_layout.addWidget(self._qtgui_waterfall_sink_x_0_win, 6, 0, 2, 6)
+        for r in range(6, 8):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(0, 6):
+            self.top_grid_layout.setColumnStretch(c, 1)
         self.qtgui_freq_sink_x_0 = qtgui.freq_sink_c(
         	2048, #size
         	firdes.WIN_BLACKMAN_hARRIS, #wintype
@@ -193,19 +226,24 @@ class radiosonde_rx_usrp(gr.top_block, Qt.QWidget):
             self.qtgui_freq_sink_x_0.set_line_alpha(i, alphas[i])
 
         self._qtgui_freq_sink_x_0_win = sip.wrapinstance(self.qtgui_freq_sink_x_0.pyqwidget(), Qt.QWidget)
-        self.top_grid_layout.addWidget(self._qtgui_freq_sink_x_0_win, 0,0,6,6)
-        self.low_pass_filter_0 = filter.fir_filter_ccf(decim, firdes.low_pass(
-        	1, samp_rate, 25e3, 2e3, firdes.WIN_HAMMING, 6.76))
+        self.top_grid_layout.addWidget(self._qtgui_freq_sink_x_0_win, 0, 0, 6, 6)
+        for r in range(0, 6):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(0, 6):
+            self.top_grid_layout.setColumnStretch(c, 1)
         self.freq_xlating_fir_filter_xxx_0 = filter.freq_xlating_fir_filter_ccc(1, (xlate_taps), offset, samp_rate)
+        self.fosphor_glfw_sink_c_0 = fosphor.glfw_sink_c()
+        self.fosphor_glfw_sink_c_0.set_fft_window(window.WIN_BLACKMAN_hARRIS)
+        self.fosphor_glfw_sink_c_0.set_frequency_range(0, samp_rate)
 
 
 
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.freq_xlating_fir_filter_xxx_0, 0), (self.low_pass_filter_0, 0))
-        self.connect((self.low_pass_filter_0, 0), (self.qtgui_freq_sink_x_0, 0))
-        self.connect((self.low_pass_filter_0, 0), (self.qtgui_waterfall_sink_x_0, 0))
+        self.connect((self.freq_xlating_fir_filter_xxx_0, 0), (self.qtgui_freq_sink_x_0, 0))
+        self.connect((self.freq_xlating_fir_filter_xxx_0, 0), (self.qtgui_waterfall_sink_x_0, 0))
+        self.connect((self.uhd_usrp_source_0, 0), (self.fosphor_glfw_sink_c_0, 0))
         self.connect((self.uhd_usrp_source_0, 0), (self.freq_xlating_fir_filter_xxx_0, 0))
 
     def closeEvent(self, event):
@@ -239,11 +277,12 @@ class radiosonde_rx_usrp(gr.top_block, Qt.QWidget):
 
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
+        Qt.QMetaObject.invokeMethod(self._samp_rate_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.samp_rate)))
         self.uhd_usrp_source_0.set_samp_rate(self.samp_rate)
         self.uhd_usrp_source_0.set_center_freq(uhd.tune_request(self.rx_freq, self.samp_rate/2), 0)
         self.qtgui_waterfall_sink_x_0.set_frequency_range(0, self.samp_rate/self.decim)
         self.qtgui_freq_sink_x_0.set_frequency_range(0, self.samp_rate/self.decim)
-        self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.samp_rate, 25e3, 2e3, firdes.WIN_HAMMING, 6.76))
+        self.fosphor_glfw_sink_c_0.set_frequency_range(0, self.samp_rate)
         self.set_fn("{:s}_{:s}_{:s}_{:s}k.fc32".format(self.sat_name, self.radio_id, self.ts_str, str(int(self.samp_rate/self.decim)/1000)))
 
     def get_decim(self):

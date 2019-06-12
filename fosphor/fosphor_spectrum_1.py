@@ -3,7 +3,7 @@
 ##################################################
 # GNU Radio Python Flow Graph
 # Title: Fosphor Spectrum 1
-# Generated: Fri Aug  3 12:44:21 2018
+# GNU Radio version: 3.7.13.4
 ##################################################
 
 if __name__ == '__main__':
@@ -129,6 +129,8 @@ class fosphor_spectrum_1(gr.top_block, Qt.QWidget):
         self.uhd_usrp_source_0_0.set_center_freq(uhd.tune_request(rx_freq*1e6, samp_rate/2), 0)
         self.uhd_usrp_source_0_0.set_gain(rx_gain, 0)
         self.uhd_usrp_source_0_0.set_antenna('RX2', 0)
+        self.uhd_usrp_source_0_0.set_auto_dc_offset("", 0)
+        self.uhd_usrp_source_0_0.set_auto_iq_balance("", 0)
         self.qtgui_waterfall_sink_x_0 = qtgui.waterfall_sink_c(
         	2048, #size
         	firdes.WIN_BLACKMAN_hARRIS, #wintype

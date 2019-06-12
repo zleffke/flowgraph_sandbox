@@ -3,7 +3,7 @@
 ##################################################
 # GNU Radio Python Flow Graph
 # Title: Uhd Adsb 6
-# Generated: Tue Dec 13 22:52:41 2016
+# GNU Radio version: 3.7.13.4
 ##################################################
 
 from gnuradio import blocks
@@ -11,10 +11,12 @@ from gnuradio import digital
 from gnuradio import eng_notation
 from gnuradio import filter
 from gnuradio import gr
+from gnuradio import uhd
 from gnuradio.eng_option import eng_option
 from gnuradio.filter import firdes
 from optparse import OptionParser
 import adsb
+import time
 
 
 class uhd_adsb_6(gr.top_block):
@@ -44,26 +46,39 @@ class uhd_adsb_6(gr.top_block):
         ##################################################
         # Blocks
         ##################################################
-        self.digital_correlate_access_code_tag_bb_0 = digital.correlate_access_code_tag_bb('1010000101000000', 0, 'adsb_preamble')
+        self.uhd_usrp_source_0 = uhd.usrp_source(
+        	",".join(("", "")),
+        	uhd.stream_args(
+        		cpu_format="fc32",
+        		channels=range(1),
+        	),
+        )
+        self.uhd_usrp_source_0.set_samp_rate(samp_rate)
+        self.uhd_usrp_source_0.set_center_freq(uhd.tune_request(freq, samp_rate/2), 0)
+        self.uhd_usrp_source_0.set_gain(rx_gain, 0)
+        self.uhd_usrp_source_0.set_auto_dc_offset("", 0)
+        self.uhd_usrp_source_0.set_auto_iq_balance("", 0)
+        self.digital_correlate_access_code_tag_xx_0 = digital.correlate_access_code_tag_bb('1010000101000000', 0, 'adsb_preamble')
         self.digital_binary_slicer_fb_0 = digital.binary_slicer_fb()
         self.dc_blocker_xx_0 = filter.dc_blocker_ff(dc_block_len, True)
         self.blocks_message_source_0 = blocks.message_source(gr.sizeof_char*1, blocks_message_source_0_msgq_in)
-        self.blocks_file_source_0 = blocks.file_source(gr.sizeof_gr_complex*1, '/home/leffke/sandbox/adsb/adsb_20161212_2M_2.32fc', False)
         self.blocks_file_sink_0 = blocks.file_sink(gr.sizeof_char*1, filename, True)
         self.blocks_file_sink_0.set_unbuffered(True)
         self.blocks_complex_to_mag_squared_0 = blocks.complex_to_mag_squared(1)
         self.adsb_framer_0 = adsb.framer(tx_msgq=adsb_framer_0_msgq_out)
         self.adsb_decoder_0 = adsb.decoder(rx_msgq=adsb_decoder_0_msgq_in,tx_msgq=adsb_decoder_0_msgq_out,output_type="csv",check_parity=True)
 
+
+
         ##################################################
         # Connections
         ##################################################
         self.connect((self.blocks_complex_to_mag_squared_0, 0), (self.dc_blocker_xx_0, 0))
-        self.connect((self.blocks_file_source_0, 0), (self.blocks_complex_to_mag_squared_0, 0))
         self.connect((self.blocks_message_source_0, 0), (self.blocks_file_sink_0, 0))
         self.connect((self.dc_blocker_xx_0, 0), (self.digital_binary_slicer_fb_0, 0))
-        self.connect((self.digital_binary_slicer_fb_0, 0), (self.digital_correlate_access_code_tag_bb_0, 0))
-        self.connect((self.digital_correlate_access_code_tag_bb_0, 0), (self.adsb_framer_0, 0))
+        self.connect((self.digital_binary_slicer_fb_0, 0), (self.digital_correlate_access_code_tag_xx_0, 0))
+        self.connect((self.digital_correlate_access_code_tag_xx_0, 0), (self.adsb_framer_0, 0))
+        self.connect((self.uhd_usrp_source_0, 0), (self.blocks_complex_to_mag_squared_0, 0))
 
     def get_dc_block_len(self):
         return self.dc_block_len
@@ -77,18 +92,23 @@ class uhd_adsb_6(gr.top_block):
 
     def set_rx_gain(self, rx_gain):
         self.rx_gain = rx_gain
+        self.uhd_usrp_source_0.set_gain(self.rx_gain, 0)
+
 
     def get_samp_rate(self):
         return self.samp_rate
 
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
+        self.uhd_usrp_source_0.set_samp_rate(self.samp_rate)
+        self.uhd_usrp_source_0.set_center_freq(uhd.tune_request(self.freq, self.samp_rate/2), 0)
 
     def get_freq(self):
         return self.freq
 
     def set_freq(self, freq):
         self.freq = freq
+        self.uhd_usrp_source_0.set_center_freq(uhd.tune_request(self.freq, self.samp_rate/2), 0)
 
     def get_filename(self):
         return self.filename

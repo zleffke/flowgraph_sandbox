@@ -3,7 +3,7 @@
 ##################################################
 # GNU Radio Python Flow Graph
 # Title: Uhd Hf Am
-# Generated: Sat Jan 19 18:20:24 2019
+# GNU Radio version: 3.7.13.4
 ##################################################
 
 if __name__ == '__main__':
@@ -70,14 +70,14 @@ class uhd_hf_am(gr.top_block, Qt.QWidget):
         # Variables
         ##################################################
         self.samp_rate = samp_rate = 2.5e6
-        self.rx_freq = rx_freq = 3.9e6
+        self.rx_freq = rx_freq = 1.0e6
         self.fine_freq = fine_freq = 0
         self.coarse_freq = coarse_freq = 0
         self.volume = volume = 1
         self.usb_lsb = usb_lsb = -1
         self.ssb_am = ssb_am = 0
         self.selection = selection = ((1,0),(0,1))
-        self.lpf_cutoff = lpf_cutoff = 1.4e3
+        self.lpf_cutoff = lpf_cutoff = 5e3
         self.interp = interp = 48
         self.freq_label = freq_label = rx_freq+fine_freq+coarse_freq
         self.decim = decim = samp_rate/1e3
@@ -148,7 +148,7 @@ class uhd_hf_am(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setRowStretch(r, 1)
         for c in range(4, 5):
             self.top_grid_layout.setColumnStretch(c, 1)
-        self._rx_freq_range = Range(1e6, 50e6, 100e3, 3.9e6, 200)
+        self._rx_freq_range = Range(.2e6, 50e6, 100e3, 1.0e6, 200)
         self._rx_freq_win = RangeWidget(self._rx_freq_range, self.set_rx_freq, "rx_freq", "counter_slider", float)
         self.top_grid_layout.addWidget(self._rx_freq_win, 4, 0, 1, 4)
         for r in range(4, 5):
@@ -260,18 +260,22 @@ class uhd_hf_am(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setRowStretch(r, 1)
         for c in range(1, 2):
             self.top_grid_layout.setColumnStretch(c, 1)
-        self.uhd_usrp_source_0 = uhd.usrp_source(
-        	",".join(("addr=192.168.10.13", "")),
+        self.uhd_usrp_source_1 = uhd.usrp_source(
+        	",".join(("addr=192.168.10.2", "")),
         	uhd.stream_args(
         		cpu_format="fc32",
         		channels=range(1),
         	),
         )
-        self.uhd_usrp_source_0.set_samp_rate(samp_rate)
-        self.uhd_usrp_source_0.set_time_now(uhd.time_spec(time.time()), uhd.ALL_MBOARDS)
-        self.uhd_usrp_source_0.set_center_freq(rx_freq, 0)
-        self.uhd_usrp_source_0.set_gain(0, 0)
-        self.uhd_usrp_source_0.set_antenna('RX1', 0)
+        self.uhd_usrp_source_1.set_clock_source('external', 0)
+        self.uhd_usrp_source_1.set_time_source('external', 0)
+        self.uhd_usrp_source_1.set_subdev_spec('A:B', 0)
+        self.uhd_usrp_source_1.set_samp_rate(samp_rate)
+        self.uhd_usrp_source_1.set_time_now(uhd.time_spec(time.time()), uhd.ALL_MBOARDS)
+        self.uhd_usrp_source_1.set_center_freq(uhd.tune_request(rx_freq, samp_rate/2), 0)
+        self.uhd_usrp_source_1.set_gain(0, 0)
+        self.uhd_usrp_source_1.set_auto_dc_offset(True, 0)
+        self.uhd_usrp_source_1.set_auto_iq_balance(True, 0)
         self.rational_resampler_xxx_1 = filter.rational_resampler_ccc(
                 interpolation=1,
                 decimation=4,
@@ -555,9 +559,6 @@ class uhd_hf_am(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setRowStretch(r, 1)
         for c in range(0, 4):
             self.top_grid_layout.setColumnStretch(c, 1)
-        self.fosphor_glfw_sink_c_0 = fosphor.glfw_sink_c()
-        self.fosphor_glfw_sink_c_0.set_fft_window(window.WIN_BLACKMAN_hARRIS)
-        self.fosphor_glfw_sink_c_0.set_frequency_range(rx_freq, samp_rate)
         self.blocks_multiply_xx_1_0 = blocks.multiply_vff(1)
         self.blocks_multiply_xx_1 = blocks.multiply_vff(1)
         self.blocks_multiply_xx_0 = blocks.multiply_vcc(1)
@@ -586,7 +587,6 @@ class uhd_hf_am(gr.top_block, Qt.QWidget):
         # Connections
         ##################################################
         self.connect((self.analog_agc2_xx_0, 0), (self.blocks_multiply_xx_0, 0))
-        self.connect((self.analog_agc2_xx_0, 0), (self.fosphor_glfw_sink_c_0, 0))
         self.connect((self.analog_agc2_xx_0, 0), (self.rational_resampler_xxx_0_0, 0))
         self.connect((self.analog_agc2_xx_0_0, 0), (self.blocks_multiply_const_vxx_0, 0))
         self.connect((self.analog_sig_source_x_0, 0), (self.blocks_multiply_xx_0, 1))
@@ -620,7 +620,7 @@ class uhd_hf_am(gr.top_block, Qt.QWidget):
         self.connect((self.rational_resampler_xxx_0, 0), (self.qtgui_freq_sink_x_0, 0))
         self.connect((self.rational_resampler_xxx_0_0, 0), (self.fosphor_qt_sink_c_0, 0))
         self.connect((self.rational_resampler_xxx_1, 0), (self.blocks_complex_to_mag_squared_0, 0))
-        self.connect((self.uhd_usrp_source_0, 0), (self.analog_agc2_xx_0, 0))
+        self.connect((self.uhd_usrp_source_1, 0), (self.analog_agc2_xx_0, 0))
 
     def closeEvent(self, event):
         self.settings = Qt.QSettings("GNU Radio", "uhd_hf_am")
@@ -633,7 +633,8 @@ class uhd_hf_am(gr.top_block, Qt.QWidget):
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
         self.set_decim(self.samp_rate/1e3)
-        self.uhd_usrp_source_0.set_samp_rate(self.samp_rate)
+        self.uhd_usrp_source_1.set_samp_rate(self.samp_rate)
+        self.uhd_usrp_source_1.set_center_freq(uhd.tune_request(self.rx_freq, self.samp_rate/2), 0)
         self.qtgui_time_sink_x_0_0.set_samp_rate(self.samp_rate/self.decim*self.interp/3/4)
         self.qtgui_time_sink_x_0.set_samp_rate(self.samp_rate/self.decim*self.interp/3)
         self.qtgui_freq_sink_x_0_0.set_frequency_range(0, self.samp_rate/self.decim * self.interp/3)
@@ -643,7 +644,6 @@ class uhd_hf_am(gr.top_block, Qt.QWidget):
         self.low_pass_filter_0_0.set_taps(firdes.low_pass(1, self.samp_rate/self.decim*self.interp, self.lpf_cutoff, 100, firdes.WIN_HAMMING, 6.76))
         self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.samp_rate/self.decim*self.interp/3, 1.5e3, 100, firdes.WIN_HAMMING, 6.76))
         self.fosphor_qt_sink_c_0.set_frequency_range(self.rx_freq, self.samp_rate/int(self.samp_rate/1e3)*200)
-        self.fosphor_glfw_sink_c_0.set_frequency_range(self.rx_freq, self.samp_rate)
         self.analog_sig_source_x_0_0_0.set_sampling_freq(self.samp_rate/self.decim*self.interp/3)
         self.analog_sig_source_x_0_0.set_sampling_freq(self.samp_rate/self.decim*self.interp/3)
         self.analog_sig_source_x_0.set_sampling_freq(self.samp_rate)
@@ -653,10 +653,9 @@ class uhd_hf_am(gr.top_block, Qt.QWidget):
 
     def set_rx_freq(self, rx_freq):
         self.rx_freq = rx_freq
-        self.uhd_usrp_source_0.set_center_freq(self.rx_freq, 0)
+        self.uhd_usrp_source_1.set_center_freq(uhd.tune_request(self.rx_freq, self.samp_rate/2), 0)
         self.set_freq_label(self._freq_label_formatter(self.rx_freq+self.fine_freq+self.coarse_freq))
         self.fosphor_qt_sink_c_0.set_frequency_range(self.rx_freq, self.samp_rate/int(self.samp_rate/1e3)*200)
-        self.fosphor_glfw_sink_c_0.set_frequency_range(self.rx_freq, self.samp_rate)
 
     def get_fine_freq(self):
         return self.fine_freq

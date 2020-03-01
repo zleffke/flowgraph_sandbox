@@ -73,7 +73,7 @@ class fft_power_meas(gr.top_block, Qt.QWidget):
         ##################################################
         self.samp_rate = samp_rate = 250e3
         self.rx_gain = rx_gain = 0
-        self.rx_freq = rx_freq = 900e6
+        self.rx_freq = rx_freq = 401.04e6
 
         ##################################################
         # Blocks
@@ -103,7 +103,6 @@ class fft_power_meas(gr.top_block, Qt.QWidget):
         		channels=range(1),
         	),
         )
-        self.uhd_usrp_source_1.set_subdev_spec('A:A', 0)
         self.uhd_usrp_source_1.set_samp_rate(samp_rate)
         self.uhd_usrp_source_1.set_time_now(uhd.time_spec(time.time()), uhd.ALL_MBOARDS)
         self.uhd_usrp_source_1.set_center_freq(uhd.tune_request(rx_freq, samp_rate/2), 0)

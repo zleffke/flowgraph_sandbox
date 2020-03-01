@@ -1,13 +1,9 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
-#
-# SPDX-License-Identifier: GPL-3.0
-#
 ##################################################
 # GNU Radio Python Flow Graph
 # Title: Ais Sigmf
-# Generated: Fri Feb 22 17:26:02 2019
-# GNU Radio version: 3.7.12.0
+# GNU Radio version: 3.7.13.4
 ##################################################
 
 if __name__ == '__main__':
@@ -36,7 +32,6 @@ from optparse import OptionParser
 import ais
 import math
 import pyqt
-import sigmf
 import sip
 import sys
 import time
@@ -98,7 +93,7 @@ class ais_sigmf(gr.top_block, Qt.QWidget):
         self.rx_gain = rx_gain = 55
         self.rx_freq = rx_freq = 162e6
         self.fsk_deviation = fsk_deviation = 10e3
-        self.fp = fp = "/captures/ais/{:s}".format(fn)
+        self.fp = fp = "/home/zleffke/captures/ais/{:s}".format(fn)
 
         ##################################################
         # Blocks
@@ -125,37 +120,20 @@ class ais_sigmf(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setRowStretch(r, 1)
         for c in range(0, 2):
             self.top_grid_layout.setColumnStretch(c, 1)
-        self.uhd_usrp_source_0 = uhd.usrp_source(
+        self.uhd_usrp_source_1 = uhd.usrp_source(
         	",".join(("", "")),
         	uhd.stream_args(
         		cpu_format="fc32",
         		channels=range(1),
         	),
         )
-        self.uhd_usrp_source_0.set_samp_rate(samp_rate)
-        self.uhd_usrp_source_0.set_time_now(uhd.time_spec(time.time()), uhd.ALL_MBOARDS)
-        self.uhd_usrp_source_0.set_center_freq(rx_freq, 0)
-        self.uhd_usrp_source_0.set_gain(rx_gain, 0)
-        self.sigmf_sink_0 = sigmf.sink("cf32", fp, sigmf.sigmf_time_mode_absolute, False)
-        self.sigmf_sink_0.set_global_meta("core:sample_rate", samp_rate)
-        self.sigmf_sink_0.set_global_meta("core:description", '')
-        self.sigmf_sink_0.set_global_meta("core:author", '')
-        self.sigmf_sink_0.set_global_meta("core:license", '')
-        self.sigmf_sink_0.set_global_meta("core:hw", '')
-        self.sigmf_sink_0.set_global_meta('usrp:rx_type', 'B200')
-        self.sigmf_sink_0.set_global_meta('usrp:rx_ser_uhd', '30DCE50')
-        self.sigmf_sink_0.set_global_meta('usrp:rx_ser_tag', '30DCE50')
-        self.sigmf_sink_0.set_global_meta('usrp:rx_db_type', 'na')
-        self.sigmf_sink_0.set_global_meta('usrp:rx_db_ser', 'na')
-        self.sigmf_sink_0.set_global_meta('modulation:scheme', 'GMSK')
-        self.sigmf_sink_0.set_global_meta('modulation:order', 2)
-        self.sigmf_sink_0.set_global_meta('cyborg:symbol_rate', 9600)
-        self.sigmf_sink_0.set_global_meta('cyborg:version', 'v0.1.0')
-        self.sigmf_sink_0.set_global_meta('usrp:version', 'v0.1.0')
-        self.sigmf_sink_0.set_global_meta('usrp:rx_rf_gain', 55)
-        self.sigmf_sink_0.set_global_meta('usrp:rx_freq', 162000000.0)
-        self.sigmf_sink_0.set_global_meta('usrp:rx_ant_model', 'COMET SMA703')
-
+        self.uhd_usrp_source_1.set_samp_rate(samp_rate)
+        self.uhd_usrp_source_1.set_time_now(uhd.time_spec(time.time()), uhd.ALL_MBOARDS)
+        self.uhd_usrp_source_1.set_center_freq(uhd.tune_request(rx_freq, samp_rate/2), 0)
+        self.uhd_usrp_source_1.set_gain(rx_gain, 0)
+        self.uhd_usrp_source_1.set_antenna('RX2', 0)
+        self.uhd_usrp_source_1.set_auto_dc_offset(True, 0)
+        self.uhd_usrp_source_1.set_auto_iq_balance(True, 0)
         self.rational_resampler_xxx_1 = filter.rational_resampler_ccc(
                 interpolation=1,
                 decimation=2,
@@ -349,8 +327,7 @@ class ais_sigmf(gr.top_block, Qt.QWidget):
         self.connect((self.rational_resampler_xxx_0_0, 0), (self.digital_clock_recovery_mm_xx_0_0, 0))
         self.connect((self.rational_resampler_xxx_1, 0), (self.qtgui_freq_sink_x_0, 0))
         self.connect((self.rational_resampler_xxx_1, 0), (self.qtgui_waterfall_sink_x_0_1, 0))
-        self.connect((self.uhd_usrp_source_0, 0), (self.blocks_multiply_xx_0_0, 0))
-        self.connect((self.uhd_usrp_source_0, 0), (self.sigmf_sink_0, 0))
+        self.connect((self.uhd_usrp_source_1, 0), (self.blocks_multiply_xx_0_0, 0))
 
     def closeEvent(self, event):
         self.settings = Qt.QSettings("GNU Radio", "ais_sigmf")
@@ -437,7 +414,8 @@ class ais_sigmf(gr.top_block, Qt.QWidget):
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
         self.set_samp_per_sym((self.samp_rate/self.decim/50*48)/self.baud)
-        self.uhd_usrp_source_0.set_samp_rate(self.samp_rate)
+        self.uhd_usrp_source_1.set_samp_rate(self.samp_rate)
+        self.uhd_usrp_source_1.set_center_freq(uhd.tune_request(self.rx_freq, self.samp_rate/2), 0)
         self.qtgui_waterfall_sink_x_0_1.set_frequency_range(self.rx_freq, self.samp_rate/2)
         self.qtgui_freq_sink_x_0.set_frequency_range(self.rx_freq, self.samp_rate/2)
         self.low_pass_filter_0_0.set_taps(firdes.low_pass(1, self.samp_rate, 7e3, 1e3, firdes.WIN_HAMMING, 6.76))
@@ -453,7 +431,7 @@ class ais_sigmf(gr.top_block, Qt.QWidget):
 
     def set_fn(self, fn):
         self.fn = fn
-        self.set_fp("/captures/ais/{:s}".format(self.fn))
+        self.set_fp("/home/zleffke/captures/ais/{:s}".format(self.fn))
 
     def get_decim(self):
         return self.decim
@@ -493,7 +471,7 @@ class ais_sigmf(gr.top_block, Qt.QWidget):
     def set_rx_gain(self, rx_gain):
         self.rx_gain = rx_gain
         Qt.QMetaObject.invokeMethod(self._rx_gain_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.rx_gain)))
-        self.uhd_usrp_source_0.set_gain(self.rx_gain, 0)
+        self.uhd_usrp_source_1.set_gain(self.rx_gain, 0)
 
 
     def get_rx_freq(self):
@@ -501,7 +479,7 @@ class ais_sigmf(gr.top_block, Qt.QWidget):
 
     def set_rx_freq(self, rx_freq):
         self.rx_freq = rx_freq
-        self.uhd_usrp_source_0.set_center_freq(self.rx_freq, 0)
+        self.uhd_usrp_source_1.set_center_freq(uhd.tune_request(self.rx_freq, self.samp_rate/2), 0)
         self.qtgui_waterfall_sink_x_0_1.set_frequency_range(self.rx_freq, self.samp_rate/2)
         self.qtgui_freq_sink_x_0.set_frequency_range(self.rx_freq, self.samp_rate/2)
 

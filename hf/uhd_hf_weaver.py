@@ -1,13 +1,9 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
-#
-# SPDX-License-Identifier: GPL-3.0
-#
 ##################################################
 # GNU Radio Python Flow Graph
 # Title: Uhd Hf Weaver
-# Generated: Fri Feb 22 12:51:34 2019
-# GNU Radio version: 3.7.12.0
+# GNU Radio version: 3.7.13.4
 ##################################################
 
 if __name__ == '__main__':
@@ -90,7 +86,7 @@ class uhd_hf_weaver(gr.top_block, Qt.QWidget):
         # Variables
         ##################################################
         self.ts_str = ts_str = dt.strftime(dt.utcnow(), "%Y-%m-%dT%H:%M:%S.%fZ")
-        self.rx_freq = rx_freq = 1.7e6
+        self.rx_freq = rx_freq = 20.05e6
         self.fn = fn = "{:s}_{:s}".format(signal_name, ts_str)
         self.fine_freq = fine_freq = 0
         self.coarse_freq = coarse_freq = 0
@@ -148,6 +144,17 @@ class uhd_hf_weaver(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setRowStretch(r, 1)
         for c in range(5, 6):
             self.top_grid_layout.setColumnStretch(c, 1)
+        self._rx_gain_tool_bar = Qt.QToolBar(self)
+        self._rx_gain_tool_bar.addWidget(Qt.QLabel("rx_gain"+": "))
+        self._rx_gain_line_edit = Qt.QLineEdit(str(self.rx_gain))
+        self._rx_gain_tool_bar.addWidget(self._rx_gain_line_edit)
+        self._rx_gain_line_edit.returnPressed.connect(
+        	lambda: self.set_rx_gain(eng_notation.str_to_num(str(self._rx_gain_line_edit.text().toAscii()))))
+        self.top_grid_layout.addWidget(self._rx_gain_tool_bar, 4, 2, 1, 1)
+        for r in range(4, 5):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(2, 3):
+            self.top_grid_layout.setColumnStretch(c, 1)
         self._rx_freq_tool_bar = Qt.QToolBar(self)
         self._rx_freq_tool_bar.addWidget(Qt.QLabel("rx_freq"+": "))
         self._rx_freq_line_edit = Qt.QLineEdit(str(self.rx_freq))
@@ -202,7 +209,7 @@ class uhd_hf_weaver(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setRowStretch(r, 1)
         for c in range(6, 7):
             self.top_grid_layout.setColumnStretch(c, 1)
-        self._coarse_freq_range = Range(-10e3, 10e3, 1, 0, 200)
+        self._coarse_freq_range = Range(-50e3, 50e3, 1, 0, 200)
         self._coarse_freq_win = RangeWidget(self._coarse_freq_range, self.set_coarse_freq, "coarse_freq", "counter_slider", float)
         self.top_grid_layout.addWidget(self._coarse_freq_win, 6, 0, 1, 4)
         for r in range(6, 7):
@@ -264,28 +271,20 @@ class uhd_hf_weaver(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setRowStretch(r, 1)
         for c in range(1, 2):
             self.top_grid_layout.setColumnStretch(c, 1)
-        self.uhd_usrp_source_0 = uhd.usrp_source(
+        self.uhd_usrp_source_1_0 = uhd.usrp_source(
         	",".join(("", "")),
         	uhd.stream_args(
         		cpu_format="fc32",
         		channels=range(1),
         	),
         )
-        self.uhd_usrp_source_0.set_samp_rate(samp_rate)
-        self.uhd_usrp_source_0.set_time_now(uhd.time_spec(time.time()), uhd.ALL_MBOARDS)
-        self.uhd_usrp_source_0.set_center_freq(rx_freq, 0)
-        self.uhd_usrp_source_0.set_gain(0, 0)
-        self._rx_gain_tool_bar = Qt.QToolBar(self)
-        self._rx_gain_tool_bar.addWidget(Qt.QLabel("rx_gain"+": "))
-        self._rx_gain_line_edit = Qt.QLineEdit(str(self.rx_gain))
-        self._rx_gain_tool_bar.addWidget(self._rx_gain_line_edit)
-        self._rx_gain_line_edit.returnPressed.connect(
-        	lambda: self.set_rx_gain(eng_notation.str_to_num(str(self._rx_gain_line_edit.text().toAscii()))))
-        self.top_grid_layout.addWidget(self._rx_gain_tool_bar, 4, 2, 1, 1)
-        for r in range(4, 5):
-            self.top_grid_layout.setRowStretch(r, 1)
-        for c in range(2, 3):
-            self.top_grid_layout.setColumnStretch(c, 1)
+        self.uhd_usrp_source_1_0.set_samp_rate(samp_rate)
+        self.uhd_usrp_source_1_0.set_time_now(uhd.time_spec(time.time()), uhd.ALL_MBOARDS)
+        self.uhd_usrp_source_1_0.set_center_freq(uhd.tune_request(rx_freq, samp_rate/2), 0)
+        self.uhd_usrp_source_1_0.set_gain(rx_gain, 0)
+        self.uhd_usrp_source_1_0.set_antenna('RX2', 0)
+        self.uhd_usrp_source_1_0.set_auto_dc_offset(True, 0)
+        self.uhd_usrp_source_1_0.set_auto_iq_balance(True, 0)
         self.rational_resampler_xxx_1 = filter.rational_resampler_ccc(
                 interpolation=1,
                 decimation=4,
@@ -644,8 +643,8 @@ class uhd_hf_weaver(gr.top_block, Qt.QWidget):
         self.connect((self.low_pass_filter_0_1, 0), (self.blocks_multiply_xx_1_0, 0))
         self.connect((self.rational_resampler_xxx_0, 0), (self.analog_agc2_xx_0, 0))
         self.connect((self.rational_resampler_xxx_1, 0), (self.blocks_complex_to_mag_squared_0, 0))
-        self.connect((self.uhd_usrp_source_0, 0), (self.blocks_multiply_xx_0, 0))
-        self.connect((self.uhd_usrp_source_0, 0), (self.fosphor_qt_sink_c_0, 0))
+        self.connect((self.uhd_usrp_source_1_0, 0), (self.blocks_multiply_xx_0, 0))
+        self.connect((self.uhd_usrp_source_1_0, 0), (self.fosphor_qt_sink_c_0, 0))
 
     def closeEvent(self, event):
         self.settings = Qt.QSettings("GNU Radio", "uhd_hf_weaver")
@@ -732,7 +731,7 @@ class uhd_hf_weaver(gr.top_block, Qt.QWidget):
     def set_rx_freq(self, rx_freq):
         self.rx_freq = rx_freq
         Qt.QMetaObject.invokeMethod(self._rx_freq_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.rx_freq)))
-        self.uhd_usrp_source_0.set_center_freq(self.rx_freq, 0)
+        self.uhd_usrp_source_1_0.set_center_freq(uhd.tune_request(self.rx_freq, self.samp_rate/2), 0)
         self.set_freq_label(self._freq_label_formatter(self.rx_freq+self.fine_freq+self.coarse_freq))
         self.fosphor_qt_sink_c_0.set_frequency_range(self.rx_freq, self.samp_rate)
 
@@ -779,7 +778,8 @@ class uhd_hf_weaver(gr.top_block, Qt.QWidget):
 
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
-        self.uhd_usrp_source_0.set_samp_rate(self.samp_rate)
+        self.uhd_usrp_source_1_0.set_samp_rate(self.samp_rate)
+        self.uhd_usrp_source_1_0.set_center_freq(uhd.tune_request(self.rx_freq, self.samp_rate/2), 0)
         self.qtgui_time_sink_x_0_0.set_samp_rate(self.samp_rate/self.decim*self.interp/3/4)
         self.qtgui_time_sink_x_0.set_samp_rate(self.samp_rate/self.decim*self.interp/3)
         self.qtgui_freq_sink_x_0_0.set_frequency_range(0, self.samp_rate/self.decim * self.interp/3)
@@ -798,6 +798,8 @@ class uhd_hf_weaver(gr.top_block, Qt.QWidget):
     def set_rx_gain(self, rx_gain):
         self.rx_gain = rx_gain
         Qt.QMetaObject.invokeMethod(self._rx_gain_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.rx_gain)))
+        self.uhd_usrp_source_1_0.set_gain(self.rx_gain, 0)
+
 
     def get_lpf_cutoff(self):
         return self.lpf_cutoff

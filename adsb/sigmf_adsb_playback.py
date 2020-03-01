@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ##################################################
 # GNU Radio Python Flow Graph
-# Title: Uhd Adsb Test
+# Title: Sigmf Adsb Playback
 # GNU Radio version: 3.7.13.4
 ##################################################
 
@@ -24,27 +24,26 @@ from gnuradio import filter
 from gnuradio import fosphor
 from gnuradio import gr
 from gnuradio import qtgui
-from gnuradio import uhd
 from gnuradio.eng_option import eng_option
 from gnuradio.fft import window
 from gnuradio.filter import firdes
 from gnuradio.qtgui import Range, RangeWidget
 from optparse import OptionParser
 import adsb
+import gr_sigmf
 import pyqt
 import sip
 import sys
-import time
 import vcc
 from gnuradio import qtgui
 
 
-class uhd_adsb_test(gr.top_block, Qt.QWidget):
+class sigmf_adsb_playback(gr.top_block, Qt.QWidget):
 
     def __init__(self):
-        gr.top_block.__init__(self, "Uhd Adsb Test")
+        gr.top_block.__init__(self, "Sigmf Adsb Playback")
         Qt.QWidget.__init__(self)
-        self.setWindowTitle("Uhd Adsb Test")
+        self.setWindowTitle("Sigmf Adsb Playback")
         qtgui.util.check_set_qss()
         try:
             self.setWindowIcon(Qt.QIcon.fromTheme('gnuradio-grc'))
@@ -62,15 +61,15 @@ class uhd_adsb_test(gr.top_block, Qt.QWidget):
         self.top_grid_layout = Qt.QGridLayout()
         self.top_layout.addLayout(self.top_grid_layout)
 
-        self.settings = Qt.QSettings("GNU Radio", "uhd_adsb_test")
+        self.settings = Qt.QSettings("GNU Radio", "sigmf_adsb_playback")
         self.restoreGeometry(self.settings.value("geometry").toByteArray())
 
 
         ##################################################
         # Variables
         ##################################################
-        self.threshold = threshold = 15
-        self.samp_rate = samp_rate = 4e6
+        self.threshold = threshold = 10
+        self.samp_rate = samp_rate = 10e6
         self.rx_gain = rx_gain = 50
         self.lpf_cutoff = lpf_cutoff = 1.5e6
         self.freq = freq = 1090e6
@@ -89,13 +88,6 @@ class uhd_adsb_test(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setRowStretch(r, 1)
         for c in range(6, 8):
             self.top_grid_layout.setColumnStretch(c, 1)
-        self._rx_gain_range = Range(1, 76, 1, 50, 200)
-        self._rx_gain_win = RangeWidget(self._rx_gain_range, self.set_rx_gain, "rx_gain", "counter_slider", float)
-        self.top_grid_layout.addWidget(self._rx_gain_win, 0, 4, 1, 2)
-        for r in range(0, 1):
-            self.top_grid_layout.setRowStretch(r, 1)
-        for c in range(4, 6):
-            self.top_grid_layout.setColumnStretch(c, 1)
         self._lpf_cutoff_tool_bar = Qt.QToolBar(self)
         self._lpf_cutoff_tool_bar.addWidget(Qt.QLabel("lpf_cutoff"+": "))
         self._lpf_cutoff_line_edit = Qt.QLineEdit(str(self.lpf_cutoff))
@@ -108,20 +100,20 @@ class uhd_adsb_test(gr.top_block, Qt.QWidget):
         for c in range(6, 8):
             self.top_grid_layout.setColumnStretch(c, 1)
         self.vcc_meta_to_json_0 = vcc.meta_to_json()
-        self.uhd_usrp_source_1 = uhd.usrp_source(
-        	",".join(("addr=192.168.10.4", "")),
-        	uhd.stream_args(
-        		cpu_format="fc32",
-        		channels=range(1),
-        	),
+        self.sigmf_source_0 = gr_sigmf.source('/captures/20191211/ADSB_2019-12-11T22:34:43Z.sigmf-data', "cf32" + ("_le" if sys.byteorder == "little" else "_be"), False)
+        self._rx_gain_range = Range(1, 76, 1, 50, 200)
+        self._rx_gain_win = RangeWidget(self._rx_gain_range, self.set_rx_gain, "rx_gain", "counter_slider", float)
+        self.top_grid_layout.addWidget(self._rx_gain_win, 0, 4, 1, 2)
+        for r in range(0, 1):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(4, 6):
+            self.top_grid_layout.setColumnStretch(c, 1)
+        self.rational_resampler_xxx_0 = filter.rational_resampler_ccc(
+                interpolation=4,
+                decimation=10,
+                taps=None,
+                fractional_bw=None,
         )
-        self.uhd_usrp_source_1.set_samp_rate(samp_rate)
-        self.uhd_usrp_source_1.set_time_now(uhd.time_spec(time.time()), uhd.ALL_MBOARDS)
-        self.uhd_usrp_source_1.set_center_freq(uhd.tune_request(freq, samp_rate/2), 0)
-        self.uhd_usrp_source_1.set_gain(rx_gain, 0)
-        self.uhd_usrp_source_1.set_antenna('RX2', 0)
-        self.uhd_usrp_source_1.set_auto_dc_offset(True, 0)
-        self.uhd_usrp_source_1.set_auto_iq_balance(True, 0)
         self.qtgui_time_sink_x_0 = qtgui.time_sink_f(
         	int(samp_rate*1*150e-6), #size
         	int(samp_rate*1), #samp_rate
@@ -129,7 +121,7 @@ class uhd_adsb_test(gr.top_block, Qt.QWidget):
         	2 #number of inputs
         )
         self.qtgui_time_sink_x_0.set_update_time(1.0/100.0)
-        self.qtgui_time_sink_x_0.set_y_axis(0, 250)
+        self.qtgui_time_sink_x_0.set_y_axis(0, 100)
 
         self.qtgui_time_sink_x_0.set_y_label('Amplitude', "")
 
@@ -183,10 +175,10 @@ class uhd_adsb_test(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setColumnStretch(c, 1)
 
         self.low_pass_filter_0 = filter.fir_filter_ccf(1, firdes.low_pass(
-        	1, samp_rate, lpf_cutoff, 10e3, firdes.WIN_HAMMING, 6.76))
+        	1, samp_rate/10*4, lpf_cutoff, 10e3, firdes.WIN_HAMMING, 6.76))
         self.fosphor_qt_sink_c_1 = fosphor.qt_sink_c()
         self.fosphor_qt_sink_c_1.set_fft_window(window.WIN_BLACKMAN_hARRIS)
-        self.fosphor_qt_sink_c_1.set_frequency_range(0, samp_rate)
+        self.fosphor_qt_sink_c_1.set_frequency_range(0, samp_rate/10*4)
         self._fosphor_qt_sink_c_1_win = sip.wrapinstance(self.fosphor_qt_sink_c_1.pyqwidget(), Qt.QWidget)
         self.top_grid_layout.addWidget(self._fosphor_qt_sink_c_1_win, 0, 0, 4, 4)
         for r in range(0, 4):
@@ -194,6 +186,7 @@ class uhd_adsb_test(gr.top_block, Qt.QWidget):
         for c in range(0, 4):
             self.top_grid_layout.setColumnStretch(c, 1)
         self.blocks_unpacked_to_packed_xx_0 = blocks.unpacked_to_packed_bb(1, gr.GR_MSB_FIRST)
+        self.blocks_throttle_0 = blocks.throttle(gr.sizeof_gr_complex*1, samp_rate *2,True)
         self.blocks_tagged_stream_to_pdu_0 = blocks.tagged_stream_to_pdu(blocks.byte_t, 'packet_len')
         self.blocks_tagged_stream_multiply_length_0 = blocks.tagged_stream_multiply_length(gr.sizeof_char*1, 'packet_len', 1.0/8)
         self.blocks_socket_pdu_0 = blocks.socket_pdu("TCP_SERVER", '127.0.0.1', '52001', 10000, False)
@@ -205,7 +198,7 @@ class uhd_adsb_test(gr.top_block, Qt.QWidget):
         self.analog_agc2_xx_0.set_max_gain(65536)
         self.adsb_framer_1 = adsb.framer(samp_rate, threshold)
         self.adsb_demod_0 = adsb.demod(samp_rate)
-        self.adsb_decoder_0 = adsb.decoder("Extended Squitter Only", "None", "None")
+        self.adsb_decoder_0 = adsb.decoder("All Messages", "Brute Force", "Verbose")
 
 
 
@@ -225,13 +218,15 @@ class uhd_adsb_test(gr.top_block, Qt.QWidget):
         self.connect((self.blocks_complex_to_mag_squared_0, 0), (self.adsb_framer_1, 0))
         self.connect((self.blocks_pdu_to_tagged_stream_0, 0), (self.blocks_unpacked_to_packed_xx_0, 0))
         self.connect((self.blocks_tagged_stream_multiply_length_0, 0), (self.blocks_tagged_stream_to_pdu_0, 0))
+        self.connect((self.blocks_throttle_0, 0), (self.rational_resampler_xxx_0, 0))
         self.connect((self.blocks_unpacked_to_packed_xx_0, 0), (self.blocks_tagged_stream_multiply_length_0, 0))
         self.connect((self.low_pass_filter_0, 0), (self.blocks_complex_to_mag_squared_0, 0))
         self.connect((self.low_pass_filter_0, 0), (self.fosphor_qt_sink_c_1, 0))
-        self.connect((self.uhd_usrp_source_1, 0), (self.analog_agc2_xx_0, 0))
+        self.connect((self.rational_resampler_xxx_0, 0), (self.analog_agc2_xx_0, 0))
+        self.connect((self.sigmf_source_0, 0), (self.blocks_throttle_0, 0))
 
     def closeEvent(self, event):
-        self.settings = Qt.QSettings("GNU Radio", "uhd_adsb_test")
+        self.settings = Qt.QSettings("GNU Radio", "sigmf_adsb_playback")
         self.settings.setValue("geometry", self.saveGeometry())
         event.accept()
 
@@ -249,19 +244,16 @@ class uhd_adsb_test(gr.top_block, Qt.QWidget):
 
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
-        self.uhd_usrp_source_1.set_samp_rate(self.samp_rate)
-        self.uhd_usrp_source_1.set_center_freq(uhd.tune_request(self.freq, self.samp_rate/2), 0)
         self.qtgui_time_sink_x_0.set_samp_rate(int(self.samp_rate*1))
-        self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.samp_rate, self.lpf_cutoff, 10e3, firdes.WIN_HAMMING, 6.76))
-        self.fosphor_qt_sink_c_1.set_frequency_range(0, self.samp_rate)
+        self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.samp_rate/10*4, self.lpf_cutoff, 10e3, firdes.WIN_HAMMING, 6.76))
+        self.fosphor_qt_sink_c_1.set_frequency_range(0, self.samp_rate/10*4)
+        self.blocks_throttle_0.set_sample_rate(self.samp_rate *2)
 
     def get_rx_gain(self):
         return self.rx_gain
 
     def set_rx_gain(self, rx_gain):
         self.rx_gain = rx_gain
-        self.uhd_usrp_source_1.set_gain(self.rx_gain, 0)
-
 
     def get_lpf_cutoff(self):
         return self.lpf_cutoff
@@ -269,17 +261,16 @@ class uhd_adsb_test(gr.top_block, Qt.QWidget):
     def set_lpf_cutoff(self, lpf_cutoff):
         self.lpf_cutoff = lpf_cutoff
         Qt.QMetaObject.invokeMethod(self._lpf_cutoff_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.lpf_cutoff)))
-        self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.samp_rate, self.lpf_cutoff, 10e3, firdes.WIN_HAMMING, 6.76))
+        self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.samp_rate/10*4, self.lpf_cutoff, 10e3, firdes.WIN_HAMMING, 6.76))
 
     def get_freq(self):
         return self.freq
 
     def set_freq(self, freq):
         self.freq = freq
-        self.uhd_usrp_source_1.set_center_freq(uhd.tune_request(self.freq, self.samp_rate/2), 0)
 
 
-def main(top_block_cls=uhd_adsb_test, options=None):
+def main(top_block_cls=sigmf_adsb_playback, options=None):
 
     from distutils.version import StrictVersion
     if StrictVersion(Qt.qVersion()) >= StrictVersion("4.5.0"):

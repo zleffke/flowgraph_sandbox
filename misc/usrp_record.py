@@ -1,13 +1,9 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
-#
-# SPDX-License-Identifier: GPL-3.0
-#
 ##################################################
 # GNU Radio Python Flow Graph
-# Title: /home/zleffke/captures/misc/SIM_USRP_20181102_011044.504933_UTC_250k.fc32
-# Generated: Thu Nov  1 20:22:40 2018
-# GNU Radio version: 3.7.12.0
+# Title: /home/zleffke/captures/misc/SIM_USRP_20190906_194852.435803_UTC_250k.fc32
+# GNU Radio version: 3.7.13.4
 ##################################################
 
 if __name__ == '__main__':
@@ -45,9 +41,9 @@ from gnuradio import qtgui
 class usrp_record(gr.top_block, Qt.QWidget):
 
     def __init__(self, radio_id='USRP', sat_name='SIM'):
-        gr.top_block.__init__(self, "/home/zleffke/captures/misc/SIM_USRP_20181102_011044.504933_UTC_250k.fc32")
+        gr.top_block.__init__(self, "/home/zleffke/captures/misc/SIM_USRP_20190906_194852.435803_UTC_250k.fc32")
         Qt.QWidget.__init__(self)
-        self.setWindowTitle("/home/zleffke/captures/misc/SIM_USRP_20181102_011044.504933_UTC_250k.fc32")
+        self.setWindowTitle("/home/zleffke/captures/misc/SIM_USRP_20190906_194852.435803_UTC_250k.fc32")
         qtgui.util.check_set_qss()
         try:
             self.setWindowIcon(Qt.QIcon.fromTheme('gnuradio-grc'))
@@ -147,17 +143,21 @@ class usrp_record(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setRowStretch(r, 1)
         for c in range(3, 5):
             self.top_grid_layout.setColumnStretch(c, 1)
-        self.uhd_usrp_source_0 = uhd.usrp_source(
-        	",".join(("", "")),
+        self.uhd_usrp_source_1_0 = uhd.usrp_source(
+        	",".join(("serial=30CF9AD", "")),
         	uhd.stream_args(
         		cpu_format="fc32",
         		channels=range(1),
         	),
         )
-        self.uhd_usrp_source_0.set_samp_rate(samp_rate)
-        self.uhd_usrp_source_0.set_center_freq(uhd.tune_request(rx_freq, samp_rate/2), 0)
-        self.uhd_usrp_source_0.set_gain(rx_gain, 0)
-        self.uhd_usrp_source_0.set_antenna('RX2', 0)
+        self.uhd_usrp_source_1_0.set_subdev_spec('A:A', 0)
+        self.uhd_usrp_source_1_0.set_samp_rate(samp_rate)
+        self.uhd_usrp_source_1_0.set_time_now(uhd.time_spec(time.time()), uhd.ALL_MBOARDS)
+        self.uhd_usrp_source_1_0.set_center_freq(uhd.tune_request(rx_freq, samp_rate/2), 0)
+        self.uhd_usrp_source_1_0.set_gain(rx_gain, 0)
+        self.uhd_usrp_source_1_0.set_antenna('RX2', 0)
+        self.uhd_usrp_source_1_0.set_auto_dc_offset(True, 0)
+        self.uhd_usrp_source_1_0.set_auto_iq_balance(True, 0)
         self.rational_resampler_xxx_0 = filter.rational_resampler_ccc(
                 interpolation=48,
                 decimation=50,
@@ -312,8 +312,6 @@ class usrp_record(gr.top_block, Qt.QWidget):
         self.fosphor_glfw_sink_c_0.set_fft_window(window.WIN_BLACKMAN_hARRIS)
         self.fosphor_glfw_sink_c_0.set_frequency_range(0, samp_rate)
         self.blocks_multiply_const_vxx_0 = blocks.multiply_const_vff((volume, ))
-        self.blocks_file_sink_0 = blocks.file_sink(gr.sizeof_gr_complex*1, fp, False)
-        self.blocks_file_sink_0.set_unbuffered(False)
         self.audio_sink_0 = audio.sink(48000, '', True)
         self.analog_quadrature_demod_cf_0 = analog.quadrature_demod_cf(samp_rate/(2*math.pi*fsk_deviation_hz/8.0))
 
@@ -331,9 +329,8 @@ class usrp_record(gr.top_block, Qt.QWidget):
         self.connect((self.low_pass_filter_0, 0), (self.rational_resampler_xxx_0, 0))
         self.connect((self.low_pass_filter_0_0_0, 0), (self.blocks_multiply_const_vxx_0, 0))
         self.connect((self.rational_resampler_xxx_0, 0), (self.analog_quadrature_demod_cf_0, 0))
-        self.connect((self.uhd_usrp_source_0, 0), (self.blocks_file_sink_0, 0))
-        self.connect((self.uhd_usrp_source_0, 0), (self.fosphor_glfw_sink_c_0, 0))
-        self.connect((self.uhd_usrp_source_0, 0), (self.freq_xlating_fir_filter_xxx_0, 0))
+        self.connect((self.uhd_usrp_source_1_0, 0), (self.fosphor_glfw_sink_c_0, 0))
+        self.connect((self.uhd_usrp_source_1_0, 0), (self.freq_xlating_fir_filter_xxx_0, 0))
 
     def closeEvent(self, event):
         self.settings = Qt.QSettings("GNU Radio", "usrp_record")
@@ -366,8 +363,8 @@ class usrp_record(gr.top_block, Qt.QWidget):
 
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
-        self.uhd_usrp_source_0.set_samp_rate(self.samp_rate)
-        self.uhd_usrp_source_0.set_center_freq(uhd.tune_request(self.rx_freq, self.samp_rate/2), 0)
+        self.uhd_usrp_source_1_0.set_samp_rate(self.samp_rate)
+        self.uhd_usrp_source_1_0.set_center_freq(uhd.tune_request(self.rx_freq, self.samp_rate/2), 0)
         self.qtgui_waterfall_sink_x_0.set_frequency_range(0, self.samp_rate/self.decim)
         self.qtgui_time_sink_x_0.set_samp_rate(self.samp_rate / self.decim / 50 * 48)
         self.qtgui_freq_sink_x_0.set_frequency_range(0, self.samp_rate/self.decim)
@@ -405,7 +402,7 @@ class usrp_record(gr.top_block, Qt.QWidget):
     def set_rx_gain(self, rx_gain):
         self.rx_gain = rx_gain
         Qt.QMetaObject.invokeMethod(self._rx_gain_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.rx_gain)))
-        self.uhd_usrp_source_0.set_gain(self.rx_gain, 0)
+        self.uhd_usrp_source_1_0.set_gain(self.rx_gain, 0)
 
 
     def get_rx_freq(self):
@@ -414,7 +411,7 @@ class usrp_record(gr.top_block, Qt.QWidget):
     def set_rx_freq(self, rx_freq):
         self.rx_freq = rx_freq
         Qt.QMetaObject.invokeMethod(self._rx_freq_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.rx_freq)))
-        self.uhd_usrp_source_0.set_center_freq(uhd.tune_request(self.rx_freq, self.samp_rate/2), 0)
+        self.uhd_usrp_source_1_0.set_center_freq(uhd.tune_request(self.rx_freq, self.samp_rate/2), 0)
 
     def get_offset(self):
         return self.offset
@@ -436,7 +433,6 @@ class usrp_record(gr.top_block, Qt.QWidget):
 
     def set_fp(self, fp):
         self.fp = fp
-        self.blocks_file_sink_0.open(self.fp)
 
     def get_decim(self):
         return self.decim

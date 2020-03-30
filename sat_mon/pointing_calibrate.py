@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ##################################################
 # GNU Radio Python Flow Graph
-# Title: Fosphor Spectrum 2
+# Title: Pointing Calibrate
 # GNU Radio version: 3.7.13.4
 ##################################################
 
@@ -17,13 +17,12 @@ if __name__ == '__main__':
             print "Warning: failed to XInitThreads()"
 
 from PyQt4 import Qt
+from gnuradio import analog
 from gnuradio import eng_notation
-from gnuradio import fosphor
 from gnuradio import gr
 from gnuradio import qtgui
 from gnuradio import uhd
 from gnuradio.eng_option import eng_option
-from gnuradio.fft import window
 from gnuradio.filter import firdes
 from optparse import OptionParser
 import sip
@@ -32,12 +31,12 @@ import time
 from gnuradio import qtgui
 
 
-class fosphor_spectrum_2(gr.top_block, Qt.QWidget):
+class pointing_calibrate(gr.top_block, Qt.QWidget):
 
     def __init__(self, fsk_dev=5000):
-        gr.top_block.__init__(self, "Fosphor Spectrum 2")
+        gr.top_block.__init__(self, "Pointing Calibrate")
         Qt.QWidget.__init__(self)
-        self.setWindowTitle("Fosphor Spectrum 2")
+        self.setWindowTitle("Pointing Calibrate")
         qtgui.util.check_set_qss()
         try:
             self.setWindowIcon(Qt.QIcon.fromTheme('gnuradio-grc'))
@@ -55,7 +54,7 @@ class fosphor_spectrum_2(gr.top_block, Qt.QWidget):
         self.top_grid_layout = Qt.QGridLayout()
         self.top_layout.addLayout(self.top_grid_layout)
 
-        self.settings = Qt.QSettings("GNU Radio", "fosphor_spectrum_2")
+        self.settings = Qt.QSettings("GNU Radio", "pointing_calibrate")
         self.restoreGeometry(self.settings.value("geometry").toByteArray())
 
 
@@ -67,14 +66,15 @@ class fosphor_spectrum_2(gr.top_block, Qt.QWidget):
         ##################################################
         # Variables
         ##################################################
-        self.samp_rate = samp_rate = 5e6
+        self.samp_rate = samp_rate = 14e6
         self.interp = interp = 48
         self.decim = decim = 50
         self.baud = baud = 4800
         self.samps_per_symb = samps_per_symb = samp_rate/10/decim*interp/baud
-        self.rx_gain = rx_gain = 60
-        self.rx_freq = rx_freq = 2332e6
-        self.offset = offset = -1500
+        self.rx_gain = rx_gain = 10
+        self.rx_freq = rx_freq = 2340e6
+        self.fft_min = fft_min = -140
+        self.fft_max = fft_max = 0
 
         ##################################################
         # Blocks
@@ -112,11 +112,33 @@ class fosphor_spectrum_2(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setRowStretch(r, 1)
         for c in range(1, 2):
             self.top_grid_layout.setColumnStretch(c, 1)
+        self._fft_min_tool_bar = Qt.QToolBar(self)
+        self._fft_min_tool_bar.addWidget(Qt.QLabel('fft_min'+": "))
+        self._fft_min_line_edit = Qt.QLineEdit(str(self.fft_min))
+        self._fft_min_tool_bar.addWidget(self._fft_min_line_edit)
+        self._fft_min_line_edit.returnPressed.connect(
+        	lambda: self.set_fft_min(eng_notation.str_to_num(str(self._fft_min_line_edit.text().toAscii()))))
+        self.top_grid_layout.addWidget(self._fft_min_tool_bar, 10, 1, 1, 1)
+        for r in range(10, 11):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(1, 2):
+            self.top_grid_layout.setColumnStretch(c, 1)
+        self._fft_max_tool_bar = Qt.QToolBar(self)
+        self._fft_max_tool_bar.addWidget(Qt.QLabel('fft_max'+": "))
+        self._fft_max_line_edit = Qt.QLineEdit(str(self.fft_max))
+        self._fft_max_tool_bar.addWidget(self._fft_max_line_edit)
+        self._fft_max_line_edit.returnPressed.connect(
+        	lambda: self.set_fft_max(eng_notation.str_to_num(str(self._fft_max_line_edit.text().toAscii()))))
+        self.top_grid_layout.addWidget(self._fft_max_tool_bar, 10, 0, 1, 1)
+        for r in range(10, 11):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(0, 1):
+            self.top_grid_layout.setColumnStretch(c, 1)
         self.uhd_usrp_source_1 = uhd.usrp_source(
         	",".join(("", "")),
         	uhd.stream_args(
         		cpu_format="fc32",
-        		channels=range(2),
+        		channels=range(1),
         	),
         )
         self.uhd_usrp_source_1.set_samp_rate(samp_rate)
@@ -125,26 +147,61 @@ class fosphor_spectrum_2(gr.top_block, Qt.QWidget):
         self.uhd_usrp_source_1.set_antenna('RX2', 0)
         self.uhd_usrp_source_1.set_auto_dc_offset(True, 0)
         self.uhd_usrp_source_1.set_auto_iq_balance(True, 0)
-        self.uhd_usrp_source_1.set_center_freq(uhd.tune_request(rx_freq, samp_rate/2.0), 1)
-        self.uhd_usrp_source_1.set_gain(rx_gain, 1)
-        self.uhd_usrp_source_1.set_antenna('RX2', 1)
-        self.uhd_usrp_source_1.set_auto_dc_offset(True, 1)
-        self.uhd_usrp_source_1.set_auto_iq_balance(True, 1)
-        self.qtgui_freq_sink_x_0 = qtgui.freq_sink_c(
+        self.qtgui_waterfall_sink_x_0 = qtgui.waterfall_sink_c(
         	2048, #size
         	firdes.WIN_BLACKMAN_hARRIS, #wintype
         	0, #fc
         	samp_rate, #bw
         	"", #name
-        	2 #number of inputs
+                1 #number of inputs
+        )
+        self.qtgui_waterfall_sink_x_0.set_update_time(0.010)
+        self.qtgui_waterfall_sink_x_0.enable_grid(False)
+        self.qtgui_waterfall_sink_x_0.enable_axis_labels(True)
+
+        if not True:
+          self.qtgui_waterfall_sink_x_0.disable_legend()
+
+        if "complex" == "float" or "complex" == "msg_float":
+          self.qtgui_waterfall_sink_x_0.set_plot_pos_half(not True)
+
+        labels = ['', '', '', '', '',
+                  '', '', '', '', '']
+        colors = [0, 0, 0, 0, 0,
+                  0, 0, 0, 0, 0]
+        alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
+                  1.0, 1.0, 1.0, 1.0, 1.0]
+        for i in xrange(1):
+            if len(labels[i]) == 0:
+                self.qtgui_waterfall_sink_x_0.set_line_label(i, "Data {0}".format(i))
+            else:
+                self.qtgui_waterfall_sink_x_0.set_line_label(i, labels[i])
+            self.qtgui_waterfall_sink_x_0.set_color_map(i, colors[i])
+            self.qtgui_waterfall_sink_x_0.set_line_alpha(i, alphas[i])
+
+        self.qtgui_waterfall_sink_x_0.set_intensity_range(fft_min, fft_max)
+
+        self._qtgui_waterfall_sink_x_0_win = sip.wrapinstance(self.qtgui_waterfall_sink_x_0.pyqwidget(), Qt.QWidget)
+        self.top_grid_layout.addWidget(self._qtgui_waterfall_sink_x_0_win, 4, 0, 4, 4)
+        for r in range(4, 8):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(0, 4):
+            self.top_grid_layout.setColumnStretch(c, 1)
+        self.qtgui_freq_sink_x_0 = qtgui.freq_sink_c(
+        	2048, #size
+        	firdes.WIN_BLACKMAN_hARRIS, #wintype
+        	0, #fc
+        	samp_rate, #bw
+        	"RHCP", #name
+        	1 #number of inputs
         )
         self.qtgui_freq_sink_x_0.set_update_time(0.010)
-        self.qtgui_freq_sink_x_0.set_y_axis(-80, 10)
+        self.qtgui_freq_sink_x_0.set_y_axis(fft_min, fft_max)
         self.qtgui_freq_sink_x_0.set_y_label('Relative Gain', 'dB')
         self.qtgui_freq_sink_x_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, 0.0, 0, "")
         self.qtgui_freq_sink_x_0.enable_autoscale(False)
         self.qtgui_freq_sink_x_0.enable_grid(True)
-        self.qtgui_freq_sink_x_0.set_fft_average(1.0)
+        self.qtgui_freq_sink_x_0.set_fft_average(0.1)
         self.qtgui_freq_sink_x_0.enable_axis_labels(True)
         self.qtgui_freq_sink_x_0.enable_control_panel(False)
 
@@ -162,7 +219,7 @@ class fosphor_spectrum_2(gr.top_block, Qt.QWidget):
                   "magenta", "yellow", "dark red", "dark green", "dark blue"]
         alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
                   1.0, 1.0, 1.0, 1.0, 1.0]
-        for i in xrange(2):
+        for i in xrange(1):
             if len(labels[i]) == 0:
                 self.qtgui_freq_sink_x_0.set_line_label(i, "Data {0}".format(i))
             else:
@@ -177,32 +234,17 @@ class fosphor_spectrum_2(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setRowStretch(r, 1)
         for c in range(0, 4):
             self.top_grid_layout.setColumnStretch(c, 1)
-        self._offset_tool_bar = Qt.QToolBar(self)
-        self._offset_tool_bar.addWidget(Qt.QLabel('offset'+": "))
-        self._offset_line_edit = Qt.QLineEdit(str(self.offset))
-        self._offset_tool_bar.addWidget(self._offset_line_edit)
-        self._offset_line_edit.returnPressed.connect(
-        	lambda: self.set_offset(eng_notation.str_to_num(str(self._offset_line_edit.text().toAscii()))))
-        self.top_grid_layout.addWidget(self._offset_tool_bar, 9, 2, 1, 1)
-        for r in range(9, 10):
-            self.top_grid_layout.setRowStretch(r, 1)
-        for c in range(2, 3):
-            self.top_grid_layout.setColumnStretch(c, 1)
-        self.fosphor_glfw_sink_c_0_0 = fosphor.glfw_sink_c()
-        self.fosphor_glfw_sink_c_0_0.set_fft_window(window.WIN_BLACKMAN_hARRIS)
-        self.fosphor_glfw_sink_c_0_0.set_frequency_range(rx_freq, samp_rate)
 
 
 
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.uhd_usrp_source_1, 1), (self.fosphor_glfw_sink_c_0_0, 0))
         self.connect((self.uhd_usrp_source_1, 0), (self.qtgui_freq_sink_x_0, 0))
-        self.connect((self.uhd_usrp_source_1, 1), (self.qtgui_freq_sink_x_0, 1))
+        self.connect((self.uhd_usrp_source_1, 0), (self.qtgui_waterfall_sink_x_0, 0))
 
     def closeEvent(self, event):
-        self.settings = Qt.QSettings("GNU Radio", "fosphor_spectrum_2")
+        self.settings = Qt.QSettings("GNU Radio", "pointing_calibrate")
         self.settings.setValue("geometry", self.saveGeometry())
         event.accept()
 
@@ -222,8 +264,8 @@ class fosphor_spectrum_2(gr.top_block, Qt.QWidget):
         self.uhd_usrp_source_1.set_center_freq(uhd.tune_request(self.rx_freq, self.samp_rate/2.0), 0)
         self.uhd_usrp_source_1.set_center_freq(uhd.tune_request(self.rx_freq, self.samp_rate/2.0), 1)
         self.set_samps_per_symb(self.samp_rate/10/self.decim*self.interp/self.baud)
+        self.qtgui_waterfall_sink_x_0.set_frequency_range(0, self.samp_rate)
         self.qtgui_freq_sink_x_0.set_frequency_range(0, self.samp_rate)
-        self.fosphor_glfw_sink_c_0_0.set_frequency_range(self.rx_freq, self.samp_rate)
 
     def get_interp(self):
         return self.interp
@@ -271,14 +313,24 @@ class fosphor_spectrum_2(gr.top_block, Qt.QWidget):
         Qt.QMetaObject.invokeMethod(self._rx_freq_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.rx_freq)))
         self.uhd_usrp_source_1.set_center_freq(uhd.tune_request(self.rx_freq, self.samp_rate/2.0), 0)
         self.uhd_usrp_source_1.set_center_freq(uhd.tune_request(self.rx_freq, self.samp_rate/2.0), 1)
-        self.fosphor_glfw_sink_c_0_0.set_frequency_range(self.rx_freq, self.samp_rate)
 
-    def get_offset(self):
-        return self.offset
+    def get_fft_min(self):
+        return self.fft_min
 
-    def set_offset(self, offset):
-        self.offset = offset
-        Qt.QMetaObject.invokeMethod(self._offset_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.offset)))
+    def set_fft_min(self, fft_min):
+        self.fft_min = fft_min
+        Qt.QMetaObject.invokeMethod(self._fft_min_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.fft_min)))
+        self.qtgui_waterfall_sink_x_0.set_intensity_range(self.fft_min, self.fft_max)
+        self.qtgui_freq_sink_x_0.set_y_axis(self.fft_min, self.fft_max)
+
+    def get_fft_max(self):
+        return self.fft_max
+
+    def set_fft_max(self, fft_max):
+        self.fft_max = fft_max
+        Qt.QMetaObject.invokeMethod(self._fft_max_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.fft_max)))
+        self.qtgui_waterfall_sink_x_0.set_intensity_range(self.fft_min, self.fft_max)
+        self.qtgui_freq_sink_x_0.set_y_axis(self.fft_min, self.fft_max)
 
 
 def argument_parser():
@@ -289,7 +341,7 @@ def argument_parser():
     return parser
 
 
-def main(top_block_cls=fosphor_spectrum_2, options=None):
+def main(top_block_cls=pointing_calibrate, options=None):
     if options is None:
         options, _ = argument_parser().parse_args()
 

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ##################################################
 # GNU Radio Python Flow Graph
-# Title: /data2/captures/20200329/LRO_RHCP_2020-03-31T04:06:13Z
+# Title: /data2/captures/20200329/LRO_RHCP_2020-03-31T04:10:21Z
 # GNU Radio version: 3.7.13.5
 ##################################################
 
@@ -37,12 +37,12 @@ import time
 from gnuradio import qtgui
 
 
-class lro_track(gr.top_block, Qt.QWidget):
+class lro_track_2(gr.top_block, Qt.QWidget):
 
     def __init__(self, avg_len=256, nfft=2048, path="/data2/captures/20200329", record_hz=10, rx_alt=542, rx_lat=37.148745, rx_lon=-80.578557, signal_type='LRO', usrp_type='B210'):
-        gr.top_block.__init__(self, "/data2/captures/20200329/LRO_RHCP_2020-03-31T04:06:13Z")
+        gr.top_block.__init__(self, "/data2/captures/20200329/LRO_RHCP_2020-03-31T04:10:21Z")
         Qt.QWidget.__init__(self)
-        self.setWindowTitle("/data2/captures/20200329/LRO_RHCP_2020-03-31T04:06:13Z")
+        self.setWindowTitle("/data2/captures/20200329/LRO_RHCP_2020-03-31T04:10:21Z")
         qtgui.util.check_set_qss()
         try:
             self.setWindowIcon(Qt.QIcon.fromTheme('gnuradio-grc'))
@@ -60,7 +60,7 @@ class lro_track(gr.top_block, Qt.QWidget):
         self.top_grid_layout = Qt.QGridLayout()
         self.top_layout.addLayout(self.top_grid_layout)
 
-        self.settings = Qt.QSettings("GNU Radio", "lro_track")
+        self.settings = Qt.QSettings("GNU Radio", "lro_track_2")
         self.restoreGeometry(self.settings.value("geometry").toByteArray())
 
 
@@ -738,7 +738,7 @@ class lro_track(gr.top_block, Qt.QWidget):
         self.connect((self.uhd_usrp_source_1, 1), (self.qtgui_waterfall_sink_x_0_0, 0))
 
     def closeEvent(self, event):
-        self.settings = Qt.QSettings("GNU Radio", "lro_track")
+        self.settings = Qt.QSettings("GNU Radio", "lro_track_2")
         self.settings.setValue("geometry", self.saveGeometry())
         event.accept()
 
@@ -1145,7 +1145,7 @@ def argument_parser():
     return parser
 
 
-def main(top_block_cls=lro_track, options=None):
+def main(top_block_cls=lro_track_2, options=None):
     if options is None:
         options, _ = argument_parser().parse_args()
 

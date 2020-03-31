@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 ##################################################
 # GNU Radio Python Flow Graph
-# Title: /captures/20200329/QUEQIAO_RHCP_2020-03-29T21:31:47Z
-# GNU Radio version: 3.7.13.4
+# Title: /captures/20200329/QUEQIAO_RHCP_2020-03-31T02:40:21Z
+# GNU Radio version: 3.7.13.5
 ##################################################
 
 if __name__ == '__main__':
@@ -34,9 +34,9 @@ from gnuradio import qtgui
 class queqiao_track(gr.top_block, Qt.QWidget):
 
     def __init__(self, path="/captures/20200329", rx_alt=542, rx_lat=37.148745, rx_lon=-80.578557, signal_type='QUEQIAO', usrp_type='B210'):
-        gr.top_block.__init__(self, "/captures/20200329/QUEQIAO_RHCP_2020-03-29T21:31:47Z")
+        gr.top_block.__init__(self, "/captures/20200329/QUEQIAO_RHCP_2020-03-31T02:40:21Z")
         Qt.QWidget.__init__(self)
-        self.setWindowTitle("/captures/20200329/QUEQIAO_RHCP_2020-03-29T21:31:47Z")
+        self.setWindowTitle("/captures/20200329/QUEQIAO_RHCP_2020-03-31T02:40:21Z")
         qtgui.util.check_set_qss()
         try:
             self.setWindowIcon(Qt.QIcon.fromTheme('gnuradio-grc'))
@@ -141,14 +141,15 @@ class queqiao_track(gr.top_block, Qt.QWidget):
         for c in range(4, 5):
             self.top_grid_layout.setColumnStretch(c, 1)
         self.uhd_usrp_source_1 = uhd.usrp_source(
-        	",".join(("", "")),
+        	",".join(("serial=30CF9D2", "")),
         	uhd.stream_args(
         		cpu_format="fc32",
-        		channels=range(2),
+        		channels=range(1),
         	),
         )
         self.uhd_usrp_source_1.set_clock_source('external', 0)
         self.uhd_usrp_source_1.set_time_source('external', 0)
+        self.uhd_usrp_source_1.set_subdev_spec('A:A', 0)
         self.uhd_usrp_source_1.set_samp_rate(samp_rate)
         self.uhd_usrp_source_1.set_time_now(uhd.time_spec(time.time()), uhd.ALL_MBOARDS)
         self.uhd_usrp_source_1.set_center_freq(uhd.tune_request(rx_freq, samp_rate/2), 0)
@@ -156,51 +157,6 @@ class queqiao_track(gr.top_block, Qt.QWidget):
         self.uhd_usrp_source_1.set_antenna('RX2', 0)
         self.uhd_usrp_source_1.set_auto_dc_offset(True, 0)
         self.uhd_usrp_source_1.set_auto_iq_balance(True, 0)
-        self.uhd_usrp_source_1.set_center_freq(uhd.tune_request(rx_freq, samp_rate/2), 1)
-        self.uhd_usrp_source_1.set_gain(rx_gain, 1)
-        self.uhd_usrp_source_1.set_antenna('RX2', 1)
-        self.uhd_usrp_source_1.set_auto_dc_offset(True, 1)
-        self.uhd_usrp_source_1.set_auto_iq_balance(True, 1)
-        self.qtgui_waterfall_sink_x_0_0 = qtgui.waterfall_sink_c(
-        	2048, #size
-        	firdes.WIN_BLACKMAN_hARRIS, #wintype
-        	0, #fc
-        	samp_rate, #bw
-        	"", #name
-                1 #number of inputs
-        )
-        self.qtgui_waterfall_sink_x_0_0.set_update_time(0.010)
-        self.qtgui_waterfall_sink_x_0_0.enable_grid(False)
-        self.qtgui_waterfall_sink_x_0_0.enable_axis_labels(True)
-
-        if not True:
-          self.qtgui_waterfall_sink_x_0_0.disable_legend()
-
-        if "complex" == "float" or "complex" == "msg_float":
-          self.qtgui_waterfall_sink_x_0_0.set_plot_pos_half(not True)
-
-        labels = ['', '', '', '', '',
-                  '', '', '', '', '']
-        colors = [0, 0, 0, 0, 0,
-                  0, 0, 0, 0, 0]
-        alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
-                  1.0, 1.0, 1.0, 1.0, 1.0]
-        for i in xrange(1):
-            if len(labels[i]) == 0:
-                self.qtgui_waterfall_sink_x_0_0.set_line_label(i, "Data {0}".format(i))
-            else:
-                self.qtgui_waterfall_sink_x_0_0.set_line_label(i, labels[i])
-            self.qtgui_waterfall_sink_x_0_0.set_color_map(i, colors[i])
-            self.qtgui_waterfall_sink_x_0_0.set_line_alpha(i, alphas[i])
-
-        self.qtgui_waterfall_sink_x_0_0.set_intensity_range(fft_min, fft_max)
-
-        self._qtgui_waterfall_sink_x_0_0_win = sip.wrapinstance(self.qtgui_waterfall_sink_x_0_0.pyqwidget(), Qt.QWidget)
-        self.top_grid_layout.addWidget(self._qtgui_waterfall_sink_x_0_0_win, 4, 4, 4, 4)
-        for r in range(4, 8):
-            self.top_grid_layout.setRowStretch(r, 1)
-        for c in range(4, 8):
-            self.top_grid_layout.setColumnStretch(c, 1)
         self.qtgui_waterfall_sink_x_0 = qtgui.waterfall_sink_c(
         	2048, #size
         	firdes.WIN_BLACKMAN_hARRIS, #wintype
@@ -240,53 +196,6 @@ class queqiao_track(gr.top_block, Qt.QWidget):
         for r in range(4, 8):
             self.top_grid_layout.setRowStretch(r, 1)
         for c in range(0, 4):
-            self.top_grid_layout.setColumnStretch(c, 1)
-        self.qtgui_freq_sink_x_0_0 = qtgui.freq_sink_c(
-        	2048, #size
-        	firdes.WIN_BLACKMAN_hARRIS, #wintype
-        	0, #fc
-        	samp_rate, #bw
-        	"LHCP", #name
-        	1 #number of inputs
-        )
-        self.qtgui_freq_sink_x_0_0.set_update_time(0.010)
-        self.qtgui_freq_sink_x_0_0.set_y_axis(fft_min, fft_max)
-        self.qtgui_freq_sink_x_0_0.set_y_label('Relative Gain', 'dB')
-        self.qtgui_freq_sink_x_0_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, 0.0, 0, "")
-        self.qtgui_freq_sink_x_0_0.enable_autoscale(False)
-        self.qtgui_freq_sink_x_0_0.enable_grid(True)
-        self.qtgui_freq_sink_x_0_0.set_fft_average(0.05)
-        self.qtgui_freq_sink_x_0_0.enable_axis_labels(True)
-        self.qtgui_freq_sink_x_0_0.enable_control_panel(False)
-
-        if not True:
-          self.qtgui_freq_sink_x_0_0.disable_legend()
-
-        if "complex" == "float" or "complex" == "msg_float":
-          self.qtgui_freq_sink_x_0_0.set_plot_pos_half(not True)
-
-        labels = ['', '', '', '', '',
-                  '', '', '', '', '']
-        widths = [1, 1, 1, 1, 1,
-                  1, 1, 1, 1, 1]
-        colors = ["blue", "red", "green", "black", "cyan",
-                  "magenta", "yellow", "dark red", "dark green", "dark blue"]
-        alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
-                  1.0, 1.0, 1.0, 1.0, 1.0]
-        for i in xrange(1):
-            if len(labels[i]) == 0:
-                self.qtgui_freq_sink_x_0_0.set_line_label(i, "Data {0}".format(i))
-            else:
-                self.qtgui_freq_sink_x_0_0.set_line_label(i, labels[i])
-            self.qtgui_freq_sink_x_0_0.set_line_width(i, widths[i])
-            self.qtgui_freq_sink_x_0_0.set_line_color(i, colors[i])
-            self.qtgui_freq_sink_x_0_0.set_line_alpha(i, alphas[i])
-
-        self._qtgui_freq_sink_x_0_0_win = sip.wrapinstance(self.qtgui_freq_sink_x_0_0.pyqwidget(), Qt.QWidget)
-        self.top_grid_layout.addWidget(self._qtgui_freq_sink_x_0_0_win, 0, 4, 4, 4)
-        for r in range(0, 4):
-            self.top_grid_layout.setRowStretch(r, 1)
-        for c in range(4, 8):
             self.top_grid_layout.setColumnStretch(c, 1)
         self.qtgui_freq_sink_x_0 = qtgui.freq_sink_c(
         	2048, #size
@@ -342,9 +251,7 @@ class queqiao_track(gr.top_block, Qt.QWidget):
         # Connections
         ##################################################
         self.connect((self.uhd_usrp_source_1, 0), (self.qtgui_freq_sink_x_0, 0))
-        self.connect((self.uhd_usrp_source_1, 1), (self.qtgui_freq_sink_x_0_0, 0))
         self.connect((self.uhd_usrp_source_1, 0), (self.qtgui_waterfall_sink_x_0, 0))
-        self.connect((self.uhd_usrp_source_1, 1), (self.qtgui_waterfall_sink_x_0_0, 0))
 
     def closeEvent(self, event):
         self.settings = Qt.QSettings("GNU Radio", "queqiao_track")
@@ -420,9 +327,7 @@ class queqiao_track(gr.top_block, Qt.QWidget):
         self.uhd_usrp_source_1.set_samp_rate(self.samp_rate)
         self.uhd_usrp_source_1.set_center_freq(uhd.tune_request(self.rx_freq, self.samp_rate/2), 0)
         self.uhd_usrp_source_1.set_center_freq(uhd.tune_request(self.rx_freq, self.samp_rate/2), 1)
-        self.qtgui_waterfall_sink_x_0_0.set_frequency_range(0, self.samp_rate)
         self.qtgui_waterfall_sink_x_0.set_frequency_range(0, self.samp_rate)
-        self.qtgui_freq_sink_x_0_0.set_frequency_range(0, self.samp_rate)
         self.qtgui_freq_sink_x_0.set_frequency_range(0, self.samp_rate)
 
     def get_rx_gain(self):
@@ -463,9 +368,7 @@ class queqiao_track(gr.top_block, Qt.QWidget):
     def set_fft_min(self, fft_min):
         self.fft_min = fft_min
         Qt.QMetaObject.invokeMethod(self._fft_min_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.fft_min)))
-        self.qtgui_waterfall_sink_x_0_0.set_intensity_range(self.fft_min, self.fft_max)
         self.qtgui_waterfall_sink_x_0.set_intensity_range(self.fft_min, self.fft_max)
-        self.qtgui_freq_sink_x_0_0.set_y_axis(self.fft_min, self.fft_max)
         self.qtgui_freq_sink_x_0.set_y_axis(self.fft_min, self.fft_max)
 
     def get_fft_max(self):
@@ -474,9 +377,7 @@ class queqiao_track(gr.top_block, Qt.QWidget):
     def set_fft_max(self, fft_max):
         self.fft_max = fft_max
         Qt.QMetaObject.invokeMethod(self._fft_max_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.fft_max)))
-        self.qtgui_waterfall_sink_x_0_0.set_intensity_range(self.fft_min, self.fft_max)
         self.qtgui_waterfall_sink_x_0.set_intensity_range(self.fft_min, self.fft_max)
-        self.qtgui_freq_sink_x_0_0.set_y_axis(self.fft_min, self.fft_max)
         self.qtgui_freq_sink_x_0.set_y_axis(self.fft_min, self.fft_max)
 
 

@@ -836,7 +836,7 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>1</value>
+      <value>0</value>
     </param>
     <param>
       <key>fftsize</key>
@@ -1346,7 +1346,7 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>1</value>
+      <value>0</value>
     </param>
     <param>
       <key>fftsize</key>
@@ -3643,7 +3643,7 @@
     </param>
     <param>
       <key>dev_addr</key>
-      <value>""</value>
+      <value>"serial=30CF9D2"</value>
     </param>
     <param>
       <key>dev_args</key>
@@ -3675,7 +3675,7 @@
     </param>
     <param>
       <key>sd_spec0</key>
-      <value></value>
+      <value>A:A</value>
     </param>
     <param>
       <key>time_source0</key>
@@ -3771,7 +3771,7 @@
     </param>
     <param>
       <key>nchan</key>
-      <value>2</value>
+      <value>1</value>
     </param>
     <param>
       <key>num_mboards</key>
@@ -3892,7 +3892,7 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>True</value>
+      <value>0</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -3946,7 +3946,7 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>True</value>
+      <value>0</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -3969,12 +3969,6 @@
     <source_block_id>uhd_usrp_source_1</source_block_id>
     <sink_block_id>virtual_sink_0</sink_block_id>
     <source_key>0</source_key>
-    <sink_key>0</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>uhd_usrp_source_1</source_block_id>
-    <sink_block_id>virtual_sink_1</sink_block_id>
-    <source_key>1</source_key>
     <sink_key>0</sink_key>
   </connection>
   <connection>

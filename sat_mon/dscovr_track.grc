@@ -2077,7 +2077,7 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>1</value>
+      <value>0</value>
     </param>
     <param>
       <key>num_extra_fields</key>
@@ -3643,7 +3643,7 @@
     </param>
     <param>
       <key>dev_addr</key>
-      <value>""</value>
+      <value>"serial=30CF9D2"</value>
     </param>
     <param>
       <key>dev_args</key>

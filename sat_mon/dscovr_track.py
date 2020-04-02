@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 ##################################################
 # GNU Radio Python Flow Graph
-# Title: /captures/20200329/DSCOVR_RHCP_2020-03-29T20:57:22Z
-# GNU Radio version: 3.7.13.4
+# Title: /captures/20200329/DSCOVR_RHCP_2020-04-01T22:26:39Z
+# GNU Radio version: 3.7.13.5
 ##################################################
 
 if __name__ == '__main__':
@@ -25,7 +25,6 @@ from gnuradio import uhd
 from gnuradio.eng_option import eng_option
 from gnuradio.filter import firdes
 from optparse import OptionParser
-import gr_sigmf
 import sip
 import sys
 import time
@@ -35,9 +34,9 @@ from gnuradio import qtgui
 class dscovr_track(gr.top_block, Qt.QWidget):
 
     def __init__(self, path="/captures/20200329", rx_alt=542, rx_lat=37.148745, rx_lon=-80.578557, signal_type='DSCOVR', usrp_type='B210'):
-        gr.top_block.__init__(self, "/captures/20200329/DSCOVR_RHCP_2020-03-29T20:57:22Z")
+        gr.top_block.__init__(self, "/captures/20200329/DSCOVR_RHCP_2020-04-01T22:26:39Z")
         Qt.QWidget.__init__(self)
-        self.setWindowTitle("/captures/20200329/DSCOVR_RHCP_2020-03-29T20:57:22Z")
+        self.setWindowTitle("/captures/20200329/DSCOVR_RHCP_2020-04-01T22:26:39Z")
         qtgui.util.check_set_qss()
         try:
             self.setWindowIcon(Qt.QIcon.fromTheme('gnuradio-grc'))
@@ -142,7 +141,7 @@ class dscovr_track(gr.top_block, Qt.QWidget):
         for c in range(4, 5):
             self.top_grid_layout.setColumnStretch(c, 1)
         self.uhd_usrp_source_1 = uhd.usrp_source(
-        	",".join(("", "")),
+        	",".join(("serial=30CF9D2", "")),
         	uhd.stream_args(
         		cpu_format="fc32",
         		channels=range(2),
@@ -162,23 +161,6 @@ class dscovr_track(gr.top_block, Qt.QWidget):
         self.uhd_usrp_source_1.set_antenna('RX2', 1)
         self.uhd_usrp_source_1.set_auto_dc_offset(True, 1)
         self.uhd_usrp_source_1.set_auto_iq_balance(True, 1)
-        self.sigmf_sink_0_0 = gr_sigmf.sink("cf32", fp_lhcp, gr_sigmf.sigmf_time_mode_relative, False)
-        self.sigmf_sink_0_0.set_global_meta("core:sample_rate", samp_rate)
-        self.sigmf_sink_0_0.set_global_meta("core:description", '')
-        self.sigmf_sink_0_0.set_global_meta("core:author", 'Zach Leffke, KJ4QLP')
-        self.sigmf_sink_0_0.set_global_meta("core:license", '')
-        self.sigmf_sink_0_0.set_global_meta("core:hw", "KJ4QLP 2.3m Dish, S-Band Septum Feed, Kuhne LNA, dual Pol")
-        self.sigmf_sink_0_0.set_global_meta('lro:pol', 'LHCP')
-        self.sigmf_sink_0_0.set_global_meta('uhd:rx_gain', 20)
-        self.sigmf_sink_0_0.set_global_meta('uhd:channel', 'B')
-        self.sigmf_sink_0_0.set_global_meta('uhd:antenna', 'RX2')
-        self.sigmf_sink_0_0.set_global_meta('uhd:usrp_type', 'B210')
-        self.sigmf_sink_0_0.set_global_meta('geo:rx_lat', 37.148745)
-        self.sigmf_sink_0_0.set_global_meta('geo:rx_lon', -80.578557)
-        self.sigmf_sink_0_0.set_global_meta('geo:rx_alt', 542)
-        self.sigmf_sink_0_0.set_global_meta('uhd:clock_src', 'external')
-        self.sigmf_sink_0_0.set_global_meta('uhd:time_src', 'external')
-
         self.qtgui_waterfall_sink_x_0_0 = qtgui.waterfall_sink_c(
         	2048, #size
         	firdes.WIN_BLACKMAN_hARRIS, #wintype
@@ -363,7 +345,6 @@ class dscovr_track(gr.top_block, Qt.QWidget):
         self.connect((self.uhd_usrp_source_1, 1), (self.qtgui_freq_sink_x_0_0, 0))
         self.connect((self.uhd_usrp_source_1, 0), (self.qtgui_waterfall_sink_x_0, 0))
         self.connect((self.uhd_usrp_source_1, 1), (self.qtgui_waterfall_sink_x_0_0, 0))
-        self.connect((self.uhd_usrp_source_1, 1), (self.sigmf_sink_0_0, 0))
 
     def closeEvent(self, event):
         self.settings = Qt.QSettings("GNU Radio", "dscovr_track")
@@ -375,8 +356,8 @@ class dscovr_track(gr.top_block, Qt.QWidget):
 
     def set_path(self, path):
         self.path = path
-        self.set_fp_lhcp("{:s}/{:s}".format(self.path, self.fn_lhcp))
         self.set_fp_rhcp("{:s}/{:s}".format(self.path, self.fn_rhcp))
+        self.set_fp_lhcp("{:s}/{:s}".format(self.path, self.fn_lhcp))
 
     def get_rx_alt(self):
         return self.rx_alt

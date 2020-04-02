@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ##################################################
 # GNU Radio Python Flow Graph
-# Title: /data2/captures/20200329/LRO_RHCP_2020-03-31T04:10:21Z
+# Title: /data2/captures/20200329/LRO_RHCP_2020-04-01T22:40:27Z
 # GNU Radio version: 3.7.13.5
 ##################################################
 
@@ -40,9 +40,9 @@ from gnuradio import qtgui
 class lro_track_2(gr.top_block, Qt.QWidget):
 
     def __init__(self, avg_len=256, nfft=2048, path="/data2/captures/20200329", record_hz=10, rx_alt=542, rx_lat=37.148745, rx_lon=-80.578557, signal_type='LRO', usrp_type='B210'):
-        gr.top_block.__init__(self, "/data2/captures/20200329/LRO_RHCP_2020-03-31T04:10:21Z")
+        gr.top_block.__init__(self, "/data2/captures/20200329/LRO_RHCP_2020-04-01T22:40:27Z")
         Qt.QWidget.__init__(self)
-        self.setWindowTitle("/data2/captures/20200329/LRO_RHCP_2020-03-31T04:10:21Z")
+        self.setWindowTitle("/data2/captures/20200329/LRO_RHCP_2020-04-01T22:40:27Z")
         qtgui.util.check_set_qss()
         try:
             self.setWindowIcon(Qt.QIcon.fromTheme('gnuradio-grc'))
@@ -89,7 +89,7 @@ class lro_track_2(gr.top_block, Qt.QWidget):
         self.lhcp_probe_signal_func = lhcp_probe_signal_func = 0
         self.lhcp_probe_offset_func = lhcp_probe_offset_func = 0
         self.lhcp_probe_noise_func = lhcp_probe_noise_func = 0
-        self.samp_rate = samp_rate = 250e3
+        self.samp_rate = samp_rate = 4e6
         self.rhcp_snr_var = rhcp_snr_var = "{:3.3f}".format(rhcp_probe_snr_func)
         self.rhcp_signal_var = rhcp_signal_var = "{:3.3f}".format(rhcp_probe_signal_func)
         self.rhcp_offset_var = rhcp_offset_var = "{:3.1f}".format(rhcp_probe_offset_func)

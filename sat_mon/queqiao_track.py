@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ##################################################
 # GNU Radio Python Flow Graph
-# Title: /captures/20200329/QUEQIAO_RHCP_2020-03-31T02:40:21Z
+# Title: /captures/20200329/QUEQIAO_RHCP_2020-04-01T22:22:31Z
 # GNU Radio version: 3.7.13.5
 ##################################################
 
@@ -34,9 +34,9 @@ from gnuradio import qtgui
 class queqiao_track(gr.top_block, Qt.QWidget):
 
     def __init__(self, path="/captures/20200329", rx_alt=542, rx_lat=37.148745, rx_lon=-80.578557, signal_type='QUEQIAO', usrp_type='B210'):
-        gr.top_block.__init__(self, "/captures/20200329/QUEQIAO_RHCP_2020-03-31T02:40:21Z")
+        gr.top_block.__init__(self, "/captures/20200329/QUEQIAO_RHCP_2020-04-01T22:22:31Z")
         Qt.QWidget.__init__(self)
-        self.setWindowTitle("/captures/20200329/QUEQIAO_RHCP_2020-03-31T02:40:21Z")
+        self.setWindowTitle("/captures/20200329/QUEQIAO_RHCP_2020-04-01T22:22:31Z")
         qtgui.util.check_set_qss()
         try:
             self.setWindowIcon(Qt.QIcon.fromTheme('gnuradio-grc'))

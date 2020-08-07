@@ -1,13 +1,9 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
-#
-# SPDX-License-Identifier: GPL-3.0
-#
 ##################################################
 # GNU Radio Python Flow Graph
 # Title: Fox1D Playback
-# Generated: Wed Oct 31 19:20:11 2018
-# GNU Radio version: 3.7.12.0
+# GNU Radio version: 3.7.13.4
 ##################################################
 
 if __name__ == '__main__':

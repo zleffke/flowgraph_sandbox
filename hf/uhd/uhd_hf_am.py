@@ -76,8 +76,10 @@ class uhd_hf_am(gr.top_block, Qt.QWidget):
         self.volume = volume = 1
         self.usb_lsb = usb_lsb = -1
         self.ssb_am = ssb_am = 0
-        self.selection = selection = ((1,0),(0,1))
-        self.lpf_cutoff = lpf_cutoff = 5e3
+        self.selection = selection = ((1,0,0),(0,1,0),(0,0,1))
+        self.pll_lbw = pll_lbw = 200
+        self.pll_freq = pll_freq = 100
+        self.lpf_cutoff = lpf_cutoff = 2e3
         self.interp = interp = 48
         self.freq_label = freq_label = rx_freq+fine_freq+coarse_freq
         self.decim = decim = samp_rate/1e3
@@ -123,8 +125,8 @@ class uhd_hf_am(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setRowStretch(r, 1)
         for c in range(5, 6):
             self.top_grid_layout.setColumnStretch(c, 1)
-        self._ssb_am_options = (0, 1, )
-        self._ssb_am_labels = ('SSB', 'AM', )
+        self._ssb_am_options = (0, 1, 2, )
+        self._ssb_am_labels = ('SSB', 'AM', 'AM*', )
         self._ssb_am_group_box = Qt.QGroupBox("ssb_am")
         self._ssb_am_box = Qt.QHBoxLayout()
         class variable_chooser_button_group(Qt.QButtonGroup):
@@ -155,12 +157,39 @@ class uhd_hf_am(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setRowStretch(r, 1)
         for c in range(0, 4):
             self.top_grid_layout.setColumnStretch(c, 1)
+        self._pll_lbw_tool_bar = Qt.QToolBar(self)
+        self._pll_lbw_tool_bar.addWidget(Qt.QLabel("pll_lbw"+": "))
+        self._pll_lbw_line_edit = Qt.QLineEdit(str(self.pll_lbw))
+        self._pll_lbw_tool_bar.addWidget(self._pll_lbw_line_edit)
+        self._pll_lbw_line_edit.returnPressed.connect(
+        	lambda: self.set_pll_lbw(eng_notation.str_to_num(str(self._pll_lbw_line_edit.text().toAscii()))))
+        self.top_grid_layout.addWidget(self._pll_lbw_tool_bar, 9, 7, 1, 1)
+        for r in range(9, 10):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(7, 8):
+            self.top_grid_layout.setColumnStretch(c, 1)
+        self._pll_freq_tool_bar = Qt.QToolBar(self)
+        self._pll_freq_tool_bar.addWidget(Qt.QLabel("pll_freq"+": "))
+        self._pll_freq_line_edit = Qt.QLineEdit(str(self.pll_freq))
+        self._pll_freq_tool_bar.addWidget(self._pll_freq_line_edit)
+        self._pll_freq_line_edit.returnPressed.connect(
+        	lambda: self.set_pll_freq(eng_notation.str_to_num(str(self._pll_freq_line_edit.text().toAscii()))))
+        self.top_grid_layout.addWidget(self._pll_freq_tool_bar, 9, 6, 1, 1)
+        for r in range(9, 10):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(6, 7):
+            self.top_grid_layout.setColumnStretch(c, 1)
+        self._lpf_cutoff_options = (2e3, 3e3, 4e3, 8e3, )
+        self._lpf_cutoff_labels = (str(self._lpf_cutoff_options[0]), str(self._lpf_cutoff_options[1]), str(self._lpf_cutoff_options[2]), str(self._lpf_cutoff_options[3]), )
         self._lpf_cutoff_tool_bar = Qt.QToolBar(self)
         self._lpf_cutoff_tool_bar.addWidget(Qt.QLabel("lpf_cutoff"+": "))
-        self._lpf_cutoff_line_edit = Qt.QLineEdit(str(self.lpf_cutoff))
-        self._lpf_cutoff_tool_bar.addWidget(self._lpf_cutoff_line_edit)
-        self._lpf_cutoff_line_edit.returnPressed.connect(
-        	lambda: self.set_lpf_cutoff(eng_notation.str_to_num(str(self._lpf_cutoff_line_edit.text().toAscii()))))
+        self._lpf_cutoff_combo_box = Qt.QComboBox()
+        self._lpf_cutoff_tool_bar.addWidget(self._lpf_cutoff_combo_box)
+        for label in self._lpf_cutoff_labels: self._lpf_cutoff_combo_box.addItem(label)
+        self._lpf_cutoff_callback = lambda i: Qt.QMetaObject.invokeMethod(self._lpf_cutoff_combo_box, "setCurrentIndex", Qt.Q_ARG("int", self._lpf_cutoff_options.index(i)))
+        self._lpf_cutoff_callback(self.lpf_cutoff)
+        self._lpf_cutoff_combo_box.currentIndexChanged.connect(
+        	lambda i: self.set_lpf_cutoff(self._lpf_cutoff_options[i]))
         self.top_grid_layout.addWidget(self._lpf_cutoff_tool_bar, 4, 5, 1, 1)
         for r in range(4, 5):
             self.top_grid_layout.setRowStretch(r, 1)
@@ -269,10 +298,10 @@ class uhd_hf_am(gr.top_block, Qt.QWidget):
         )
         self.uhd_usrp_source_1.set_clock_source('external', 0)
         self.uhd_usrp_source_1.set_time_source('external', 0)
-        self.uhd_usrp_source_1.set_subdev_spec('A:A', 0)
+        self.uhd_usrp_source_1.set_subdev_spec('A:AB', 0)
         self.uhd_usrp_source_1.set_samp_rate(samp_rate)
         self.uhd_usrp_source_1.set_time_now(uhd.time_spec(time.time()), uhd.ALL_MBOARDS)
-        self.uhd_usrp_source_1.set_center_freq(uhd.tune_request(rx_freq, samp_rate/2), 0)
+        self.uhd_usrp_source_1.set_center_freq(uhd.tune_request(rx_freq,), 0)
         self.uhd_usrp_source_1.set_gain(0, 0)
         self.uhd_usrp_source_1.set_auto_dc_offset(True, 0)
         self.uhd_usrp_source_1.set_auto_iq_balance(True, 0)
@@ -294,58 +323,6 @@ class uhd_hf_am(gr.top_block, Qt.QWidget):
                 taps=None,
                 fractional_bw=None,
         )
-        self.qtgui_time_sink_x_0_0 = qtgui.time_sink_f(
-        	1024, #size
-        	samp_rate/decim*interp/3/4, #samp_rate
-        	"", #name
-        	1 #number of inputs
-        )
-        self.qtgui_time_sink_x_0_0.set_update_time(0.010)
-        self.qtgui_time_sink_x_0_0.set_y_axis(-1, 100)
-
-        self.qtgui_time_sink_x_0_0.set_y_label('Amplitude', "")
-
-        self.qtgui_time_sink_x_0_0.enable_tags(-1, True)
-        self.qtgui_time_sink_x_0_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, qtgui.TRIG_SLOPE_POS, 0.0, 0, 0, "")
-        self.qtgui_time_sink_x_0_0.enable_autoscale(False)
-        self.qtgui_time_sink_x_0_0.enable_grid(True)
-        self.qtgui_time_sink_x_0_0.enable_axis_labels(True)
-        self.qtgui_time_sink_x_0_0.enable_control_panel(False)
-        self.qtgui_time_sink_x_0_0.enable_stem_plot(False)
-
-        if not True:
-          self.qtgui_time_sink_x_0_0.disable_legend()
-
-        labels = ['', '', '', '', '',
-                  '', '', '', '', '']
-        widths = [1, 1, 1, 1, 1,
-                  1, 1, 1, 1, 1]
-        colors = ["blue", "red", "green", "black", "cyan",
-                  "magenta", "yellow", "dark red", "dark green", "blue"]
-        styles = [1, 1, 1, 1, 1,
-                  1, 1, 1, 1, 1]
-        markers = [-1, -1, -1, -1, -1,
-                   -1, -1, -1, -1, -1]
-        alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
-                  1.0, 1.0, 1.0, 1.0, 1.0]
-
-        for i in xrange(1):
-            if len(labels[i]) == 0:
-                self.qtgui_time_sink_x_0_0.set_line_label(i, "Data {0}".format(i))
-            else:
-                self.qtgui_time_sink_x_0_0.set_line_label(i, labels[i])
-            self.qtgui_time_sink_x_0_0.set_line_width(i, widths[i])
-            self.qtgui_time_sink_x_0_0.set_line_color(i, colors[i])
-            self.qtgui_time_sink_x_0_0.set_line_style(i, styles[i])
-            self.qtgui_time_sink_x_0_0.set_line_marker(i, markers[i])
-            self.qtgui_time_sink_x_0_0.set_line_alpha(i, alphas[i])
-
-        self._qtgui_time_sink_x_0_0_win = sip.wrapinstance(self.qtgui_time_sink_x_0_0.pyqwidget(), Qt.QWidget)
-        self.top_grid_layout.addWidget(self._qtgui_time_sink_x_0_0_win, 6, 6, 3, 2)
-        for r in range(6, 9):
-            self.top_grid_layout.setRowStretch(r, 1)
-        for c in range(6, 8):
-            self.top_grid_layout.setColumnStretch(c, 1)
         self.qtgui_time_sink_x_0 = qtgui.time_sink_f(
         	1024, #size
         	samp_rate/decim*interp/3, #samp_rate
@@ -529,8 +506,6 @@ class uhd_hf_am(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setColumnStretch(c, 1)
         self.low_pass_filter_0_1 = filter.interp_fir_filter_fff(1, firdes.low_pass(
         	1, samp_rate/decim*interp/3, 1.5e3, 100, firdes.WIN_HAMMING, 6.76))
-        self.low_pass_filter_0_0_0 = filter.fir_filter_ccf(3, firdes.low_pass(
-        	1, samp_rate/decim*interp, lpf_cutoff, 100, firdes.WIN_HAMMING, 6.76))
         self.low_pass_filter_0_0 = filter.fir_filter_ccf(3, firdes.low_pass(
         	1, samp_rate/decim*interp, lpf_cutoff, 100, firdes.WIN_HAMMING, 6.76))
         self.low_pass_filter_0 = filter.interp_fir_filter_fff(1, firdes.low_pass(
@@ -568,6 +543,7 @@ class uhd_hf_am(gr.top_block, Qt.QWidget):
         self.blocks_multiply_const_vxx_1 = blocks.multiply_const_vff((usb_lsb, ))
         self.blocks_multiply_const_vxx_0 = blocks.multiply_const_vff((volume, ))
         self.blocks_moving_average_xx_0 = blocks.moving_average_ff(1000, 1/1000.0, 4000, 1)
+        self.blocks_complex_to_real_0_0 = blocks.complex_to_real(1)
         self.blocks_complex_to_real_0 = blocks.complex_to_real(1)
         self.blocks_complex_to_mag_squared_0 = blocks.complex_to_mag_squared(1)
         self.blocks_complex_to_float_0 = blocks.complex_to_float(1)
@@ -576,6 +552,7 @@ class uhd_hf_am(gr.top_block, Qt.QWidget):
         self.analog_sig_source_x_0_0_0 = analog.sig_source_f(samp_rate/decim*interp/3, analog.GR_SIN_WAVE, 1.5e3, 1, 0)
         self.analog_sig_source_x_0_0 = analog.sig_source_f(samp_rate/decim*interp/3, analog.GR_COS_WAVE, 1.5e3, 1, 0)
         self.analog_sig_source_x_0 = analog.sig_source_c(samp_rate, analog.GR_COS_WAVE, -1 * (fine_freq+coarse_freq), 1, 0)
+        self.analog_pll_carriertracking_cc_0 = analog.pll_carriertracking_cc(math.pi/pll_lbw, math.pi/pll_freq, -math.pi/pll_freq)
         self.analog_agc2_xx_0_0 = analog.agc2_ff(audio_attack, audio_decay, audio_ref, audio_gain)
         self.analog_agc2_xx_0_0.set_max_gain(audio_max_gain)
         self.analog_agc2_xx_0 = analog.agc2_cc(0.1, decay_rate, .3, 1000)
@@ -589,6 +566,8 @@ class uhd_hf_am(gr.top_block, Qt.QWidget):
         self.connect((self.analog_agc2_xx_0, 0), (self.blocks_multiply_xx_0, 0))
         self.connect((self.analog_agc2_xx_0, 0), (self.rational_resampler_xxx_0_0, 0))
         self.connect((self.analog_agc2_xx_0_0, 0), (self.blocks_multiply_const_vxx_0, 0))
+        self.connect((self.analog_pll_carriertracking_cc_0, 0), (self.blocks_complex_to_real_0, 0))
+        self.connect((self.analog_pll_carriertracking_cc_0, 0), (self.blocks_multiply_matrix_xx_0_0_0, 2))
         self.connect((self.analog_sig_source_x_0, 0), (self.blocks_multiply_xx_0, 1))
         self.connect((self.analog_sig_source_x_0_0, 0), (self.blocks_multiply_xx_1, 1))
         self.connect((self.analog_sig_source_x_0_0_0, 0), (self.blocks_multiply_xx_1_0, 1))
@@ -596,27 +575,27 @@ class uhd_hf_am(gr.top_block, Qt.QWidget):
         self.connect((self.blocks_complex_to_float_0, 0), (self.low_pass_filter_0, 0))
         self.connect((self.blocks_complex_to_float_0, 1), (self.low_pass_filter_0_1, 0))
         self.connect((self.blocks_complex_to_mag_squared_0, 0), (self.blocks_moving_average_xx_0, 0))
-        self.connect((self.blocks_complex_to_real_0, 0), (self.blocks_multiply_matrix_xx_0, 1))
+        self.connect((self.blocks_complex_to_real_0, 0), (self.blocks_multiply_matrix_xx_0, 2))
+        self.connect((self.blocks_complex_to_real_0_0, 0), (self.blocks_multiply_matrix_xx_0, 1))
         self.connect((self.blocks_moving_average_xx_0, 0), (self.blocks_multiply_const_vxx_1_0, 0))
         self.connect((self.blocks_multiply_const_vxx_0, 0), (self.audio_sink_0, 0))
         self.connect((self.blocks_multiply_const_vxx_0, 0), (self.qtgui_time_sink_x_0, 0))
         self.connect((self.blocks_multiply_const_vxx_1, 0), (self.blocks_add_xx_0, 1))
         self.connect((self.blocks_multiply_const_vxx_1_0, 0), (self.qtgui_number_sink_0, 0))
-        self.connect((self.blocks_multiply_const_vxx_1_0, 0), (self.qtgui_time_sink_x_0_0, 0))
         self.connect((self.blocks_multiply_matrix_xx_0, 0), (self.analog_agc2_xx_0_0, 0))
+        self.connect((self.blocks_multiply_matrix_xx_0_0_0, 0), (self.qtgui_freq_sink_x_0_0, 0))
         self.connect((self.blocks_multiply_matrix_xx_0_0_0, 0), (self.rational_resampler_xxx_1, 0))
         self.connect((self.blocks_multiply_xx_0, 0), (self.rational_resampler_xxx_0, 0))
         self.connect((self.blocks_multiply_xx_1, 0), (self.blocks_add_xx_0, 0))
         self.connect((self.blocks_multiply_xx_1_0, 0), (self.blocks_multiply_const_vxx_1, 0))
         self.connect((self.low_pass_filter_0, 0), (self.blocks_multiply_xx_1, 0))
+        self.connect((self.low_pass_filter_0_0, 0), (self.analog_pll_carriertracking_cc_0, 0))
         self.connect((self.low_pass_filter_0_0, 0), (self.blocks_complex_to_float_0, 0))
+        self.connect((self.low_pass_filter_0_0, 0), (self.blocks_complex_to_real_0_0, 0))
         self.connect((self.low_pass_filter_0_0, 0), (self.blocks_multiply_matrix_xx_0_0_0, 0))
-        self.connect((self.low_pass_filter_0_0, 0), (self.qtgui_freq_sink_x_0_0, 0))
-        self.connect((self.low_pass_filter_0_0_0, 0), (self.blocks_complex_to_real_0, 0))
-        self.connect((self.low_pass_filter_0_0_0, 0), (self.blocks_multiply_matrix_xx_0_0_0, 1))
+        self.connect((self.low_pass_filter_0_0, 0), (self.blocks_multiply_matrix_xx_0_0_0, 1))
         self.connect((self.low_pass_filter_0_1, 0), (self.blocks_multiply_xx_1_0, 0))
         self.connect((self.rational_resampler_xxx_0, 0), (self.low_pass_filter_0_0, 0))
-        self.connect((self.rational_resampler_xxx_0, 0), (self.low_pass_filter_0_0_0, 0))
         self.connect((self.rational_resampler_xxx_0, 0), (self.qtgui_freq_sink_x_0, 0))
         self.connect((self.rational_resampler_xxx_0_0, 0), (self.fosphor_qt_sink_c_0, 0))
         self.connect((self.rational_resampler_xxx_1, 0), (self.blocks_complex_to_mag_squared_0, 0))
@@ -634,13 +613,10 @@ class uhd_hf_am(gr.top_block, Qt.QWidget):
         self.samp_rate = samp_rate
         self.set_decim(self.samp_rate/1e3)
         self.uhd_usrp_source_1.set_samp_rate(self.samp_rate)
-        self.uhd_usrp_source_1.set_center_freq(uhd.tune_request(self.rx_freq, self.samp_rate/2), 0)
-        self.qtgui_time_sink_x_0_0.set_samp_rate(self.samp_rate/self.decim*self.interp/3/4)
         self.qtgui_time_sink_x_0.set_samp_rate(self.samp_rate/self.decim*self.interp/3)
         self.qtgui_freq_sink_x_0_0.set_frequency_range(0, self.samp_rate/self.decim * self.interp/3)
         self.qtgui_freq_sink_x_0.set_frequency_range(0, self.samp_rate/self.decim * self.interp)
         self.low_pass_filter_0_1.set_taps(firdes.low_pass(1, self.samp_rate/self.decim*self.interp/3, 1.5e3, 100, firdes.WIN_HAMMING, 6.76))
-        self.low_pass_filter_0_0_0.set_taps(firdes.low_pass(1, self.samp_rate/self.decim*self.interp, self.lpf_cutoff, 100, firdes.WIN_HAMMING, 6.76))
         self.low_pass_filter_0_0.set_taps(firdes.low_pass(1, self.samp_rate/self.decim*self.interp, self.lpf_cutoff, 100, firdes.WIN_HAMMING, 6.76))
         self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.samp_rate/self.decim*self.interp/3, 1.5e3, 100, firdes.WIN_HAMMING, 6.76))
         self.fosphor_qt_sink_c_0.set_frequency_range(self.rx_freq, self.samp_rate/int(self.samp_rate/1e3)*200)
@@ -653,7 +629,7 @@ class uhd_hf_am(gr.top_block, Qt.QWidget):
 
     def set_rx_freq(self, rx_freq):
         self.rx_freq = rx_freq
-        self.uhd_usrp_source_1.set_center_freq(uhd.tune_request(self.rx_freq, self.samp_rate/2), 0)
+        self.uhd_usrp_source_1.set_center_freq(uhd.tune_request(self.rx_freq,), 0)
         self.set_freq_label(self._freq_label_formatter(self.rx_freq+self.fine_freq+self.coarse_freq))
         self.fosphor_qt_sink_c_0.set_frequency_range(self.rx_freq, self.samp_rate/int(self.samp_rate/1e3)*200)
 
@@ -705,13 +681,29 @@ class uhd_hf_am(gr.top_block, Qt.QWidget):
         self.blocks_multiply_matrix_xx_0_0_0.set_A((self.selection[self.ssb_am],))
         self.blocks_multiply_matrix_xx_0.set_A((self.selection[self.ssb_am],))
 
+    def get_pll_lbw(self):
+        return self.pll_lbw
+
+    def set_pll_lbw(self, pll_lbw):
+        self.pll_lbw = pll_lbw
+        Qt.QMetaObject.invokeMethod(self._pll_lbw_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.pll_lbw)))
+        self.analog_pll_carriertracking_cc_0.set_loop_bandwidth(math.pi/self.pll_lbw)
+
+    def get_pll_freq(self):
+        return self.pll_freq
+
+    def set_pll_freq(self, pll_freq):
+        self.pll_freq = pll_freq
+        Qt.QMetaObject.invokeMethod(self._pll_freq_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.pll_freq)))
+        self.analog_pll_carriertracking_cc_0.set_max_freq(math.pi/self.pll_freq)
+        self.analog_pll_carriertracking_cc_0.set_min_freq(-math.pi/self.pll_freq)
+
     def get_lpf_cutoff(self):
         return self.lpf_cutoff
 
     def set_lpf_cutoff(self, lpf_cutoff):
         self.lpf_cutoff = lpf_cutoff
-        Qt.QMetaObject.invokeMethod(self._lpf_cutoff_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.lpf_cutoff)))
-        self.low_pass_filter_0_0_0.set_taps(firdes.low_pass(1, self.samp_rate/self.decim*self.interp, self.lpf_cutoff, 100, firdes.WIN_HAMMING, 6.76))
+        self._lpf_cutoff_callback(self.lpf_cutoff)
         self.low_pass_filter_0_0.set_taps(firdes.low_pass(1, self.samp_rate/self.decim*self.interp, self.lpf_cutoff, 100, firdes.WIN_HAMMING, 6.76))
 
     def get_interp(self):
@@ -719,12 +711,10 @@ class uhd_hf_am(gr.top_block, Qt.QWidget):
 
     def set_interp(self, interp):
         self.interp = interp
-        self.qtgui_time_sink_x_0_0.set_samp_rate(self.samp_rate/self.decim*self.interp/3/4)
         self.qtgui_time_sink_x_0.set_samp_rate(self.samp_rate/self.decim*self.interp/3)
         self.qtgui_freq_sink_x_0_0.set_frequency_range(0, self.samp_rate/self.decim * self.interp/3)
         self.qtgui_freq_sink_x_0.set_frequency_range(0, self.samp_rate/self.decim * self.interp)
         self.low_pass_filter_0_1.set_taps(firdes.low_pass(1, self.samp_rate/self.decim*self.interp/3, 1.5e3, 100, firdes.WIN_HAMMING, 6.76))
-        self.low_pass_filter_0_0_0.set_taps(firdes.low_pass(1, self.samp_rate/self.decim*self.interp, self.lpf_cutoff, 100, firdes.WIN_HAMMING, 6.76))
         self.low_pass_filter_0_0.set_taps(firdes.low_pass(1, self.samp_rate/self.decim*self.interp, self.lpf_cutoff, 100, firdes.WIN_HAMMING, 6.76))
         self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.samp_rate/self.decim*self.interp/3, 1.5e3, 100, firdes.WIN_HAMMING, 6.76))
         self.analog_sig_source_x_0_0_0.set_sampling_freq(self.samp_rate/self.decim*self.interp/3)
@@ -742,12 +732,10 @@ class uhd_hf_am(gr.top_block, Qt.QWidget):
 
     def set_decim(self, decim):
         self.decim = decim
-        self.qtgui_time_sink_x_0_0.set_samp_rate(self.samp_rate/self.decim*self.interp/3/4)
         self.qtgui_time_sink_x_0.set_samp_rate(self.samp_rate/self.decim*self.interp/3)
         self.qtgui_freq_sink_x_0_0.set_frequency_range(0, self.samp_rate/self.decim * self.interp/3)
         self.qtgui_freq_sink_x_0.set_frequency_range(0, self.samp_rate/self.decim * self.interp)
         self.low_pass_filter_0_1.set_taps(firdes.low_pass(1, self.samp_rate/self.decim*self.interp/3, 1.5e3, 100, firdes.WIN_HAMMING, 6.76))
-        self.low_pass_filter_0_0_0.set_taps(firdes.low_pass(1, self.samp_rate/self.decim*self.interp, self.lpf_cutoff, 100, firdes.WIN_HAMMING, 6.76))
         self.low_pass_filter_0_0.set_taps(firdes.low_pass(1, self.samp_rate/self.decim*self.interp, self.lpf_cutoff, 100, firdes.WIN_HAMMING, 6.76))
         self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.samp_rate/self.decim*self.interp/3, 1.5e3, 100, firdes.WIN_HAMMING, 6.76))
         self.analog_sig_source_x_0_0_0.set_sampling_freq(self.samp_rate/self.decim*self.interp/3)

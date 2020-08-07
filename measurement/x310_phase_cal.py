@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ##################################################
 # GNU Radio Python Flow Graph
-# Title: X310 Phase Calibration, Start Time [UTC]: 2020-07-12T05:39:34.049043Z
+# Title: X310 Phase Calibration, Start Time [UTC]: 2020-08-07T03:06:19.775945Z
 # GNU Radio version: 3.7.13.4
 ##################################################
 
@@ -37,9 +37,9 @@ from gnuradio import qtgui
 class x310_phase_cal(gr.top_block, Qt.QWidget):
 
     def __init__(self):
-        gr.top_block.__init__(self, "X310 Phase Calibration, Start Time [UTC]: 2020-07-12T05:39:34.049043Z")
+        gr.top_block.__init__(self, "X310 Phase Calibration, Start Time [UTC]: 2020-08-07T03:06:19.775945Z")
         Qt.QWidget.__init__(self)
-        self.setWindowTitle("X310 Phase Calibration, Start Time [UTC]: 2020-07-12T05:39:34.049043Z")
+        self.setWindowTitle("X310 Phase Calibration, Start Time [UTC]: 2020-08-07T03:06:19.775945Z")
         qtgui.util.check_set_qss()
         try:
             self.setWindowIcon(Qt.QIcon.fromTheme('gnuradio-grc'))
@@ -65,9 +65,11 @@ class x310_phase_cal(gr.top_block, Qt.QWidget):
         # Variables
         ##################################################
         self.ts_str = ts_str = dt.strftime(dt.utcnow(), "%Y-%m-%dT%H:%M:%S.%fZ")
+        self.phase_deg = phase_deg = 0
         self.title_str = title_str = "X310 Phase Calibration, Start Time [UTC]: {:s}".format(ts_str)
         self.samp_rate = samp_rate = .5e6
         self.rx_freq = rx_freq = 10e6
+        self.phase_rad = phase_rad = phase_deg * math.pi/180.0
         self.decim = decim = 10
 
         ##################################################
@@ -216,7 +218,7 @@ class x310_phase_cal(gr.top_block, Qt.QWidget):
         	2048, #size
         	firdes.WIN_BLACKMAN_hARRIS, #wintype
         	rx_freq*0, #fc
-        	samp_rate, #bw
+        	samp_rate / decim, #bw
         	"East/West", #name
         	1 #number of inputs
         )
@@ -263,7 +265,7 @@ class x310_phase_cal(gr.top_block, Qt.QWidget):
         	2048, #size
         	firdes.WIN_BLACKMAN_hARRIS, #wintype
         	rx_freq*0, #fc
-        	samp_rate, #bw
+        	samp_rate / decim, #bw
         	"North/South", #name
         	1 #number of inputs
         )
@@ -306,8 +308,20 @@ class x310_phase_cal(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setRowStretch(r, 1)
         for c in range(0, 4):
             self.top_grid_layout.setColumnStretch(c, 1)
+        self._phase_deg_tool_bar = Qt.QToolBar(self)
+        self._phase_deg_tool_bar.addWidget(Qt.QLabel('Phase Shift [deg]'+": "))
+        self._phase_deg_line_edit = Qt.QLineEdit(str(self.phase_deg))
+        self._phase_deg_tool_bar.addWidget(self._phase_deg_line_edit)
+        self._phase_deg_line_edit.returnPressed.connect(
+        	lambda: self.set_phase_deg(eng_notation.str_to_num(str(self._phase_deg_line_edit.text().toAscii()))))
+        self.top_grid_layout.addWidget(self._phase_deg_tool_bar)
+        self.low_pass_filter_0_0 = filter.fir_filter_ccf(1, firdes.low_pass(
+        	1, samp_rate / decim, 5e3, 1e3, firdes.WIN_HAMMING, 6.76))
+        self.low_pass_filter_0 = filter.fir_filter_ccf(1, firdes.low_pass(
+        	1, samp_rate / decim, 3e3, 1e3, firdes.WIN_HAMMING, 6.76))
         self.blocks_sub_xx_0 = blocks.sub_ff(1)
         self.blocks_null_sink_0 = blocks.null_sink(gr.sizeof_float*1)
+        self.blocks_multiply_const_vxx_1 = blocks.multiply_const_vcc((complex(math.cos(phase_rad),math.sin(phase_rad)), ))
         self.blocks_multiply_const_vxx_0_0 = blocks.multiply_const_vff((180.0/math.pi, ))
         self.blocks_multiply_const_vxx_0 = blocks.multiply_const_vff((180.0/math.pi, ))
         self.blocks_complex_to_magphase_1 = blocks.complex_to_magphase(1)
@@ -332,13 +346,16 @@ class x310_phase_cal(gr.top_block, Qt.QWidget):
         self.connect((self.blocks_multiply_const_vxx_0, 0), (self.qtgui_time_sink_x_0_0, 0))
         self.connect((self.blocks_multiply_const_vxx_0_0, 0), (self.blocks_sub_xx_0, 1))
         self.connect((self.blocks_multiply_const_vxx_0_0, 0), (self.qtgui_time_sink_x_0_0, 1))
+        self.connect((self.blocks_multiply_const_vxx_1, 0), (self.analog_agc2_xx_1, 0))
         self.connect((self.blocks_sub_xx_0, 0), (self.qtgui_number_sink_0, 0))
-        self.connect((self.rational_resampler_xxx_0, 0), (self.blocks_complex_to_magphase_1, 0))
-        self.connect((self.rational_resampler_xxx_0, 0), (self.qtgui_freq_sink_x_0_0, 0))
-        self.connect((self.rational_resampler_xxx_0_0, 0), (self.blocks_complex_to_magphase_0, 0))
-        self.connect((self.rational_resampler_xxx_0_0, 0), (self.qtgui_freq_sink_x_0, 0))
+        self.connect((self.low_pass_filter_0, 0), (self.blocks_complex_to_magphase_1, 0))
+        self.connect((self.low_pass_filter_0, 0), (self.qtgui_freq_sink_x_0_0, 0))
+        self.connect((self.low_pass_filter_0_0, 0), (self.blocks_complex_to_magphase_0, 0))
+        self.connect((self.low_pass_filter_0_0, 0), (self.qtgui_freq_sink_x_0, 0))
+        self.connect((self.rational_resampler_xxx_0, 0), (self.low_pass_filter_0, 0))
+        self.connect((self.rational_resampler_xxx_0_0, 0), (self.low_pass_filter_0_0, 0))
         self.connect((self.uhd_usrp_source_1, 0), (self.analog_agc2_xx_0, 0))
-        self.connect((self.uhd_usrp_source_1, 1), (self.analog_agc2_xx_1, 0))
+        self.connect((self.uhd_usrp_source_1, 1), (self.blocks_multiply_const_vxx_1, 0))
 
     def closeEvent(self, event):
         self.settings = Qt.QSettings("GNU Radio", "x310_phase_cal")
@@ -351,6 +368,14 @@ class x310_phase_cal(gr.top_block, Qt.QWidget):
     def set_ts_str(self, ts_str):
         self.ts_str = ts_str
         self.set_title_str("X310 Phase Calibration, Start Time [UTC]: {:s}".format(self.ts_str))
+
+    def get_phase_deg(self):
+        return self.phase_deg
+
+    def set_phase_deg(self, phase_deg):
+        self.phase_deg = phase_deg
+        self.set_phase_rad(self.phase_deg * math.pi/180.0)
+        Qt.QMetaObject.invokeMethod(self._phase_deg_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.phase_deg)))
 
     def get_title_str(self):
         return self.title_str
@@ -366,8 +391,10 @@ class x310_phase_cal(gr.top_block, Qt.QWidget):
         Qt.QMetaObject.invokeMethod(self._samp_rate_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.samp_rate)))
         self.uhd_usrp_source_1.set_samp_rate(self.samp_rate)
         self.qtgui_time_sink_x_0_0.set_samp_rate(self.samp_rate / self.decim)
-        self.qtgui_freq_sink_x_0_0.set_frequency_range(self.rx_freq*0, self.samp_rate)
-        self.qtgui_freq_sink_x_0.set_frequency_range(self.rx_freq*0, self.samp_rate)
+        self.qtgui_freq_sink_x_0_0.set_frequency_range(self.rx_freq*0, self.samp_rate / self.decim)
+        self.qtgui_freq_sink_x_0.set_frequency_range(self.rx_freq*0, self.samp_rate / self.decim)
+        self.low_pass_filter_0_0.set_taps(firdes.low_pass(1, self.samp_rate / self.decim, 5e3, 1e3, firdes.WIN_HAMMING, 6.76))
+        self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.samp_rate / self.decim, 3e3, 1e3, firdes.WIN_HAMMING, 6.76))
 
     def get_rx_freq(self):
         return self.rx_freq
@@ -377,8 +404,15 @@ class x310_phase_cal(gr.top_block, Qt.QWidget):
         Qt.QMetaObject.invokeMethod(self._rx_freq_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.rx_freq)))
         self.uhd_usrp_source_1.set_center_freq(uhd.tune_request(self.rx_freq), 0)
         self.uhd_usrp_source_1.set_center_freq(uhd.tune_request(self.rx_freq), 1)
-        self.qtgui_freq_sink_x_0_0.set_frequency_range(self.rx_freq*0, self.samp_rate)
-        self.qtgui_freq_sink_x_0.set_frequency_range(self.rx_freq*0, self.samp_rate)
+        self.qtgui_freq_sink_x_0_0.set_frequency_range(self.rx_freq*0, self.samp_rate / self.decim)
+        self.qtgui_freq_sink_x_0.set_frequency_range(self.rx_freq*0, self.samp_rate / self.decim)
+
+    def get_phase_rad(self):
+        return self.phase_rad
+
+    def set_phase_rad(self, phase_rad):
+        self.phase_rad = phase_rad
+        self.blocks_multiply_const_vxx_1.set_k((complex(math.cos(self.phase_rad),math.sin(self.phase_rad)), ))
 
     def get_decim(self):
         return self.decim
@@ -386,6 +420,10 @@ class x310_phase_cal(gr.top_block, Qt.QWidget):
     def set_decim(self, decim):
         self.decim = decim
         self.qtgui_time_sink_x_0_0.set_samp_rate(self.samp_rate / self.decim)
+        self.qtgui_freq_sink_x_0_0.set_frequency_range(self.rx_freq*0, self.samp_rate / self.decim)
+        self.qtgui_freq_sink_x_0.set_frequency_range(self.rx_freq*0, self.samp_rate / self.decim)
+        self.low_pass_filter_0_0.set_taps(firdes.low_pass(1, self.samp_rate / self.decim, 5e3, 1e3, firdes.WIN_HAMMING, 6.76))
+        self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.samp_rate / self.decim, 3e3, 1e3, firdes.WIN_HAMMING, 6.76))
 
 
 def main(top_block_cls=x310_phase_cal, options=None):

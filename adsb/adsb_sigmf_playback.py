@@ -91,7 +91,7 @@ class adsb_sigmf_playback(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setRowStretch(r, 1)
         for c in range(4, 8):
             self.top_grid_layout.setColumnStretch(c, 1)
-        self.sigmf_source_0 = gr_sigmf.source('/home/zleffke/captures/nsat/discone_test_1/018_ADSB_Multiple_2019-04-20T17:36:56.sigmf-data', "cf32" + ("_le" if sys.byteorder == "little" else "_be"), True)
+        self.sigmf_source_0 = gr_sigmf.source('/home/zleffke/captures/nsat/20190420/discone_test_1/017_ADSB_Multiple_2019-04-20T17:36:43.sigmf-data', "cf32" + ("_le" if sys.byteorder == "little" else "_be"), True)
         self.rational_resampler_xxx_0 = filter.rational_resampler_ccc(
                 interpolation=1,
                 decimation=10,
@@ -207,7 +207,6 @@ class adsb_sigmf_playback(gr.top_block, Qt.QWidget):
         for c in range(0, 4):
             self.top_grid_layout.setColumnStretch(c, 1)
         self.blocks_throttle_1 = blocks.throttle(gr.sizeof_gr_complex*1, samp_rate,True)
-        self.blocks_socket_pdu_0 = blocks.socket_pdu("TCP_SERVER", '127.0.0.1', '52001', 10000, False)
         self.blocks_multiply_xx_0 = blocks.multiply_vcc(1)
         self.blocks_message_debug_0_0 = blocks.message_debug()
         self.blocks_message_debug_0 = blocks.message_debug()
@@ -226,7 +225,6 @@ class adsb_sigmf_playback(gr.top_block, Qt.QWidget):
         # Connections
         ##################################################
         self.msg_connect((self.adsb_decoder_0, 'decoded'), (self.blocks_message_debug_0, 'print_pdu'))
-        self.msg_connect((self.adsb_decoder_0, 'decoded'), (self.blocks_socket_pdu_0, 'pdus'))
         self.msg_connect((self.adsb_demod_0, 'demodulated'), (self.adsb_decoder_0, 'demodulated'))
         self.msg_connect((self.sigmf_source_0, 'meta'), (self.blocks_message_debug_0_0, 'print'))
         self.connect((self.adsb_demod_0, 0), (self.qtgui_time_sink_x_0, 0))

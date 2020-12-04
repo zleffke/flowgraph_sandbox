@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ##################################################
 # GNU Radio Python Flow Graph
-# Title: X310 Phase Calibration, Start Time [UTC]: 2020-08-08T03:19:17.667962Z
+# Title: CODAR Dual channel With Phase Calibration, Start Time [UTC]: 2020-09-08T03:24:03.087834Z
 # GNU Radio version: 3.7.13.4
 ##################################################
 
@@ -21,11 +21,13 @@ from datetime import datetime as dt; import string; import math
 from gnuradio import analog
 from gnuradio import blocks
 from gnuradio import eng_notation
+from gnuradio import fft
 from gnuradio import filter
 from gnuradio import gr
 from gnuradio import qtgui
 from gnuradio import uhd
 from gnuradio.eng_option import eng_option
+from gnuradio.fft import window
 from gnuradio.filter import firdes
 from gnuradio.qtgui import Range, RangeWidget
 from optparse import OptionParser
@@ -35,12 +37,12 @@ import time
 from gnuradio import qtgui
 
 
-class x310_phase_cal_2(gr.top_block, Qt.QWidget):
+class codar_x310_corr_phase(gr.top_block, Qt.QWidget):
 
     def __init__(self):
-        gr.top_block.__init__(self, "X310 Phase Calibration, Start Time [UTC]: 2020-08-08T03:19:17.667962Z")
+        gr.top_block.__init__(self, "CODAR Dual channel With Phase Calibration, Start Time [UTC]: 2020-09-08T03:24:03.087834Z")
         Qt.QWidget.__init__(self)
-        self.setWindowTitle("X310 Phase Calibration, Start Time [UTC]: 2020-08-08T03:19:17.667962Z")
+        self.setWindowTitle("CODAR Dual channel With Phase Calibration, Start Time [UTC]: 2020-09-08T03:24:03.087834Z")
         qtgui.util.check_set_qss()
         try:
             self.setWindowIcon(Qt.QIcon.fromTheme('gnuradio-grc'))
@@ -58,7 +60,7 @@ class x310_phase_cal_2(gr.top_block, Qt.QWidget):
         self.top_grid_layout = Qt.QGridLayout()
         self.top_layout.addLayout(self.top_grid_layout)
 
-        self.settings = Qt.QSettings("GNU Radio", "x310_phase_cal_2")
+        self.settings = Qt.QSettings("GNU Radio", "codar_x310_corr_phase")
         self.restoreGeometry(self.settings.value("geometry").toByteArray())
 
 
@@ -68,14 +70,17 @@ class x310_phase_cal_2(gr.top_block, Qt.QWidget):
         self.ts_str = ts_str = dt.strftime(dt.utcnow(), "%Y-%m-%dT%H:%M:%S.%fZ")
         self.phase_shift = phase_shift = 90
         self.phase_deg = phase_deg = 0
-        self.title_str = title_str = "X310 Phase Calibration, Start Time [UTC]: {:s}".format(ts_str)
-        self.samp_rate = samp_rate = .5e6
-        self.rx_freq = rx_freq = 4.45e6
+        self.title_str = title_str = "CODAR Dual channel With Phase Calibration, Start Time [UTC]: {:s}".format(ts_str)
+        self.samp_rate = samp_rate = 2e6
+        self.rx_freq = rx_freq = 4.451e6
         self.phase_rad2 = phase_rad2 = phase_shift * math.pi/180.0
         self.phase_rad = phase_rad = phase_deg * math.pi/180.0
         self.phase_delta_avg = phase_delta_avg = 1000
-        self.lpf_cutoff = lpf_cutoff = 10e3
+        self.nfft = nfft = 1024*32
+        self.lpf_cutoff = lpf_cutoff = 12.5e3
+        self.delay = delay = 0
         self.decim = decim = 10
+        self.c_ms = c_ms = 299792458
 
         ##################################################
         # Blocks
@@ -96,6 +101,11 @@ class x310_phase_cal_2(gr.top_block, Qt.QWidget):
         self.main_tab_grid_layout_2 = Qt.QGridLayout()
         self.main_tab_layout_2.addLayout(self.main_tab_grid_layout_2)
         self.main_tab.addTab(self.main_tab_widget_2, 'RHCP_LHCP')
+        self.main_tab_widget_3 = Qt.QWidget()
+        self.main_tab_layout_3 = Qt.QBoxLayout(Qt.QBoxLayout.TopToBottom, self.main_tab_widget_3)
+        self.main_tab_grid_layout_3 = Qt.QGridLayout()
+        self.main_tab_layout_3.addLayout(self.main_tab_grid_layout_3)
+        self.main_tab.addTab(self.main_tab_widget_3, 'Correlation')
         self.top_grid_layout.addWidget(self.main_tab, 1, 0, 1, 1)
         for r in range(1, 2):
             self.top_grid_layout.setRowStretch(r, 1)
@@ -145,6 +155,17 @@ class x310_phase_cal_2(gr.top_block, Qt.QWidget):
             self.main_tab_grid_layout_0.setRowStretch(r, 1)
         for c in range(2, 3):
             self.main_tab_grid_layout_0.setColumnStretch(c, 1)
+        self._delay_tool_bar = Qt.QToolBar(self)
+        self._delay_tool_bar.addWidget(Qt.QLabel('corr_delay'+": "))
+        self._delay_line_edit = Qt.QLineEdit(str(self.delay))
+        self._delay_tool_bar.addWidget(self._delay_line_edit)
+        self._delay_line_edit.returnPressed.connect(
+        	lambda: self.set_delay(eng_notation.str_to_num(str(self._delay_line_edit.text().toAscii()))))
+        self.main_tab_grid_layout_1.addWidget(self._delay_tool_bar, 8, 0, 1, 1)
+        for r in range(8, 9):
+            self.main_tab_grid_layout_1.setRowStretch(r, 1)
+        for c in range(0, 1):
+            self.main_tab_grid_layout_1.setColumnStretch(c, 1)
         self.uhd_usrp_source_1 = uhd.usrp_source(
         	",".join(("addr=192.168.10.2", "")),
         	uhd.stream_args(
@@ -339,6 +360,58 @@ class x310_phase_cal_2(gr.top_block, Qt.QWidget):
             self.main_tab_grid_layout_0.setRowStretch(r, 1)
         for c in range(0, 4):
             self.main_tab_grid_layout_0.setColumnStretch(c, 1)
+        self.qtgui_time_sink_x_0_0_1 = qtgui.time_sink_f(
+        	10, #size
+        	samp_rate/decim, #samp_rate
+        	"", #name
+        	2 #number of inputs
+        )
+        self.qtgui_time_sink_x_0_0_1.set_update_time(0.010)
+        self.qtgui_time_sink_x_0_0_1.set_y_axis(-20, 20)
+
+        self.qtgui_time_sink_x_0_0_1.set_y_label('Range Delta [km]', "")
+
+        self.qtgui_time_sink_x_0_0_1.enable_tags(-1, True)
+        self.qtgui_time_sink_x_0_0_1.set_trigger_mode(qtgui.TRIG_MODE_FREE, qtgui.TRIG_SLOPE_POS, 0.0, 0, 0, "")
+        self.qtgui_time_sink_x_0_0_1.enable_autoscale(False)
+        self.qtgui_time_sink_x_0_0_1.enable_grid(False)
+        self.qtgui_time_sink_x_0_0_1.enable_axis_labels(True)
+        self.qtgui_time_sink_x_0_0_1.enable_control_panel(False)
+        self.qtgui_time_sink_x_0_0_1.enable_stem_plot(False)
+
+        if not True:
+          self.qtgui_time_sink_x_0_0_1.disable_legend()
+
+        labels = ['', '', '', '', '',
+                  '', '', '', '', '']
+        widths = [1, 1, 1, 1, 1,
+                  1, 1, 1, 1, 1]
+        colors = ["blue", "red", "green", "black", "cyan",
+                  "magenta", "yellow", "dark red", "dark green", "blue"]
+        styles = [1, 1, 1, 1, 1,
+                  1, 1, 1, 1, 1]
+        markers = [-1, -1, -1, -1, -1,
+                   -1, -1, -1, -1, -1]
+        alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
+                  1.0, 1.0, 1.0, 1.0, 1.0]
+
+        for i in xrange(2):
+            if len(labels[i]) == 0:
+                self.qtgui_time_sink_x_0_0_1.set_line_label(i, "Data {0}".format(i))
+            else:
+                self.qtgui_time_sink_x_0_0_1.set_line_label(i, labels[i])
+            self.qtgui_time_sink_x_0_0_1.set_line_width(i, widths[i])
+            self.qtgui_time_sink_x_0_0_1.set_line_color(i, colors[i])
+            self.qtgui_time_sink_x_0_0_1.set_line_style(i, styles[i])
+            self.qtgui_time_sink_x_0_0_1.set_line_marker(i, markers[i])
+            self.qtgui_time_sink_x_0_0_1.set_line_alpha(i, alphas[i])
+
+        self._qtgui_time_sink_x_0_0_1_win = sip.wrapinstance(self.qtgui_time_sink_x_0_0_1.pyqwidget(), Qt.QWidget)
+        self.main_tab_grid_layout_3.addWidget(self._qtgui_time_sink_x_0_0_1_win, 4, 0, 2, 4)
+        for r in range(4, 6):
+            self.main_tab_grid_layout_3.setRowStretch(r, 1)
+        for c in range(0, 4):
+            self.main_tab_grid_layout_3.setColumnStretch(c, 1)
         self.qtgui_time_sink_x_0_0_0 = qtgui.time_sink_f(
         	8192, #size
         	samp_rate / decim, #samp_rate
@@ -443,6 +516,187 @@ class x310_phase_cal_2(gr.top_block, Qt.QWidget):
             self.main_tab_grid_layout_1.setRowStretch(r, 1)
         for c in range(0, 4):
             self.main_tab_grid_layout_1.setColumnStretch(c, 1)
+        self.qtgui_time_sink_x_0 = qtgui.time_sink_f(
+        	nfft, #size
+        	samp_rate/decim, #samp_rate
+        	"", #name
+        	1 #number of inputs
+        )
+        self.qtgui_time_sink_x_0.set_update_time(0.10)
+        self.qtgui_time_sink_x_0.set_y_axis(-1, 1)
+
+        self.qtgui_time_sink_x_0.set_y_label('Correlation', "")
+
+        self.qtgui_time_sink_x_0.enable_tags(-1, True)
+        self.qtgui_time_sink_x_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, qtgui.TRIG_SLOPE_POS, 0.0, 0, 0, "")
+        self.qtgui_time_sink_x_0.enable_autoscale(True)
+        self.qtgui_time_sink_x_0.enable_grid(False)
+        self.qtgui_time_sink_x_0.enable_axis_labels(True)
+        self.qtgui_time_sink_x_0.enable_control_panel(False)
+        self.qtgui_time_sink_x_0.enable_stem_plot(False)
+
+        if not True:
+          self.qtgui_time_sink_x_0.disable_legend()
+
+        labels = ['', '', '', '', '',
+                  '', '', '', '', '']
+        widths = [1, 1, 1, 1, 1,
+                  1, 1, 1, 1, 1]
+        colors = ["blue", "red", "green", "black", "cyan",
+                  "magenta", "yellow", "dark red", "dark green", "blue"]
+        styles = [1, 1, 1, 1, 1,
+                  1, 1, 1, 1, 1]
+        markers = [-1, -1, -1, -1, -1,
+                   -1, -1, -1, -1, -1]
+        alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
+                  1.0, 1.0, 1.0, 1.0, 1.0]
+
+        for i in xrange(1):
+            if len(labels[i]) == 0:
+                self.qtgui_time_sink_x_0.set_line_label(i, "Data {0}".format(i))
+            else:
+                self.qtgui_time_sink_x_0.set_line_label(i, labels[i])
+            self.qtgui_time_sink_x_0.set_line_width(i, widths[i])
+            self.qtgui_time_sink_x_0.set_line_color(i, colors[i])
+            self.qtgui_time_sink_x_0.set_line_style(i, styles[i])
+            self.qtgui_time_sink_x_0.set_line_marker(i, markers[i])
+            self.qtgui_time_sink_x_0.set_line_alpha(i, alphas[i])
+
+        self._qtgui_time_sink_x_0_win = sip.wrapinstance(self.qtgui_time_sink_x_0.pyqwidget(), Qt.QWidget)
+        self.main_tab_grid_layout_3.addWidget(self._qtgui_time_sink_x_0_win, 0, 4, 4, 4)
+        for r in range(0, 4):
+            self.main_tab_grid_layout_3.setRowStretch(r, 1)
+        for c in range(4, 8):
+            self.main_tab_grid_layout_3.setColumnStretch(c, 1)
+        self.qtgui_number_sink_0 = qtgui.number_sink(
+            gr.sizeof_float,
+            0,
+            qtgui.NUM_GRAPH_NONE,
+            3
+        )
+        self.qtgui_number_sink_0.set_update_time(0.010)
+        self.qtgui_number_sink_0.set_title("")
+
+        labels = ['Delay', '', 'Range Delta', '', '',
+                  '', '', '', '', '']
+        units = ['[usec]', '', '[km]', '', '',
+                 '', '', '', '', '']
+        colors = [("black", "black"), ("black", "black"), ("black", "black"), ("black", "black"), ("black", "black"),
+                  ("black", "black"), ("black", "black"), ("black", "black"), ("black", "black"), ("black", "black")]
+        factor = [1, 1, 1, 1, 1,
+                  1, 1, 1, 1, 1]
+        for i in xrange(3):
+            self.qtgui_number_sink_0.set_min(i, -1)
+            self.qtgui_number_sink_0.set_max(i, 1)
+            self.qtgui_number_sink_0.set_color(i, colors[i][0], colors[i][1])
+            if len(labels[i]) == 0:
+                self.qtgui_number_sink_0.set_label(i, "Data {0}".format(i))
+            else:
+                self.qtgui_number_sink_0.set_label(i, labels[i])
+            self.qtgui_number_sink_0.set_unit(i, units[i])
+            self.qtgui_number_sink_0.set_factor(i, factor[i])
+
+        self.qtgui_number_sink_0.enable_autoscale(True)
+        self._qtgui_number_sink_0_win = sip.wrapinstance(self.qtgui_number_sink_0.pyqwidget(), Qt.QWidget)
+        self.main_tab_grid_layout_3.addWidget(self._qtgui_number_sink_0_win, 6, 0, 1, 2)
+        for r in range(6, 7):
+            self.main_tab_grid_layout_3.setRowStretch(r, 1)
+        for c in range(0, 2):
+            self.main_tab_grid_layout_3.setColumnStretch(c, 1)
+        self.qtgui_histogram_sink_x_0_0 = qtgui.histogram_sink_f(
+        	20,
+        	1000,
+                0,
+                5000,
+        	"",
+        	1
+        )
+
+        self.qtgui_histogram_sink_x_0_0.set_update_time(0.010)
+        self.qtgui_histogram_sink_x_0_0.enable_autoscale(True)
+        self.qtgui_histogram_sink_x_0_0.enable_accumulate(True)
+        self.qtgui_histogram_sink_x_0_0.enable_grid(False)
+        self.qtgui_histogram_sink_x_0_0.enable_axis_labels(True)
+
+        if not True:
+          self.qtgui_histogram_sink_x_0_0.disable_legend()
+
+        labels = ['Correlation Magnitude', 'Corr Mag', '', '', '',
+                  '', '', '', '', '']
+        widths = [1, 1, 1, 1, 1,
+                  1, 1, 1, 1, 1]
+        colors = ["blue", "red", "green", "black", "cyan",
+                  "magenta", "yellow", "dark red", "dark green", "dark blue"]
+        styles = [1, 1, 1, 1, 1,
+                  1, 1, 1, 1, 1]
+        markers = [-1, -1, -1, -1, -1,
+                   -1, -1, -1, -1, -1]
+        alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
+                  1.0, 1.0, 1.0, 1.0, 1.0]
+        for i in xrange(1):
+            if len(labels[i]) == 0:
+                self.qtgui_histogram_sink_x_0_0.set_line_label(i, "Data {0}".format(i))
+            else:
+                self.qtgui_histogram_sink_x_0_0.set_line_label(i, labels[i])
+            self.qtgui_histogram_sink_x_0_0.set_line_width(i, widths[i])
+            self.qtgui_histogram_sink_x_0_0.set_line_color(i, colors[i])
+            self.qtgui_histogram_sink_x_0_0.set_line_style(i, styles[i])
+            self.qtgui_histogram_sink_x_0_0.set_line_marker(i, markers[i])
+            self.qtgui_histogram_sink_x_0_0.set_line_alpha(i, alphas[i])
+
+        self._qtgui_histogram_sink_x_0_0_win = sip.wrapinstance(self.qtgui_histogram_sink_x_0_0.pyqwidget(), Qt.QWidget)
+        self.main_tab_grid_layout_3.addWidget(self._qtgui_histogram_sink_x_0_0_win, 0, 0, 4, 4)
+        for r in range(0, 4):
+            self.main_tab_grid_layout_3.setRowStretch(r, 1)
+        for c in range(0, 4):
+            self.main_tab_grid_layout_3.setColumnStretch(c, 1)
+        self.qtgui_histogram_sink_x_0 = qtgui.histogram_sink_f(
+        	20,
+        	2000,
+                -25*1/(samp_rate/decim) *c_ms / 1000.0,
+                25*1/(samp_rate/decim) *c_ms / 1000.0,
+        	"",
+        	1
+        )
+
+        self.qtgui_histogram_sink_x_0.set_update_time(0.010)
+        self.qtgui_histogram_sink_x_0.enable_autoscale(True)
+        self.qtgui_histogram_sink_x_0.enable_accumulate(True)
+        self.qtgui_histogram_sink_x_0.enable_grid(False)
+        self.qtgui_histogram_sink_x_0.enable_axis_labels(True)
+
+        if not True:
+          self.qtgui_histogram_sink_x_0.disable_legend()
+
+        labels = ['Range Delta [km]', 'Corr Mag', '', '', '',
+                  '', '', '', '', '']
+        widths = [1, 1, 1, 1, 1,
+                  1, 1, 1, 1, 1]
+        colors = ["blue", "red", "green", "black", "cyan",
+                  "magenta", "yellow", "dark red", "dark green", "dark blue"]
+        styles = [1, 1, 1, 1, 1,
+                  1, 1, 1, 1, 1]
+        markers = [-1, -1, -1, -1, -1,
+                   -1, -1, -1, -1, -1]
+        alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
+                  1.0, 1.0, 1.0, 1.0, 1.0]
+        for i in xrange(1):
+            if len(labels[i]) == 0:
+                self.qtgui_histogram_sink_x_0.set_line_label(i, "Data {0}".format(i))
+            else:
+                self.qtgui_histogram_sink_x_0.set_line_label(i, labels[i])
+            self.qtgui_histogram_sink_x_0.set_line_width(i, widths[i])
+            self.qtgui_histogram_sink_x_0.set_line_color(i, colors[i])
+            self.qtgui_histogram_sink_x_0.set_line_style(i, styles[i])
+            self.qtgui_histogram_sink_x_0.set_line_marker(i, markers[i])
+            self.qtgui_histogram_sink_x_0.set_line_alpha(i, alphas[i])
+
+        self._qtgui_histogram_sink_x_0_win = sip.wrapinstance(self.qtgui_histogram_sink_x_0.pyqwidget(), Qt.QWidget)
+        self.main_tab_grid_layout_3.addWidget(self._qtgui_histogram_sink_x_0_win, 4, 4, 2, 4)
+        for r in range(4, 6):
+            self.main_tab_grid_layout_3.setRowStretch(r, 1)
+        for c in range(4, 8):
+            self.main_tab_grid_layout_3.setColumnStretch(c, 1)
         self.qtgui_freq_sink_x_0_1 = qtgui.freq_sink_c(
         	2048, #size
         	firdes.WIN_BLACKMAN_hARRIS, #wintype
@@ -649,19 +903,37 @@ class x310_phase_cal_2(gr.top_block, Qt.QWidget):
         	1, samp_rate / decim, lpf_cutoff, 1e3, firdes.WIN_HAMMING, 6.76))
         self.low_pass_filter_0 = filter.fir_filter_ccf(1, firdes.low_pass(
         	1, samp_rate / decim, lpf_cutoff, 1e3, firdes.WIN_HAMMING, 6.76))
+        self.fft_vxx_2 = fft.fft_vcc(nfft, True, (window.blackmanharris(nfft)), True, 4)
+        self.fft_vxx_1 = fft.fft_vcc(nfft, False, (window.blackmanharris(nfft)), False, 4)
+        self.fft_vxx_0 = fft.fft_vcc(nfft, False, (window.blackmanharris(nfft)), False, 4)
+        self.blocks_vector_to_stream_1 = blocks.vector_to_stream(gr.sizeof_float*1, nfft)
         self.blocks_sub_xx_0_0 = blocks.sub_ff(1)
         self.blocks_sub_xx_0 = blocks.sub_ff(1)
+        self.blocks_stream_to_vector_1 = blocks.stream_to_vector(gr.sizeof_gr_complex*1, nfft)
+        self.blocks_stream_to_vector_0 = blocks.stream_to_vector(gr.sizeof_gr_complex*1, nfft)
+        self.blocks_short_to_float_0 = blocks.short_to_float(1, 1)
+        self.blocks_null_sink_0 = blocks.null_sink(gr.sizeof_short*1)
         self.blocks_multiply_const_vxx_1_0_0 = blocks.multiply_const_vcc((complex(math.cos(phase_rad2),math.sin(phase_rad2)), ))
         self.blocks_multiply_const_vxx_1_0 = blocks.multiply_const_vcc((complex(math.cos(phase_rad2),math.sin(phase_rad2)), ))
         self.blocks_multiply_const_vxx_1 = blocks.multiply_const_vcc((complex(math.cos(phase_rad),math.sin(phase_rad)), ))
+        self.blocks_multiply_const_vxx_0_0 = blocks.multiply_const_vff((1/(samp_rate/decim) *c_ms / 1000.0, ))
+        self.blocks_multiply_const_vxx_0 = blocks.multiply_const_vff((1/(samp_rate/decim) * 1e6, ))
+        self.blocks_multiply_conjugate_cc_0 = blocks.multiply_conjugate_cc(nfft)
+        self.blocks_moving_average_xx_0_1_0 = blocks.moving_average_cc(5, 1/5.0, 4000, nfft)
+        self.blocks_moving_average_xx_0_1 = blocks.moving_average_ff(10, .1, 4000, 1)
         self.blocks_moving_average_xx_0_0 = blocks.moving_average_ff(int(phase_delta_avg), 1.0/phase_delta_avg, 4000, 1)
         self.blocks_moving_average_xx_0 = blocks.moving_average_ff(int(phase_delta_avg), 1.0/phase_delta_avg, 4000, 1)
+        self.blocks_max_xx_0 = blocks.max_ff(nfft,1)
+        self.blocks_delay_0 = blocks.delay(gr.sizeof_gr_complex*1, int(delay))
         self.blocks_complex_to_real_0_1 = blocks.complex_to_real(1)
         self.blocks_complex_to_real_0_0_0 = blocks.complex_to_real(1)
         self.blocks_complex_to_real_0_0 = blocks.complex_to_real(1)
         self.blocks_complex_to_real_0 = blocks.complex_to_real(1)
+        self.blocks_complex_to_mag_0 = blocks.complex_to_mag(nfft)
+        self.blocks_argmax_xx_0 = blocks.argmax_fs(nfft)
         self.blocks_add_xx_0_0 = blocks.add_vcc(1)
         self.blocks_add_xx_0 = blocks.add_vcc(1)
+        self.blocks_add_const_vxx_0 = blocks.add_const_vff((-nfft/2.0, ))
         self.blocks_abs_xx_0_0 = blocks.abs_ff(1)
         self.blocks_abs_xx_0 = blocks.abs_ff(1)
         self.analog_agc2_xx_1 = analog.agc2_cc(1e-1, 1e-2, 1.0, 1.0)
@@ -678,10 +950,19 @@ class x310_phase_cal_2(gr.top_block, Qt.QWidget):
         self.connect((self.analog_agc2_xx_1, 0), (self.rational_resampler_xxx_0, 0))
         self.connect((self.blocks_abs_xx_0, 0), (self.qtgui_time_sink_x_0_0, 2))
         self.connect((self.blocks_abs_xx_0_0, 0), (self.qtgui_time_sink_x_0_0_0, 2))
+        self.connect((self.blocks_add_const_vxx_0, 0), (self.blocks_multiply_const_vxx_0, 0))
+        self.connect((self.blocks_add_const_vxx_0, 0), (self.blocks_multiply_const_vxx_0_0, 0))
+        self.connect((self.blocks_add_xx_0, 0), (self.blocks_stream_to_vector_0, 0))
         self.connect((self.blocks_add_xx_0, 0), (self.qtgui_freq_sink_x_0_1, 0))
         self.connect((self.blocks_add_xx_0, 0), (self.qtgui_waterfall_sink_x_0_1, 0))
+        self.connect((self.blocks_add_xx_0_0, 0), (self.blocks_delay_0, 0))
         self.connect((self.blocks_add_xx_0_0, 0), (self.qtgui_freq_sink_x_0_0_0, 0))
         self.connect((self.blocks_add_xx_0_0, 0), (self.qtgui_waterfall_sink_x_0_0_0, 0))
+        self.connect((self.blocks_argmax_xx_0, 1), (self.blocks_null_sink_0, 0))
+        self.connect((self.blocks_argmax_xx_0, 0), (self.blocks_short_to_float_0, 0))
+        self.connect((self.blocks_complex_to_mag_0, 0), (self.blocks_argmax_xx_0, 0))
+        self.connect((self.blocks_complex_to_mag_0, 0), (self.blocks_max_xx_0, 0))
+        self.connect((self.blocks_complex_to_mag_0, 0), (self.blocks_vector_to_stream_1, 0))
         self.connect((self.blocks_complex_to_real_0, 0), (self.blocks_sub_xx_0, 0))
         self.connect((self.blocks_complex_to_real_0, 0), (self.qtgui_time_sink_x_0_0, 0))
         self.connect((self.blocks_complex_to_real_0_0, 0), (self.blocks_sub_xx_0, 1))
@@ -690,14 +971,32 @@ class x310_phase_cal_2(gr.top_block, Qt.QWidget):
         self.connect((self.blocks_complex_to_real_0_0_0, 0), (self.qtgui_time_sink_x_0_0_0, 1))
         self.connect((self.blocks_complex_to_real_0_1, 0), (self.blocks_sub_xx_0_0, 0))
         self.connect((self.blocks_complex_to_real_0_1, 0), (self.qtgui_time_sink_x_0_0_0, 0))
+        self.connect((self.blocks_delay_0, 0), (self.blocks_stream_to_vector_1, 0))
+        self.connect((self.blocks_max_xx_0, 0), (self.qtgui_histogram_sink_x_0_0, 0))
+        self.connect((self.blocks_max_xx_0, 0), (self.qtgui_number_sink_0, 1))
+        self.connect((self.blocks_max_xx_0, 0), (self.qtgui_time_sink_x_0_0_1, 1))
         self.connect((self.blocks_moving_average_xx_0, 0), (self.blocks_abs_xx_0, 0))
         self.connect((self.blocks_moving_average_xx_0_0, 0), (self.blocks_abs_xx_0_0, 0))
+        self.connect((self.blocks_moving_average_xx_0_1, 0), (self.qtgui_histogram_sink_x_0, 0))
+        self.connect((self.blocks_moving_average_xx_0_1, 0), (self.qtgui_number_sink_0, 2))
+        self.connect((self.blocks_moving_average_xx_0_1, 0), (self.qtgui_time_sink_x_0_0_1, 0))
+        self.connect((self.blocks_moving_average_xx_0_1_0, 0), (self.blocks_complex_to_mag_0, 0))
+        self.connect((self.blocks_multiply_conjugate_cc_0, 0), (self.fft_vxx_2, 0))
+        self.connect((self.blocks_multiply_const_vxx_0, 0), (self.qtgui_number_sink_0, 0))
+        self.connect((self.blocks_multiply_const_vxx_0_0, 0), (self.blocks_moving_average_xx_0_1, 0))
         self.connect((self.blocks_multiply_const_vxx_1, 0), (self.analog_agc2_xx_1, 0))
         self.connect((self.blocks_multiply_const_vxx_1_0, 0), (self.blocks_add_xx_0, 0))
         self.connect((self.blocks_multiply_const_vxx_1_0, 0), (self.blocks_complex_to_real_0_1, 0))
         self.connect((self.blocks_multiply_const_vxx_1_0_0, 0), (self.blocks_add_xx_0_0, 1))
+        self.connect((self.blocks_short_to_float_0, 0), (self.blocks_add_const_vxx_0, 0))
+        self.connect((self.blocks_stream_to_vector_0, 0), (self.fft_vxx_0, 0))
+        self.connect((self.blocks_stream_to_vector_1, 0), (self.fft_vxx_1, 0))
         self.connect((self.blocks_sub_xx_0, 0), (self.blocks_moving_average_xx_0, 0))
         self.connect((self.blocks_sub_xx_0_0, 0), (self.blocks_moving_average_xx_0_0, 0))
+        self.connect((self.blocks_vector_to_stream_1, 0), (self.qtgui_time_sink_x_0, 0))
+        self.connect((self.fft_vxx_0, 0), (self.blocks_multiply_conjugate_cc_0, 0))
+        self.connect((self.fft_vxx_1, 0), (self.blocks_multiply_conjugate_cc_0, 1))
+        self.connect((self.fft_vxx_2, 0), (self.blocks_moving_average_xx_0_1_0, 0))
         self.connect((self.low_pass_filter_0, 0), (self.blocks_add_xx_0, 1))
         self.connect((self.low_pass_filter_0, 0), (self.blocks_complex_to_real_0_0, 0))
         self.connect((self.low_pass_filter_0, 0), (self.blocks_complex_to_real_0_0_0, 0))
@@ -715,7 +1014,7 @@ class x310_phase_cal_2(gr.top_block, Qt.QWidget):
         self.connect((self.uhd_usrp_source_1, 1), (self.blocks_multiply_const_vxx_1, 0))
 
     def closeEvent(self, event):
-        self.settings = Qt.QSettings("GNU Radio", "x310_phase_cal_2")
+        self.settings = Qt.QSettings("GNU Radio", "codar_x310_corr_phase")
         self.settings.setValue("geometry", self.saveGeometry())
         event.accept()
 
@@ -724,7 +1023,7 @@ class x310_phase_cal_2(gr.top_block, Qt.QWidget):
 
     def set_ts_str(self, ts_str):
         self.ts_str = ts_str
-        self.set_title_str("X310 Phase Calibration, Start Time [UTC]: {:s}".format(self.ts_str))
+        self.set_title_str("CODAR Dual channel With Phase Calibration, Start Time [UTC]: {:s}".format(self.ts_str))
 
     def get_phase_shift(self):
         return self.phase_shift
@@ -757,14 +1056,19 @@ class x310_phase_cal_2(gr.top_block, Qt.QWidget):
         self.qtgui_waterfall_sink_x_0_0_0.set_frequency_range(self.rx_freq, self.samp_rate / self.decim)
         self.qtgui_waterfall_sink_x_0_0.set_frequency_range(self.rx_freq, self.samp_rate / self.decim)
         self.qtgui_waterfall_sink_x_0.set_frequency_range(self.rx_freq, self.samp_rate / self.decim)
+        self.qtgui_time_sink_x_0_0_1.set_samp_rate(self.samp_rate/self.decim)
         self.qtgui_time_sink_x_0_0_0.set_samp_rate(self.samp_rate / self.decim)
         self.qtgui_time_sink_x_0_0.set_samp_rate(self.samp_rate / self.decim)
+        self.qtgui_time_sink_x_0.set_samp_rate(self.samp_rate/self.decim)
+        self.qtgui_histogram_sink_x_0.set_x_axis(-25*1/(self.samp_rate/self.decim) *self.c_ms / 1000.0, 25*1/(self.samp_rate/self.decim) *self.c_ms / 1000.0)
         self.qtgui_freq_sink_x_0_1.set_frequency_range(self.rx_freq*0, self.samp_rate / self.decim)
         self.qtgui_freq_sink_x_0_0_0.set_frequency_range(self.rx_freq*0, self.samp_rate / self.decim)
         self.qtgui_freq_sink_x_0_0.set_frequency_range(self.rx_freq*0, self.samp_rate / self.decim)
         self.qtgui_freq_sink_x_0.set_frequency_range(self.rx_freq*0, self.samp_rate / self.decim)
         self.low_pass_filter_0_0.set_taps(firdes.low_pass(1, self.samp_rate / self.decim, self.lpf_cutoff, 1e3, firdes.WIN_HAMMING, 6.76))
         self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.samp_rate / self.decim, self.lpf_cutoff, 1e3, firdes.WIN_HAMMING, 6.76))
+        self.blocks_multiply_const_vxx_0_0.set_k((1/(self.samp_rate/self.decim) *self.c_ms / 1000.0, ))
+        self.blocks_multiply_const_vxx_0.set_k((1/(self.samp_rate/self.decim) * 1e6, ))
 
     def get_rx_freq(self):
         return self.rx_freq
@@ -807,6 +1111,13 @@ class x310_phase_cal_2(gr.top_block, Qt.QWidget):
         self.blocks_moving_average_xx_0_0.set_length_and_scale(int(self.phase_delta_avg), 1.0/self.phase_delta_avg)
         self.blocks_moving_average_xx_0.set_length_and_scale(int(self.phase_delta_avg), 1.0/self.phase_delta_avg)
 
+    def get_nfft(self):
+        return self.nfft
+
+    def set_nfft(self, nfft):
+        self.nfft = nfft
+        self.blocks_add_const_vxx_0.set_k((-self.nfft/2.0, ))
+
     def get_lpf_cutoff(self):
         return self.lpf_cutoff
 
@@ -815,6 +1126,14 @@ class x310_phase_cal_2(gr.top_block, Qt.QWidget):
         Qt.QMetaObject.invokeMethod(self._lpf_cutoff_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.lpf_cutoff)))
         self.low_pass_filter_0_0.set_taps(firdes.low_pass(1, self.samp_rate / self.decim, self.lpf_cutoff, 1e3, firdes.WIN_HAMMING, 6.76))
         self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.samp_rate / self.decim, self.lpf_cutoff, 1e3, firdes.WIN_HAMMING, 6.76))
+
+    def get_delay(self):
+        return self.delay
+
+    def set_delay(self, delay):
+        self.delay = delay
+        Qt.QMetaObject.invokeMethod(self._delay_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.delay)))
+        self.blocks_delay_0.set_dly(int(self.delay))
 
     def get_decim(self):
         return self.decim
@@ -825,17 +1144,30 @@ class x310_phase_cal_2(gr.top_block, Qt.QWidget):
         self.qtgui_waterfall_sink_x_0_0_0.set_frequency_range(self.rx_freq, self.samp_rate / self.decim)
         self.qtgui_waterfall_sink_x_0_0.set_frequency_range(self.rx_freq, self.samp_rate / self.decim)
         self.qtgui_waterfall_sink_x_0.set_frequency_range(self.rx_freq, self.samp_rate / self.decim)
+        self.qtgui_time_sink_x_0_0_1.set_samp_rate(self.samp_rate/self.decim)
         self.qtgui_time_sink_x_0_0_0.set_samp_rate(self.samp_rate / self.decim)
         self.qtgui_time_sink_x_0_0.set_samp_rate(self.samp_rate / self.decim)
+        self.qtgui_time_sink_x_0.set_samp_rate(self.samp_rate/self.decim)
+        self.qtgui_histogram_sink_x_0.set_x_axis(-25*1/(self.samp_rate/self.decim) *self.c_ms / 1000.0, 25*1/(self.samp_rate/self.decim) *self.c_ms / 1000.0)
         self.qtgui_freq_sink_x_0_1.set_frequency_range(self.rx_freq*0, self.samp_rate / self.decim)
         self.qtgui_freq_sink_x_0_0_0.set_frequency_range(self.rx_freq*0, self.samp_rate / self.decim)
         self.qtgui_freq_sink_x_0_0.set_frequency_range(self.rx_freq*0, self.samp_rate / self.decim)
         self.qtgui_freq_sink_x_0.set_frequency_range(self.rx_freq*0, self.samp_rate / self.decim)
         self.low_pass_filter_0_0.set_taps(firdes.low_pass(1, self.samp_rate / self.decim, self.lpf_cutoff, 1e3, firdes.WIN_HAMMING, 6.76))
         self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.samp_rate / self.decim, self.lpf_cutoff, 1e3, firdes.WIN_HAMMING, 6.76))
+        self.blocks_multiply_const_vxx_0_0.set_k((1/(self.samp_rate/self.decim) *self.c_ms / 1000.0, ))
+        self.blocks_multiply_const_vxx_0.set_k((1/(self.samp_rate/self.decim) * 1e6, ))
+
+    def get_c_ms(self):
+        return self.c_ms
+
+    def set_c_ms(self, c_ms):
+        self.c_ms = c_ms
+        self.qtgui_histogram_sink_x_0.set_x_axis(-25*1/(self.samp_rate/self.decim) *self.c_ms / 1000.0, 25*1/(self.samp_rate/self.decim) *self.c_ms / 1000.0)
+        self.blocks_multiply_const_vxx_0_0.set_k((1/(self.samp_rate/self.decim) *self.c_ms / 1000.0, ))
 
 
-def main(top_block_cls=x310_phase_cal_2, options=None):
+def main(top_block_cls=codar_x310_corr_phase, options=None):
 
     from distutils.version import StrictVersion
     if StrictVersion(Qt.qVersion()) >= StrictVersion("4.5.0"):

@@ -21,16 +21,14 @@ from gnuradio import analog
 from gnuradio import blocks
 from gnuradio import eng_notation
 from gnuradio import filter
-from gnuradio import fosphor
 from gnuradio import gr
 from gnuradio import qtgui
-from gnuradio import uhd
 from gnuradio.eng_option import eng_option
-from gnuradio.fft import window
 from gnuradio.filter import firdes
 from gnuradio.qtgui import Range, RangeWidget
 from optparse import OptionParser
 import adsb
+import osmosdr
 import pyqt
 import sip
 import sys
@@ -70,9 +68,9 @@ class uhd_adsb_test(gr.top_block, Qt.QWidget):
         # Variables
         ##################################################
         self.threshold = threshold = 15
-        self.samp_rate = samp_rate = 4e6
+        self.samp_rate = samp_rate = 2e6
         self.rx_gain = rx_gain = 50
-        self.lpf_cutoff = lpf_cutoff = 1.5e6
+        self.lpf_cutoff = lpf_cutoff = 1e6
         self.freq = freq = 1090e6
 
         ##################################################
@@ -108,20 +106,6 @@ class uhd_adsb_test(gr.top_block, Qt.QWidget):
         for c in range(6, 8):
             self.top_grid_layout.setColumnStretch(c, 1)
         self.vcc_meta_to_json_0 = vcc.meta_to_json()
-        self.uhd_usrp_source_1 = uhd.usrp_source(
-        	",".join(("addr=192.168.10.4", "")),
-        	uhd.stream_args(
-        		cpu_format="fc32",
-        		channels=range(1),
-        	),
-        )
-        self.uhd_usrp_source_1.set_samp_rate(samp_rate)
-        self.uhd_usrp_source_1.set_time_now(uhd.time_spec(time.time()), uhd.ALL_MBOARDS)
-        self.uhd_usrp_source_1.set_center_freq(uhd.tune_request(freq, samp_rate/2), 0)
-        self.uhd_usrp_source_1.set_gain(rx_gain, 0)
-        self.uhd_usrp_source_1.set_antenna('RX2', 0)
-        self.uhd_usrp_source_1.set_auto_dc_offset(True, 0)
-        self.uhd_usrp_source_1.set_auto_iq_balance(True, 0)
         self.qtgui_time_sink_x_0 = qtgui.time_sink_f(
         	int(samp_rate*1*150e-6), #size
         	int(samp_rate*1), #samp_rate
@@ -174,6 +158,53 @@ class uhd_adsb_test(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setRowStretch(r, 1)
         for c in range(4, 8):
             self.top_grid_layout.setColumnStretch(c, 1)
+        self.qtgui_freq_sink_x_0 = qtgui.freq_sink_c(
+        	2048, #size
+        	firdes.WIN_BLACKMAN_hARRIS, #wintype
+        	0, #fc
+        	samp_rate, #bw
+        	"", #name
+        	1 #number of inputs
+        )
+        self.qtgui_freq_sink_x_0.set_update_time(0.01)
+        self.qtgui_freq_sink_x_0.set_y_axis(-80, 0)
+        self.qtgui_freq_sink_x_0.set_y_label('Relative Gain', 'dB')
+        self.qtgui_freq_sink_x_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, 0.0, 0, "")
+        self.qtgui_freq_sink_x_0.enable_autoscale(False)
+        self.qtgui_freq_sink_x_0.enable_grid(True)
+        self.qtgui_freq_sink_x_0.set_fft_average(1.0)
+        self.qtgui_freq_sink_x_0.enable_axis_labels(True)
+        self.qtgui_freq_sink_x_0.enable_control_panel(False)
+
+        if not True:
+          self.qtgui_freq_sink_x_0.disable_legend()
+
+        if "complex" == "float" or "complex" == "msg_float":
+          self.qtgui_freq_sink_x_0.set_plot_pos_half(not True)
+
+        labels = ['', '', '', '', '',
+                  '', '', '', '', '']
+        widths = [1, 1, 1, 1, 1,
+                  1, 1, 1, 1, 1]
+        colors = ["blue", "red", "green", "black", "cyan",
+                  "magenta", "yellow", "dark red", "dark green", "dark blue"]
+        alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
+                  1.0, 1.0, 1.0, 1.0, 1.0]
+        for i in xrange(1):
+            if len(labels[i]) == 0:
+                self.qtgui_freq_sink_x_0.set_line_label(i, "Data {0}".format(i))
+            else:
+                self.qtgui_freq_sink_x_0.set_line_label(i, labels[i])
+            self.qtgui_freq_sink_x_0.set_line_width(i, widths[i])
+            self.qtgui_freq_sink_x_0.set_line_color(i, colors[i])
+            self.qtgui_freq_sink_x_0.set_line_alpha(i, alphas[i])
+
+        self._qtgui_freq_sink_x_0_win = sip.wrapinstance(self.qtgui_freq_sink_x_0.pyqwidget(), Qt.QWidget)
+        self.top_grid_layout.addWidget(self._qtgui_freq_sink_x_0_win, 0, 0, 2, 4)
+        for r in range(0, 2):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(0, 4):
+            self.top_grid_layout.setColumnStretch(c, 1)
         self.pyqt_text_output_0 = pyqt.text_output()
         self._pyqt_text_output_0_win = self.pyqt_text_output_0;
         self.top_grid_layout.addWidget(self._pyqt_text_output_0_win, 3, 4, 1, 4)
@@ -182,17 +213,21 @@ class uhd_adsb_test(gr.top_block, Qt.QWidget):
         for c in range(4, 8):
             self.top_grid_layout.setColumnStretch(c, 1)
 
+        self.osmosdr_source_0 = osmosdr.source( args="numchan=" + str(1) + " " + '' )
+        self.osmosdr_source_0.set_sample_rate(samp_rate)
+        self.osmosdr_source_0.set_center_freq(freq, 0)
+        self.osmosdr_source_0.set_freq_corr(0, 0)
+        self.osmosdr_source_0.set_dc_offset_mode(0, 0)
+        self.osmosdr_source_0.set_iq_balance_mode(0, 0)
+        self.osmosdr_source_0.set_gain_mode(False, 0)
+        self.osmosdr_source_0.set_gain(rx_gain, 0)
+        self.osmosdr_source_0.set_if_gain(20, 0)
+        self.osmosdr_source_0.set_bb_gain(20, 0)
+        self.osmosdr_source_0.set_antenna('', 0)
+        self.osmosdr_source_0.set_bandwidth(0, 0)
+
         self.low_pass_filter_0 = filter.fir_filter_ccf(1, firdes.low_pass(
         	1, samp_rate, lpf_cutoff, 10e3, firdes.WIN_HAMMING, 6.76))
-        self.fosphor_qt_sink_c_1 = fosphor.qt_sink_c()
-        self.fosphor_qt_sink_c_1.set_fft_window(window.WIN_BLACKMAN_hARRIS)
-        self.fosphor_qt_sink_c_1.set_frequency_range(0, samp_rate)
-        self._fosphor_qt_sink_c_1_win = sip.wrapinstance(self.fosphor_qt_sink_c_1.pyqwidget(), Qt.QWidget)
-        self.top_grid_layout.addWidget(self._fosphor_qt_sink_c_1_win, 0, 0, 4, 4)
-        for r in range(0, 4):
-            self.top_grid_layout.setRowStretch(r, 1)
-        for c in range(0, 4):
-            self.top_grid_layout.setColumnStretch(c, 1)
         self.blocks_unpacked_to_packed_xx_0 = blocks.unpacked_to_packed_bb(1, gr.GR_MSB_FIRST)
         self.blocks_tagged_stream_to_pdu_0 = blocks.tagged_stream_to_pdu(blocks.byte_t, 'packet_len')
         self.blocks_tagged_stream_multiply_length_0 = blocks.tagged_stream_multiply_length(gr.sizeof_char*1, 'packet_len', 1.0/8)
@@ -227,8 +262,8 @@ class uhd_adsb_test(gr.top_block, Qt.QWidget):
         self.connect((self.blocks_tagged_stream_multiply_length_0, 0), (self.blocks_tagged_stream_to_pdu_0, 0))
         self.connect((self.blocks_unpacked_to_packed_xx_0, 0), (self.blocks_tagged_stream_multiply_length_0, 0))
         self.connect((self.low_pass_filter_0, 0), (self.blocks_complex_to_mag_squared_0, 0))
-        self.connect((self.low_pass_filter_0, 0), (self.fosphor_qt_sink_c_1, 0))
-        self.connect((self.uhd_usrp_source_1, 0), (self.analog_agc2_xx_0, 0))
+        self.connect((self.low_pass_filter_0, 0), (self.qtgui_freq_sink_x_0, 0))
+        self.connect((self.osmosdr_source_0, 0), (self.analog_agc2_xx_0, 0))
 
     def closeEvent(self, event):
         self.settings = Qt.QSettings("GNU Radio", "uhd_adsb_test")
@@ -249,19 +284,17 @@ class uhd_adsb_test(gr.top_block, Qt.QWidget):
 
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
-        self.uhd_usrp_source_1.set_samp_rate(self.samp_rate)
-        self.uhd_usrp_source_1.set_center_freq(uhd.tune_request(self.freq, self.samp_rate/2), 0)
         self.qtgui_time_sink_x_0.set_samp_rate(int(self.samp_rate*1))
+        self.qtgui_freq_sink_x_0.set_frequency_range(0, self.samp_rate)
+        self.osmosdr_source_0.set_sample_rate(self.samp_rate)
         self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.samp_rate, self.lpf_cutoff, 10e3, firdes.WIN_HAMMING, 6.76))
-        self.fosphor_qt_sink_c_1.set_frequency_range(0, self.samp_rate)
 
     def get_rx_gain(self):
         return self.rx_gain
 
     def set_rx_gain(self, rx_gain):
         self.rx_gain = rx_gain
-        self.uhd_usrp_source_1.set_gain(self.rx_gain, 0)
-
+        self.osmosdr_source_0.set_gain(self.rx_gain, 0)
 
     def get_lpf_cutoff(self):
         return self.lpf_cutoff
@@ -276,7 +309,7 @@ class uhd_adsb_test(gr.top_block, Qt.QWidget):
 
     def set_freq(self, freq):
         self.freq = freq
-        self.uhd_usrp_source_1.set_center_freq(uhd.tune_request(self.freq, self.samp_rate/2), 0)
+        self.osmosdr_source_0.set_center_freq(self.freq, 0)
 
 
 def main(top_block_cls=uhd_adsb_test, options=None):

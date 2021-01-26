@@ -1991,7 +1991,7 @@
     </param>
     <param>
       <key>dev_addr</key>
-      <value>""</value>
+      <value>"addr=192.168.30.51"</value>
     </param>
     <param>
       <key>dev_args</key>

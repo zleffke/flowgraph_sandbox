@@ -97,7 +97,7 @@ class adsb_rx(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setColumnStretch(c, 1)
         self.zeromq_pub_msg_sink_0 = zeromq.pub_msg_sink('tcp://127.0.0.1:5001', 10)
         self.uhd_usrp_source_0 = uhd.usrp_source(
-        	",".join(("", "")),
+        	",".join(("addr=192.168.30.51", "")),
         	uhd.stream_args(
         		cpu_format="fc32",
         		channels=range(1),

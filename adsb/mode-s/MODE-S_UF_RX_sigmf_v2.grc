@@ -46,7 +46,7 @@
     </param>
     <param>
       <key>id</key>
-      <value>modes_uf_rx_sigmf</value>
+      <value>modes_uf_rx_sigmf_v2</value>
     </param>
     <param>
       <key>max_nouts</key>
@@ -118,6 +118,45 @@
     <param>
       <key>id</key>
       <value>avg_len</value>
+    </param>
+    <param>
+      <key>label</key>
+      <value></value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>real</value>
+    </param>
+  </block>
+  <block>
+    <key>variable_qtgui_entry</key>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>5</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(24, 1268)</value>
+    </param>
+    <param>
+      <key>gui_hint</key>
+      <value>6,4,1,1</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>bit_thresh</value>
     </param>
     <param>
       <key>label</key>
@@ -397,15 +436,15 @@
     </param>
     <param>
       <key>value</key>
-      <value>1e-3</value>
+      <value>1e-6</value>
     </param>
     <param>
       <key>_enabled</key>
-      <value>True</value>
+      <value>1</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(512, 1212)</value>
+      <value>(160, 1284)</value>
     </param>
     <param>
       <key>gui_hint</key>
@@ -444,7 +483,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(192, 892)</value>
+      <value>(1288, 732)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -483,7 +522,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(8, 76)</value>
+      <value>(248, 4)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -522,50 +561,11 @@
     </param>
     <param>
       <key>value</key>
-      <value>4000000</value>
+      <value>2</value>
     </param>
   </block>
   <block>
-    <key>variable_qtgui_entry</key>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>value</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(632, 1212)</value>
-    </param>
-    <param>
-      <key>gui_hint</key>
-      <value>6,4,1,1</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>thresh_mult</value>
-    </param>
-    <param>
-      <key>label</key>
-      <value></value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>real</value>
-    </param>
-  </block>
-  <block>
-    <key>adsb_framer</key>
+    <key>ais_invert</key>
     <param>
       <key>alias</key>
       <value></value>
@@ -579,16 +579,12 @@
       <value></value>
     </param>
     <param>
-      <key>threshold</key>
-      <value></value>
-    </param>
-    <param>
       <key>_enabled</key>
-      <value>0</value>
+      <value>True</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(88, 1916)</value>
+      <value>(792, 1072)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -596,7 +592,7 @@
     </param>
     <param>
       <key>id</key>
-      <value>adsb_framer_0</value>
+      <value>ais_invert_0</value>
     </param>
     <param>
       <key>maxoutbuf</key>
@@ -605,10 +601,6 @@
     <param>
       <key>minoutbuf</key>
       <value>0</value>
-    </param>
-    <param>
-      <key>fs</key>
-      <value></value>
     </param>
   </block>
   <block>
@@ -672,69 +664,6 @@
     <param>
       <key>type</key>
       <value>complex</value>
-    </param>
-  </block>
-  <block>
-    <key>analog_sig_source_x</key>
-    <param>
-      <key>amp</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>freq</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(600, 988)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>analog_sig_source_x_0</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>offset</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>float</value>
-    </param>
-    <param>
-      <key>samp_rate</key>
-      <value>samp_rate/2</value>
-    </param>
-    <param>
-      <key>waveform</key>
-      <value>analog.GR_CONST_WAVE</value>
     </param>
   </block>
   <block>
@@ -859,7 +788,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1024, 1612)</value>
+      <value>(1024, 1836)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -868,57 +797,6 @@
     <param>
       <key>id</key>
       <value>blocks_add_const_vxx_1</value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>float</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>vlen</key>
-      <value>1</value>
-    </param>
-  </block>
-  <block>
-    <key>blocks_add_const_vxx</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>const</key>
-      <value>20</value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(1232, 1180)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>blocks_add_const_vxx_2</value>
     </param>
     <param>
       <key>type</key>
@@ -957,7 +835,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(880, 1612)</value>
+      <value>(880, 1836)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1004,7 +882,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1080, 1140)</value>
+      <value>(1136, 1068)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1012,7 +890,7 @@
     </param>
     <param>
       <key>id</key>
-      <value>blocks_char_to_float_0_0_0</value>
+      <value>blocks_char_to_float_0_1</value>
     </param>
     <param>
       <key>maxoutbuf</key>
@@ -1024,7 +902,7 @@
     </param>
     <param>
       <key>scale</key>
-      <value>-1/20.0</value>
+      <value>1/10.0</value>
     </param>
     <param>
       <key>vlen</key>
@@ -1133,11 +1011,11 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>True</value>
+      <value>1</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(496, 1120)</value>
+      <value>(360, 992)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1145,7 +1023,7 @@
     </param>
     <param>
       <key>id</key>
-      <value>blocks_complex_to_real_0</value>
+      <value>blocks_complex_to_real_1_0_0</value>
     </param>
     <param>
       <key>maxoutbuf</key>
@@ -1154,61 +1032,6 @@
     <param>
       <key>minoutbuf</key>
       <value>0</value>
-    </param>
-    <param>
-      <key>vlen</key>
-      <value>1</value>
-    </param>
-  </block>
-  <block>
-    <key>blocks_delay</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>delay</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(232, 1132)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>blocks_delay_0</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>num_ports</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>complex</value>
     </param>
     <param>
       <key>vlen</key>
@@ -1282,7 +1105,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1400, 1456)</value>
+      <value>(1368, 1552)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1474,7 +1297,7 @@
     </param>
     <param>
       <key>const</key>
-      <value>20</value>
+      <value>thresh</value>
     </param>
     <param>
       <key>affinity</key>
@@ -1486,58 +1309,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1288, 1316)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>blocks_multiply_const_vxx_1</value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>float</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>vlen</key>
-      <value>1</value>
-    </param>
-  </block>
-  <block>
-    <key>blocks_multiply_const_vxx</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>const</key>
-      <value>thresh_mult</value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(632, 1164)</value>
+      <value>(592, 1572)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1609,57 +1381,6 @@
     <param>
       <key>minoutbuf</key>
       <value>0</value>
-    </param>
-    <param>
-      <key>vlen</key>
-      <value>1</value>
-    </param>
-  </block>
-  <block>
-    <key>blocks_multiply_xx</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(352, 1104)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>blocks_multiply_xx_0</value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>complex</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>num_inputs</key>
-      <value>2</value>
     </param>
     <param>
       <key>vlen</key>
@@ -1757,6 +1478,100 @@
     </param>
   </block>
   <block>
+    <key>blocks_pdu_to_tagged_stream</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(1256, 1236)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>180</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>blocks_pdu_to_tagged_stream_1</value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>byte</value>
+    </param>
+    <param>
+      <key>tag</key>
+      <value>packet_len</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+  </block>
+  <block>
+    <key>blocks_rms_xx</key>
+    <param>
+      <key>alpha</key>
+      <value>rms_alpha</value>
+    </param>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(488, 1572)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>blocks_rms_xx_0</value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>complex</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+  </block>
+  <block>
     <key>blocks_rms_xx</key>
     <param>
       <key>alpha</key>
@@ -1780,7 +1595,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(520, 1164)</value>
+      <value>(384, 1036)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1788,7 +1603,7 @@
     </param>
     <param>
       <key>id</key>
-      <value>blocks_rms_xx_0</value>
+      <value>blocks_rms_xx_1</value>
     </param>
     <param>
       <key>type</key>
@@ -1921,11 +1736,11 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>True</value>
+      <value>0</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(816, 1128)</value>
+      <value>(792, 1544)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1957,7 +1772,7 @@
     </param>
   </block>
   <block>
-    <key>blocks_tag_debug</key>
+    <key>blocks_sub_xx</key>
     <param>
       <key>alias</key>
       <value></value>
@@ -1971,16 +1786,12 @@
       <value></value>
     </param>
     <param>
-      <key>display</key>
+      <key>_enabled</key>
       <value>True</value>
     </param>
     <param>
-      <key>_enabled</key>
-      <value>0</value>
-    </param>
-    <param>
       <key>_coordinate</key>
-      <value>(816, 1892)</value>
+      <value>(528, 1056)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1988,23 +1799,23 @@
     </param>
     <param>
       <key>id</key>
-      <value>blocks_tag_debug_0</value>
+      <value>blocks_sub_xx_2_0</value>
     </param>
     <param>
       <key>type</key>
-      <value>byte</value>
+      <value>float</value>
     </param>
     <param>
-      <key>filter</key>
-      <value>""</value>
+      <key>maxoutbuf</key>
+      <value>0</value>
     </param>
     <param>
-      <key>name</key>
-      <value></value>
+      <key>minoutbuf</key>
+      <value>0</value>
     </param>
     <param>
       <key>num_inputs</key>
-      <value>1</value>
+      <value>2</value>
     </param>
     <param>
       <key>vlen</key>
@@ -2110,7 +1921,7 @@
     </param>
     <param>
       <key>samples_per_second</key>
-      <value>samp_rate</value>
+      <value>samp_rate*2</value>
     </param>
     <param>
       <key>type</key>
@@ -2137,11 +1948,11 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>0</value>
+      <value>1</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(280, 1944)</value>
+      <value>(648, 1072)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2149,7 +1960,7 @@
     </param>
     <param>
       <key>id</key>
-      <value>digital_binary_slicer_fb_0</value>
+      <value>digital_binary_slicer_fb_0_0</value>
     </param>
     <param>
       <key>maxoutbuf</key>
@@ -2176,11 +1987,11 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>True</value>
+      <value>0</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(936, 1144)</value>
+      <value>(896, 1656)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2197,69 +2008,6 @@
     <param>
       <key>minoutbuf</key>
       <value>0</value>
-    </param>
-  </block>
-  <block>
-    <key>digital_clock_recovery_mm_xx</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(384, 756)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>gain_mu</key>
-      <value>0.175</value>
-    </param>
-    <param>
-      <key>gain_omega</key>
-      <value>0.25*0.175*0.175</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>digital_clock_recovery_mm_xx_0</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>mu</key>
-      <value>0.5</value>
-    </param>
-    <param>
-      <key>omega_relative_limit</key>
-      <value>0.005</value>
-    </param>
-    <param>
-      <key>omega</key>
-      <value>2</value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>complex</value>
     </param>
   </block>
   <block>
@@ -2286,7 +2034,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(224, 1596)</value>
+      <value>(224, 1820)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2295,6 +2043,61 @@
     <param>
       <key>id</key>
       <value>digital_correlate_access_code_tag_xx_0_0_1_2</value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>byte</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>tagname</key>
+      <value>P1_P2</value>
+    </param>
+    <param>
+      <key>threshold</key>
+      <value>1</value>
+    </param>
+  </block>
+  <block>
+    <key>digital_correlate_access_code_tag_xx</key>
+    <param>
+      <key>access_code</key>
+      <value>011100000111000</value>
+    </param>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value>P1+P2</value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(104, 1516)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>digital_correlate_access_code_tag_xx_0_0_1_2_0</value>
     </param>
     <param>
       <key>type</key>
@@ -2341,7 +2144,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(640, 1596)</value>
+      <value>(640, 1820)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2373,10 +2176,10 @@
     </param>
   </block>
   <block>
-    <key>digital_correlate_access_code_xx_ts</key>
+    <key>digital_correlate_access_code_tag_xx</key>
     <param>
       <key>access_code</key>
-      <value>11100000111000</value>
+      <value>1111111100011111000111000001</value>
     </param>
     <param>
       <key>alias</key>
@@ -2384,7 +2187,7 @@
     </param>
     <param>
       <key>comment</key>
-      <value></value>
+      <value>P1+P2+sync Encoded</value>
     </param>
     <param>
       <key>affinity</key>
@@ -2396,7 +2199,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(544, 1932)</value>
+      <value>(456, 1612)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2404,7 +2207,7 @@
     </param>
     <param>
       <key>id</key>
-      <value>digital_correlate_access_code_xx_ts_0</value>
+      <value>digital_correlate_access_code_tag_xx_0_0_1_2_2_0_0</value>
     </param>
     <param>
       <key>type</key>
@@ -2420,11 +2223,66 @@
     </param>
     <param>
       <key>tagname</key>
-      <value>packet</value>
+      <value>sync</value>
     </param>
     <param>
       <key>threshold</key>
+      <value>2</value>
+    </param>
+  </block>
+  <block>
+    <key>digital_correlate_access_code_tag_xx</key>
+    <param>
+      <key>access_code</key>
+      <value>00011111000111000001</value>
+    </param>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value>P1+P2+sync Encoded</value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(888, 1052)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
       <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>digital_correlate_access_code_tag_xx_0_0_1_2_2_0_0_0</value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>byte</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>tagname</key>
+      <value>sync</value>
+    </param>
+    <param>
+      <key>threshold</key>
+      <value>3</value>
     </param>
   </block>
   <block>
@@ -2447,7 +2305,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(608, 760)</value>
+      <value>(624, 712)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2498,7 +2356,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(456, 1612)</value>
+      <value>(456, 1836)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2519,6 +2377,45 @@
     <param>
       <key>modulus</key>
       <value>2</value>
+    </param>
+  </block>
+  <block>
+    <key>digital_diff_phasor_cc</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(184, 992)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>digital_diff_phasor_cc_0</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
     </param>
   </block>
   <block>
@@ -2545,7 +2442,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(392, 884)</value>
+      <value>(384, 740)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2590,129 +2487,6 @@
     <param>
       <key>type</key>
       <value>ccf</value>
-    </param>
-  </block>
-  <block>
-    <key>epy_block</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_io_cache</key>
-      <value>('Peamble Stripper', 'pds_frame_sync', [('tag_name', "'packet'")], [('0', 'byte', 1)], [('out', 'message', 1)], "\n    Expects Correlate Access Code - Tag block upstream.\n    Tag indicates the last bit of the UF frame sync\n    Operates on unpacked byte stream.\n\n    Logic:\n     Detects a packet tag.\n     pulls out the following 112 + 7 bit pad (x2 due to sample rate)(frame minus frame preamble bits)\n     Packs unpacked bit vector into bytes\n     Emits a PMT/PDU Message of decoded frame\n     Emitted Frame should contain three data packets, each with a 12 bit 'word sync' starting each packet\n    ", ['tag_name'])</value>
-    </param>
-    <param>
-      <key>_source_code</key>
-      <value>#!/usr/bin/env python
-
-
-import numpy
-import pmt
-import binascii
-from gnuradio import gr
-
-SEARCH = 1
-COPY = 2
-
-class pds_frame_sync(gr.sync_block):
-    """
-    Expects Correlate Access Code - Tag block upstream.
-    Tag indicates the last bit of the UF frame sync
-    Operates on unpacked byte stream.
-
-    Logic:
-     Detects a packet tag.
-     pulls out the following 112 + 7 bit pad (x2 due to sample rate)(frame minus frame preamble bits)
-     Packs unpacked bit vector into bytes
-     Emits a PMT/PDU Message of decoded frame
-     Emitted Frame should contain three data packets, each with a 12 bit 'word sync' starting each packet
-    """
-    def __init__(self, tag_name="packet"):
-        gr.sync_block.__init__(self,
-            name="Peamble Stripper",
-            in_sig=[numpy.int8],
-            out_sig=None)
-
-        self.tag_name = tag_name
-        self.message_port_register_out(pmt.intern("out"))
-        self.len_encoded_msg = 112
-        self.pds_msg = []
-        self.msg_packed = []
-        self.msg_count = 0
-        self.state = SEARCH
-
-    def pack_bytes(self):
-        self.msg_count += 1
-        a = [int("".join(map(str, self.pds_msg[i:i+8])), 2) for i in range(0, len(self.pds_msg), 8)]
-        self.msg_packed = bytearray(a)
-
-    def work(self, input_items, output_items):
-        in0 = input_items[0]
-        num_input_items = len(in0)
-        print num_input_items
-        return_value = num_input_items
-        nread = self.nitems_read(0)
-
-        if self.state == SEARCH:
-            tags = self.get_tags_in_window(0, 0, num_input_items)
-            if len(tags) &gt; 0:
-                print "Tags Detected", 
-                for t in tags:
-                    t_str = pmt.symbol_to_string(t.key)
-                    #print t_str
-                    if t_str == self.tag_name:
-                        #print "PACKET"
-                        print t_str
-                        del self.pds_msg[:]#empty encoded msg buffer
-                        del self.msg_packed[:]#empty packed msg buffer
-                        cur_idx = t.offset - nread
-                        self.pds_msg.extend(in0[cur_idx:])
-                        self.state = COPY
-
-        elif self.state == COPY:
-            cur_msg_len = len(self.pds_msg)
-            if (cur_msg_len + num_input_items) &lt; self.len_encoded_msg:  #doesn't exceed max frame length
-                self.pds_msg.extend(in0)
-            else:
-                num_remain = self.len_encoded_msg - cur_msg_len
-                self.pds_msg.extend(in0[0:num_remain])
-                return_value = num_remain
-                self.pack_bytes()
-                msg_str = "[{:d}] {:s}\n".format(self.msg_count, binascii.hexlify(self.msg_packed))
-                pmt_msg = pmt.cons(pmt.PMT_NIL, pmt.intern(msg_str))
-
-                print msg_str
-                self.message_port_pub(pmt.intern('out'), pmt.cons(pmt.PMT_NIL, pmt.init_u8vector(len(self.msg_packed),self.msg_packed)))
-                self.state = SEARCH #RESET to SEARCH State
-
-        return return_value
-
-</value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(608, 1780)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>epy_block_0</value>
-    </param>
-    <param>
-      <key>tag_name</key>
-      <value>'sync'</value>
     </param>
   </block>
   <block>
@@ -2823,8 +2597,8 @@ class uf_decode(gr.sync_block):
         # print 'type(vector)\n', type(vector)
         self.bits = vector
 
-        print meta
-        print self.bits
+        #print meta
+        #print self.bits
         
         #data = list(pmt.u8vector_elements(msg))
         #packed = self._pack_bytes(data)
@@ -2833,6 +2607,7 @@ class uf_decode(gr.sync_block):
         #self._decode_type(packed)
         try:
             self._decode_header()
+            self._parse_payload()
             parity_passed = self._check_parity()
         except Exception as e: # catch *all* exceptions
             print e
@@ -2852,23 +2627,88 @@ class uf_decode(gr.sync_block):
     def _decode_header(self):  
         # Uplink Format, 5 bits
         self.uf = self.bin2dec(self.bits[0:0+5])
-        if self.uf &lt;=24:
-            if self.verbose:
-                if self.msg_filter == 'All Messages':
-                    print '\n'
-                    print '----------------------------------------------------------------------'
-                    print 'datetime:'.ljust(16) + '%s' % (self.meta['datetime'])
-                    print 'SNR:'.ljust(16) + '%1.2f dB' % (self.meta['snr'])
-		            #print 'UF{:d}'.format(self.uf)
-                    print 'UF:'.ljust(16) + '%d %s' % (self.uf, UF_STR_LUT[self.uf])
-
-
+        self.uf_str = "UF{:d}".format(self.uf)
+        if self.uf in [0,4,5]:
+            # 56 bit payload
+            self.payload_length = 56
+            self.payload = self.bits[0:self.payload_length]
+            #print len(self.payload), self.payload
+ 
     def bin2dec(self, bits):
         return int(''.join(map(str, bits)), 2)
 
+    def _parse_payload(self):
+        if self.uf_str == 'UF0':
+            self.rl = self.payload[8]
+            self.aq = self.payload[13]
+            self.ds = self.payload[14:22]
+            self.ap = self.payload[32:32+24]
+            
+            if self.verbose:
+                #print '\n'
+                print '----------------------------------------------------------------------'
+                print self.meta
+                print len(self.payload), self.payload
+                print 'datetime: {:s}'.format(self.meta['datetime'])
+                print '     SNR: {:2.2f} dB'.format(self.meta['snr'])
+                print '    SYNC: {:d}'.format(self.meta['sync'])
+                print '      UF: {:d} {:s}'.format(self.uf, UF_STR_LUT[self.uf])
+                print '      RL: {:d}'.format(self.rl)
+                print '      AQ: {:d}'.format(self.aq)
+                print '      DS: 0x{:04x}'.format(self.bin2dec(self.ds))
+                print ' bits AP:', self.ap
+                print '  hex AP: 0x{:06x}'.format(self.bin2dec(self.ap))
+
+            #Create output pdu and emit
+            meta = pmt.to_pmt(self.meta)
+            vector = pmt.to_pmt(self.payload)
+            pdu = pmt.cons(meta, vector)
+            self.message_port_pub(pmt.intern('out'), pdu)
+
+    
 
     # http://jetvision.de/sbs/adsb/crc.htm
     def _check_parity(self):
+        # DF CRC polynomial (0xFFFA048) = 1 + x + x^2 + x^3 + x^4 + x^5 + x^6 + x^7 + x^8 + x^9 + x^10 + x^11 + x^12 + x^14 + x^21 + x^24
+        crc_poly = np.array([1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,0,0,0,0,0,0,1,0,0,1])        
+        # UF CRC polynomial (0x1205FFF) = 1 + x^3 + x^10 + x^12 + x^13 + x^14 + x^15 + X^16 + x^17 + x^18 + x^19 + X^20 + x^21 + x^22 + x^23 + x^24
+        #crc_poly = np.array([1,0,0,1,0,0,0,0,0,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1])
+
+        if self.uf in [0,4,5]:
+            # 56 bit payload
+            self.payload_length = 56
+            #payload = self.bits[0:self.payload_length]
+            #print len(payload), payload
+
+            # Address/Parity, 24 bits
+            ap_bits = self.bits[32:32+24]
+            crc_bits = self.compute_crc(self.bits[0:self.payload_length-24], crc_poly)            
+            crc = self.bin2dec(crc_bits)
+
+            # XOR the computed CRC with the AP, the result should be the
+            # interrogated plane's ICAO address
+            self.aa_bits = crc_bits ^ ap_bits
+            self.aa = self.bin2dec(self.aa_bits)
+            self.aa_str = '%06x' % (self.aa)
+
+            parity_passed = self.plane_dict.has_key(self.aa_str) == True
+            if parity_passed:
+                self.plane_dict[self.aa_str] += 1
+            else:
+                self.plane_dict[self.aa_str] = 0
+
+            if self.verbose:
+                print '      AA: 0x{:06x}'.format(self.aa)
+                print 'AA count: {:d}'.format(self.plane_dict[self.aa_str])
+                print '----------------------------------------------------------------------'
+
+        return 0
+
+
+
+
+    # http://jetvision.de/sbs/adsb/crc.htm
+    def _check_parity_old(self):
         # DF CRC polynomial (0xFFFA048) = 1 + x + x^2 + x^3 + x^4 + x^5 + x^6 + x^7 + x^8 + x^9 + x^10 + x^11 + x^12 + x^14 + x^21 + x^24
         crc_poly = np.array([1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,0,0,0,0,0,0,1,0,0,1])        
         # UF CRC polynomial (0x1205FFF) = 1 + x^3 + x^10 + x^12 + x^13 + x^14 + x^15 + X^16 + x^17 + x^18 + x^19 + X^20 + x^21 + x^22 + x^23 + x^24
@@ -2878,6 +2718,8 @@ class uf_decode(gr.sync_block):
             if self.uf in [0,4,5]:
                 # 56 bit payload
                 self.payload_length = 56
+                payload = self.bits[0:self.payload_length]
+                print len(payload), payload
 
                 # Address/Parity, 24 bits
                 ap_bits = self.bits[32:32+24]
@@ -2999,6 +2841,7 @@ class uf_decode(gr.sync_block):
     # http://www.radarspotters.eu/forum/index.php?topic=5617.msg41293#msg41293
     # http://www.eurocontrol.int/eec/gallery/content/public/document/eec/report/1994/022_CRC_calculations_for_Mode_S.pdf
     def compute_crc(self, data, poly):
+        print data
         num_data_bits = len(data)
         num_crc_bits = len(poly)-1
 
@@ -3053,6 +2896,26 @@ class uf_decode(gr.sync_block):
         print bds, binascii.hexlify(data[1:3]), binascii.hexlify(bds)
         #self.decoded['BDS'] = binascii.hexlify(numpy.uint16(bds_bytes &amp; 0xFF))
 
+    # http://www.bucharestairports.ro/files/pages_files/Vol_IV_-_4yh_ed,_July_2007.pdf
+    # http://www.icao.int/APAC/Documents/edocs/cns/SSR_%20modesii.pdf
+    # http://www.anteni.net/adsb/Doc/1090-WP30-18-DRAFT_DO-260B-V42.pdf
+    # http://www.cats.com.kh/download.php?path=vdzw4dHS08mjtKi6vNi31Mbn0tnZ2eycn6ydmqPE19rT7Mze4cSYpsetmdXd0w==
+    # http://www.sigidwiki.com/images/1/15/ADS-B_for_Dummies.pdf
+    def _decode_header_old(self):  
+        # Uplink Format, 5 bits
+        self.uf = self.bin2dec(self.bits[0:0+5])
+        self.uf_str = "UF{:d}".format(self.uf)
+        if self.uf &lt;=24:
+            if self.verbose:
+                if self.msg_filter == 'All Messages':
+                    print '\n'
+                    print '----------------------------------------------------------------------'
+                    print 'datetime:'.ljust(16) + '%s' % (self.meta['datetime'])
+                    print 'SNR:'.ljust(16) + '%1.2f dB' % (self.meta['snr'])
+		            #print 'UF{:d}'.format(self.uf)
+                    print 'UF:'.ljust(16) + '%d %s' % (self.uf, UF_STR_LUT[self.uf])
+
+
     def _pack_bytes_old(self, unpacked):
         #self.msg_count += 1
         a = [int("".join(map(str, unpacked[i:i+8])), 2) for i in range(0, len(unpacked), 8)]
@@ -3066,11 +2929,11 @@ class uf_decode(gr.sync_block):
     </param>
     <param>
       <key>_enabled</key>
-      <value>0</value>
+      <value>1</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1408, 1524)</value>
+      <value>(1280, 1132)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -3166,7 +3029,11 @@ class uf_frame_sync(gr.sync_block):
         
         #look for specific trigger tag (probably 'sync') to indicate frame delimiter
         if all(x in self.tag.keys() for x in [self.tag_name, 'rx_time', 'es::event_time']):
-            idx_start = self.tag[self.offset_key]
+            #print self.tag[self.tag_name]
+            if self.tag[self.tag_name] == 1:
+                idx_start = self.tag[self.offset_key]
+            else: 
+                idx_start = self.tag[self.offset_key]+1
             idx_stop  = idx_start + self.msg_len
             msg = in0[idx_start:idx_stop]
             
@@ -3199,11 +3066,11 @@ class uf_frame_sync(gr.sync_block):
     </param>
     <param>
       <key>_enabled</key>
-      <value>0</value>
+      <value>1</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(880, 1668)</value>
+      <value>(1136, 1116)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -3224,168 +3091,6 @@ class uf_frame_sync(gr.sync_block):
     <param>
       <key>sps</key>
       <value>2</value>
-    </param>
-    <param>
-      <key>tag_name</key>
-      <value>'sync'</value>
-    </param>
-  </block>
-  <block>
-    <key>epy_block</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_io_cache</key>
-      <value>('Uplink Frame (UF) Sync', 'uf_frame_sync', [('tag_name', "'packet'"), ('msg_len', '112')], [('0', 'byte', 1)], [('out', 'message', 1)], '\n    Expects Correlate Access Code - Tag block upstream.\n    Tag indicates the last bit of the UF frame sync\n    Operates on unpacked byte stream.\n\n    Logic:\n     Detects a packet tag.\n     pulls out the following 112\n     Packs unpacked bit vector into bytes\n     Emits a PMT/PDU Message of decoded frame\n    ', ['msg_len', 'tag_name'])</value>
-    </param>
-    <param>
-      <key>_source_code</key>
-      <value>#!/usr/bin/env python
-
-
-import numpy
-import pmt
-import binascii
-from gnuradio import gr
-
-SEARCH = 1
-COPY = 2
-
-class uf_frame_sync(gr.sync_block):
-    """
-    Expects Correlate Access Code - Tag block upstream.
-    Tag indicates the last bit of the UF frame sync
-    Operates on unpacked byte stream.
-
-    Logic:
-     Detects a packet tag.
-     pulls out the following 112
-     Packs unpacked bit vector into bytes
-     Emits a PMT/PDU Message of decoded frame
-    """
-    def __init__(self, tag_name="packet", msg_len=112):
-        gr.sync_block.__init__(self,
-            name="Uplink Frame (UF) Sync",
-            in_sig=[numpy.int8],
-            out_sig=None)
-
-        self.tag_name = tag_name
-        self.message_port_register_out(pmt.intern("out"))
-        #self.len_encoded_msg = 112
-        self.msg_len = msg_len
-        self.msg = []
-        self.msg_packed = []
-        self.msg_count = 0
-        self.state = SEARCH
-        self.tags = {}
-
-    def pack_bytes(self):
-        self.msg_count += 1
-        a = [int("".join(map(str, self.pds_msg[i:i+8])), 2) for i in range(0, len(self.pds_msg), 8)]
-        self.msg_packed = bytearray(a)
-
-
-    def work(self, input_items, output_items):
-        in0 = input_items[0]
-        num_input_items = len(in0)
-        return_value = num_input_items
-        nread = self.nitems_read(0)
-        print num_input_items, nread,
-        print ""
-
-        if self.state == SEARCH:
-            tags = self.get_tags_in_window(0, 0, num_input_items)
-            self.tag = {}
-            for t in tags:
-                offset = t.offset
-                key = pmt.to_python(t.key) # convert from PMT to python string
-                value = pmt.to_python(t.value) 
-                self.tag[key] = value
-                if key == self.tag_name:
-                    self.tag[key] = offset - nread
-            if self.tag_name in self.tag.keys():
-                print "SYNC!", nread
-                print self.tag
-                del self.msg[:]
-                idx_start = self.tag[self.tag_name]
-                idx_stop  = idx_start + self.msg_len
-                self.msg.extend(in0[idx_start:idx_stop])
-                print len(self.msg), self.msg
-                #self.state = COPY
-            
-        return num_input_items
-
-    def work_old(self, input_items, output_items):
-        in0 = input_items[0]
-        num_input_items = len(in0)
-        return_value = num_input_items
-        nread = self.nitems_read(0)
-        print num_input_items, nread
-
-        if self.state == SEARCH:
-            tags = self.get_tags_in_window(0, 0, num_input_items)
-            if len(tags) &gt; 0:
-                print "Tags Detected !"
-                for t in tags:
-                    t_str = pmt.symbol_to_string(t.key)
-                    #print t_str
-                    if t_str == self.tag_name:
-                        #print "PACKET"
-                        #print t_str
-                        del self.pds_msg[:]#empty encoded msg buffer
-                        del self.msg_packed[:]#empty packed msg buffer
-                        cur_idx = t.offset - nread
-                        self.pds_msg.extend(in0[cur_idx:])
-                        cur_msg_len = len(self.pds_msg)
-                        print cur_msg_len &lt; self.len_encoded_msg,
-                        print t_str, num_input_items, cur_idx, len(self.pds_msg)
-                        self.state = COPY
-
-        elif self.state == COPY:
-            cur_msg_len = len(self.pds_msg)
-            if (cur_msg_len + num_input_items) &lt; self.len_encoded_msg:  #doesn't exceed max frame length
-                self.pds_msg.extend(in0)
-            else:
-                num_remain = self.len_encoded_msg - cur_msg_len
-                self.pds_msg.extend(in0[0:num_remain])
-                return_value = num_remain
-                self.pack_bytes()
-                msg_str = "[{:d}] {:s}\n".format(self.msg_count, binascii.hexlify(self.msg_packed))
-                pmt_msg = pmt.cons(pmt.PMT_NIL, pmt.intern(msg_str))
-
-                print msg_str
-                self.message_port_pub(pmt.intern('out'), pmt.cons(pmt.PMT_NIL, pmt.init_u8vector(len(self.msg_packed),self.msg_packed)))
-                self.state = SEARCH #RESET to SEARCH State
-
-        return return_value
-
-</value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(608, 1716)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>epy_block_1</value>
-    </param>
-    <param>
-      <key>msg_len</key>
-      <value>112</value>
     </param>
     <param>
       <key>tag_name</key>
@@ -3667,7 +3372,7 @@ class uf_frame_sync(gr.sync_block):
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(296, 4)</value>
+      <value>(400, 4)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -3698,7 +3403,7 @@ class uf_frame_sync(gr.sync_block):
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(400, 4)</value>
+      <value>(504, 4)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -3808,7 +3513,7 @@ class uf_frame_sync(gr.sync_block):
     </param>
     <param>
       <key>cutoff_freq</key>
-      <value>3e6</value>
+      <value>4e6</value>
     </param>
     <param>
       <key>decim</key>
@@ -3883,7 +3588,7 @@ class uf_frame_sync(gr.sync_block):
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(880, 820)</value>
+      <value>(888, 812)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -3908,161 +3613,6 @@ class uf_frame_sync(gr.sync_block):
     <param>
       <key>symbol_values</key>
       <value>[0,1]</value>
-    </param>
-  </block>
-  <block>
-    <key>note</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(584, 1876)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>note_2</value>
-    </param>
-    <param>
-      <key>note</key>
-      <value>ID UF Header and TAG</value>
-    </param>
-  </block>
-  <block>
-    <key>note</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(848, 1892)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>note_3</value>
-    </param>
-    <param>
-      <key>note</key>
-      <value>Wait for Tag, pass next 112 bits as vector</value>
-    </param>
-  </block>
-  <block>
-    <key>note</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(336, 1948)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>note_4</value>
-    </param>
-    <param>
-      <key>note</key>
-      <value>DECIMATE</value>
-    </param>
-  </block>
-  <block>
-    <key>note</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(1368, 1836)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>note_5</value>
-    </param>
-    <param>
-      <key>note</key>
-      <value>BPSK DEMOD</value>
-    </param>
-  </block>
-  <block>
-    <key>note</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(1368, 1892)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>note_6</value>
-    </param>
-    <param>
-      <key>note</key>
-      <value>DIFF DECODE</value>
     </param>
   </block>
   <block>
@@ -4144,135 +3694,6 @@ class uf_frame_sync(gr.sync_block):
     </param>
   </block>
   <block>
-    <key>pyqt_pdu_lambda</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(320, 1948)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>pyqt_pdu_lambda_0</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>fn</key>
-      <value>lambda x: numpy.array ([x[i] for i in range(0, len(x), sps)])</value>
-    </param>
-  </block>
-  <block>
-    <key>pyqt_pdu_lambda</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(960, 1828)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>pyqt_pdu_lambda_1</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>fn</key>
-      <value>lambda x: numpy.array([(i+1)/2 for i in x])</value>
-    </param>
-  </block>
-  <block>
-    <key>pyqt_pdu_lambda</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(824, 1844)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>pyqt_pdu_lambda_2</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>fn</key>
-      <value>lambda x: numpy.array([(x[i] +x[i-1]) %2 for i in range(1,lex(x))])</value>
-    </param>
-  </block>
-  <block>
     <key>qtgui_const_sink_x</key>
     <param>
       <key>autoscale</key>
@@ -4300,7 +3721,7 @@ class uf_frame_sync(gr.sync_block):
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(856, 748)</value>
+      <value>(888, 700)</value>
     </param>
     <param>
       <key>gui_hint</key>
@@ -4620,242 +4041,7 @@ class uf_frame_sync(gr.sync_block):
     </param>
   </block>
   <block>
-    <key>qtgui_number_sink</key>
-    <param>
-      <key>autoscale</key>
-      <value>False</value>
-    </param>
-    <param>
-      <key>avg</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(400, 1860)</value>
-    </param>
-    <param>
-      <key>gui_hint</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>graph_type</key>
-      <value>qtgui.NUM_GRAPH_HORIZ</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>qtgui_number_sink_0</value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>byte</value>
-    </param>
-    <param>
-      <key>color1</key>
-      <value>("black", "black")</value>
-    </param>
-    <param>
-      <key>factor1</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>label1</key>
-      <value></value>
-    </param>
-    <param>
-      <key>unit1</key>
-      <value></value>
-    </param>
-    <param>
-      <key>color10</key>
-      <value>("black", "black")</value>
-    </param>
-    <param>
-      <key>factor10</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>label10</key>
-      <value></value>
-    </param>
-    <param>
-      <key>unit10</key>
-      <value></value>
-    </param>
-    <param>
-      <key>color2</key>
-      <value>("black", "black")</value>
-    </param>
-    <param>
-      <key>factor2</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>label2</key>
-      <value></value>
-    </param>
-    <param>
-      <key>unit2</key>
-      <value></value>
-    </param>
-    <param>
-      <key>color3</key>
-      <value>("black", "black")</value>
-    </param>
-    <param>
-      <key>factor3</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>label3</key>
-      <value></value>
-    </param>
-    <param>
-      <key>unit3</key>
-      <value></value>
-    </param>
-    <param>
-      <key>color4</key>
-      <value>("black", "black")</value>
-    </param>
-    <param>
-      <key>factor4</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>label4</key>
-      <value></value>
-    </param>
-    <param>
-      <key>unit4</key>
-      <value></value>
-    </param>
-    <param>
-      <key>color5</key>
-      <value>("black", "black")</value>
-    </param>
-    <param>
-      <key>factor5</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>label5</key>
-      <value></value>
-    </param>
-    <param>
-      <key>unit5</key>
-      <value></value>
-    </param>
-    <param>
-      <key>color6</key>
-      <value>("black", "black")</value>
-    </param>
-    <param>
-      <key>factor6</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>label6</key>
-      <value></value>
-    </param>
-    <param>
-      <key>unit6</key>
-      <value></value>
-    </param>
-    <param>
-      <key>color7</key>
-      <value>("black", "black")</value>
-    </param>
-    <param>
-      <key>factor7</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>label7</key>
-      <value></value>
-    </param>
-    <param>
-      <key>unit7</key>
-      <value></value>
-    </param>
-    <param>
-      <key>color8</key>
-      <value>("black", "black")</value>
-    </param>
-    <param>
-      <key>factor8</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>label8</key>
-      <value></value>
-    </param>
-    <param>
-      <key>unit8</key>
-      <value></value>
-    </param>
-    <param>
-      <key>color9</key>
-      <value>("black", "black")</value>
-    </param>
-    <param>
-      <key>factor9</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>label9</key>
-      <value></value>
-    </param>
-    <param>
-      <key>unit9</key>
-      <value></value>
-    </param>
-    <param>
-      <key>max</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>min</key>
-      <value>-1</value>
-    </param>
-    <param>
-      <key>name</key>
-      <value>""</value>
-    </param>
-    <param>
-      <key>nconnections</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>update_time</key>
-      <value>0.10</value>
-    </param>
-  </block>
-  <block>
-    <key>qtgui_time_sink_x</key>
-    <param>
-      <key>autoscale</key>
-      <value>True</value>
-    </param>
+    <key>qtgui_time_raster_sink_x</key>
     <param>
       <key>axislabels</key>
       <value>True</value>
@@ -4869,32 +4055,24 @@ class uf_frame_sync(gr.sync_block):
       <value></value>
     </param>
     <param>
-      <key>ctrlpanel</key>
-      <value>False</value>
-    </param>
-    <param>
       <key>affinity</key>
       <value></value>
     </param>
     <param>
-      <key>entags</key>
+      <key>_enabled</key>
       <value>True</value>
     </param>
     <param>
-      <key>_enabled</key>
-      <value>0</value>
-    </param>
-    <param>
       <key>_coordinate</key>
-      <value>(616, 1484)</value>
+      <value>(1008, 1220)</value>
     </param>
     <param>
       <key>gui_hint</key>
-      <value>3,0,2,3</value>
+      <value>3,5,3,5</value>
     </param>
     <param>
       <key>_rotation</key>
-      <value>0</value>
+      <value>180</value>
     </param>
     <param>
       <key>grid</key>
@@ -4902,11 +4080,15 @@ class uf_frame_sync(gr.sync_block):
     </param>
     <param>
       <key>id</key>
-      <value>qtgui_time_sink_x_0</value>
+      <value>qtgui_time_raster_sink_x_0</value>
     </param>
     <param>
-      <key>legend</key>
-      <value>False</value>
+      <key>zmax</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>zmin</key>
+      <value>-1</value>
     </param>
     <param>
       <key>alpha1</key>
@@ -4914,23 +4096,11 @@ class uf_frame_sync(gr.sync_block):
     </param>
     <param>
       <key>color1</key>
-      <value>"blue"</value>
+      <value>1</value>
     </param>
     <param>
       <key>label1</key>
       <value></value>
-    </param>
-    <param>
-      <key>marker1</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>style1</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>width1</key>
-      <value>1</value>
     </param>
     <param>
       <key>alpha10</key>
@@ -4938,23 +4108,11 @@ class uf_frame_sync(gr.sync_block):
     </param>
     <param>
       <key>color10</key>
-      <value>"blue"</value>
+      <value>0</value>
     </param>
     <param>
       <key>label10</key>
       <value></value>
-    </param>
-    <param>
-      <key>marker10</key>
-      <value>-1</value>
-    </param>
-    <param>
-      <key>style10</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>width10</key>
-      <value>1</value>
     </param>
     <param>
       <key>alpha2</key>
@@ -4962,23 +4120,11 @@ class uf_frame_sync(gr.sync_block):
     </param>
     <param>
       <key>color2</key>
-      <value>"red"</value>
+      <value>0</value>
     </param>
     <param>
       <key>label2</key>
       <value></value>
-    </param>
-    <param>
-      <key>marker2</key>
-      <value>-1</value>
-    </param>
-    <param>
-      <key>style2</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>width2</key>
-      <value>1</value>
     </param>
     <param>
       <key>alpha3</key>
@@ -4986,23 +4132,11 @@ class uf_frame_sync(gr.sync_block):
     </param>
     <param>
       <key>color3</key>
-      <value>"green"</value>
+      <value>0</value>
     </param>
     <param>
       <key>label3</key>
       <value></value>
-    </param>
-    <param>
-      <key>marker3</key>
-      <value>-1</value>
-    </param>
-    <param>
-      <key>style3</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>width3</key>
-      <value>1</value>
     </param>
     <param>
       <key>alpha4</key>
@@ -5010,23 +4144,11 @@ class uf_frame_sync(gr.sync_block):
     </param>
     <param>
       <key>color4</key>
-      <value>"black"</value>
+      <value>0</value>
     </param>
     <param>
       <key>label4</key>
       <value></value>
-    </param>
-    <param>
-      <key>marker4</key>
-      <value>-1</value>
-    </param>
-    <param>
-      <key>style4</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>width4</key>
-      <value>1</value>
     </param>
     <param>
       <key>alpha5</key>
@@ -5034,23 +4156,11 @@ class uf_frame_sync(gr.sync_block):
     </param>
     <param>
       <key>color5</key>
-      <value>"cyan"</value>
+      <value>0</value>
     </param>
     <param>
       <key>label5</key>
       <value></value>
-    </param>
-    <param>
-      <key>marker5</key>
-      <value>-1</value>
-    </param>
-    <param>
-      <key>style5</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>width5</key>
-      <value>1</value>
     </param>
     <param>
       <key>alpha6</key>
@@ -5058,23 +4168,11 @@ class uf_frame_sync(gr.sync_block):
     </param>
     <param>
       <key>color6</key>
-      <value>"magenta"</value>
+      <value>0</value>
     </param>
     <param>
       <key>label6</key>
       <value></value>
-    </param>
-    <param>
-      <key>marker6</key>
-      <value>-1</value>
-    </param>
-    <param>
-      <key>style6</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>width6</key>
-      <value>1</value>
     </param>
     <param>
       <key>alpha7</key>
@@ -5082,23 +4180,11 @@ class uf_frame_sync(gr.sync_block):
     </param>
     <param>
       <key>color7</key>
-      <value>"yellow"</value>
+      <value>0</value>
     </param>
     <param>
       <key>label7</key>
       <value></value>
-    </param>
-    <param>
-      <key>marker7</key>
-      <value>-1</value>
-    </param>
-    <param>
-      <key>style7</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>width7</key>
-      <value>1</value>
     </param>
     <param>
       <key>alpha8</key>
@@ -5106,23 +4192,11 @@ class uf_frame_sync(gr.sync_block):
     </param>
     <param>
       <key>color8</key>
-      <value>"dark red"</value>
+      <value>0</value>
     </param>
     <param>
       <key>label8</key>
       <value></value>
-    </param>
-    <param>
-      <key>marker8</key>
-      <value>-1</value>
-    </param>
-    <param>
-      <key>style8</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>width8</key>
-      <value>1</value>
     </param>
     <param>
       <key>alpha9</key>
@@ -5130,91 +4204,47 @@ class uf_frame_sync(gr.sync_block):
     </param>
     <param>
       <key>color9</key>
-      <value>"dark green"</value>
+      <value>0</value>
     </param>
     <param>
       <key>label9</key>
       <value></value>
     </param>
     <param>
-      <key>marker9</key>
-      <value>-1</value>
-    </param>
-    <param>
-      <key>style9</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>width9</key>
-      <value>1</value>
+      <key>mult</key>
+      <value>[]</value>
     </param>
     <param>
       <key>name</key>
-      <value>"soft chips"</value>
+      <value>""</value>
+    </param>
+    <param>
+      <key>ncols</key>
+      <value>56</value>
+    </param>
+    <param>
+      <key>nrows</key>
+      <value>20</value>
     </param>
     <param>
       <key>nconnections</key>
-      <value>2</value>
+      <value>1</value>
     </param>
     <param>
-      <key>size</key>
-      <value>burst_length/2</value>
+      <key>offset</key>
+      <value>[]</value>
     </param>
     <param>
-      <key>srate</key>
-      <value>samp_rate/2</value>
-    </param>
-    <param>
-      <key>stemplot</key>
-      <value>False</value>
-    </param>
-    <param>
-      <key>tr_chan</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>tr_delay</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>tr_level</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>tr_mode</key>
-      <value>qtgui.TRIG_MODE_TAG</value>
-    </param>
-    <param>
-      <key>tr_slope</key>
-      <value>qtgui.TRIG_SLOPE_POS</value>
-    </param>
-    <param>
-      <key>tr_tag</key>
-      <value>"es::event_type"</value>
+      <key>samp_rate</key>
+      <value>samp_rate / 2</value>
     </param>
     <param>
       <key>type</key>
-      <value>float</value>
+      <value>byte</value>
     </param>
     <param>
       <key>update_time</key>
       <value>0.10</value>
-    </param>
-    <param>
-      <key>ylabel</key>
-      <value>Amplitude</value>
-    </param>
-    <param>
-      <key>yunit</key>
-      <value>""</value>
-    </param>
-    <param>
-      <key>ymax</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>ymin</key>
-      <value>-1</value>
     </param>
   </block>
   <block>
@@ -5253,7 +4283,7 @@ class uf_frame_sync(gr.sync_block):
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1168, 1596)</value>
+      <value>(1168, 1820)</value>
     </param>
     <param>
       <key>gui_hint</key>
@@ -5612,7 +4642,7 @@ class uf_frame_sync(gr.sync_block):
     </param>
     <param>
       <key>entags</key>
-      <value>False</value>
+      <value>True</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -5620,11 +4650,11 @@ class uf_frame_sync(gr.sync_block):
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1376, 1120)</value>
+      <value>(1328, 992)</value>
     </param>
     <param>
       <key>gui_hint</key>
-      <value>3,0,3,10</value>
+      <value>3,0,3,5</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -5692,7 +4722,7 @@ class uf_frame_sync(gr.sync_block):
     </param>
     <param>
       <key>alpha2</key>
-      <value>0.5</value>
+      <value>0.25</value>
     </param>
     <param>
       <key>color2</key>
@@ -5704,7 +4734,7 @@ class uf_frame_sync(gr.sync_block):
     </param>
     <param>
       <key>marker2</key>
-      <value>0</value>
+      <value>-1</value>
     </param>
     <param>
       <key>style2</key>
@@ -5955,7 +4985,7 @@ class uf_frame_sync(gr.sync_block):
     <key>qtgui_time_sink_x</key>
     <param>
       <key>autoscale</key>
-      <value>False</value>
+      <value>True</value>
     </param>
     <param>
       <key>axislabels</key>
@@ -5999,7 +5029,7 @@ class uf_frame_sync(gr.sync_block):
     </param>
     <param>
       <key>grid</key>
-      <value>False</value>
+      <value>True</value>
     </param>
     <param>
       <key>id</key>
@@ -6370,57 +5400,6 @@ class uf_frame_sync(gr.sync_block):
     </param>
   </block>
   <block>
-    <key>single_pole_iir_filter_xx</key>
-    <param>
-      <key>alpha</key>
-      <value>rms_alpha</value>
-    </param>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(664, 1348)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>single_pole_iir_filter_xx_0</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>float</value>
-    </param>
-    <param>
-      <key>vlen</key>
-      <value>1</value>
-    </param>
-  </block>
-  <block>
     <key>vcc_burst_snr</key>
     <param>
       <key>length</key>
@@ -6508,68 +5487,6 @@ class uf_frame_sync(gr.sync_block):
     <param>
       <key>samp_rate</key>
       <value>samp_rate</value>
-    </param>
-  </block>
-  <block>
-    <key>vcc_qt_hex_text</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(1352, 1592)</value>
-    </param>
-    <param>
-      <key>gui_hint</key>
-      <value>3,7,2,3</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>vcc_qt_hex_text_0</value>
-    </param>
-  </block>
-  <block>
-    <key>virtual_sink</key>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(1168, 1692)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>virtual_sink_0</value>
-    </param>
-    <param>
-      <key>stream_id</key>
-      <value>frames</value>
     </param>
   </block>
   <block>
@@ -6661,38 +5578,11 @@ class uf_frame_sync(gr.sync_block):
     </param>
     <param>
       <key>_enabled</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(832, 1476)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>virtual_sink_4</value>
-    </param>
-    <param>
-      <key>stream_id</key>
-      <value>bits</value>
-    </param>
-  </block>
-  <block>
-    <key>virtual_sink</key>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
       <value>True</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(880, 932)</value>
+      <value>(888, 764)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -6719,34 +5609,7 @@ class uf_frame_sync(gr.sync_block):
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1064, 1484)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>virtual_sink_4_1</value>
-    </param>
-    <param>
-      <key>stream_id</key>
-      <value>bits</value>
-    </param>
-  </block>
-  <block>
-    <key>virtual_sink</key>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(1112, 828)</value>
+      <value>(1120, 820)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -6759,33 +5622,6 @@ class uf_frame_sync(gr.sync_block):
     <param>
       <key>stream_id</key>
       <value>soft_bits</value>
-    </param>
-  </block>
-  <block>
-    <key>virtual_source</key>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(112, 1948)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>virtual_source_0</value>
-    </param>
-    <param>
-      <key>stream_id</key>
-      <value>real</value>
     </param>
   </block>
   <block>
@@ -6908,34 +5744,7 @@ class uf_frame_sync(gr.sync_block):
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(64, 1332)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>virtual_source_4</value>
-    </param>
-    <param>
-      <key>stream_id</key>
-      <value>soft_bits</value>
-    </param>
-  </block>
-  <block>
-    <key>virtual_source</key>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(56, 1612)</value>
+      <value>(56, 1836)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -6962,7 +5771,7 @@ class uf_frame_sync(gr.sync_block):
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(32, 1100)</value>
+      <value>(0, 988)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -6977,33 +5786,12 @@ class uf_frame_sync(gr.sync_block):
       <value>corrected_iq</value>
     </param>
   </block>
-  <block>
-    <key>virtual_source</key>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(1200, 1532)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>virtual_source_5</value>
-    </param>
-    <param>
-      <key>stream_id</key>
-      <value>frames</value>
-    </param>
-  </block>
+  <connection>
+    <source_block_id>ais_invert_0</source_block_id>
+    <sink_block_id>digital_correlate_access_code_tag_xx_0_0_1_2_2_0_0_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
   <connection>
     <source_block_id>analog_agc2_xx_0</source_block_id>
     <sink_block_id>low_pass_filter_0</sink_block_id>
@@ -7029,22 +5817,16 @@ class uf_frame_sync(gr.sync_block):
     <sink_key>0</sink_key>
   </connection>
   <connection>
-    <source_block_id>blocks_add_const_vxx_2</source_block_id>
-    <sink_block_id>qtgui_time_sink_x_0_1</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>2</sink_key>
-  </connection>
-  <connection>
     <source_block_id>blocks_char_to_float_0_0</source_block_id>
     <sink_block_id>blocks_add_const_vxx_1</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
   <connection>
-    <source_block_id>blocks_char_to_float_0_0_0</source_block_id>
-    <sink_block_id>blocks_add_const_vxx_2</sink_block_id>
+    <source_block_id>blocks_char_to_float_0_1</source_block_id>
+    <sink_block_id>qtgui_time_sink_x_0_1</sink_block_id>
     <source_key>0</source_key>
-    <sink_key>0</sink_key>
+    <sink_key>2</sink_key>
   </connection>
   <connection>
     <source_block_id>blocks_complex_to_arg_0</source_block_id>
@@ -7071,22 +5853,16 @@ class uf_frame_sync(gr.sync_block):
     <sink_key>0</sink_key>
   </connection>
   <connection>
-    <source_block_id>blocks_complex_to_real_0</source_block_id>
-    <sink_block_id>blocks_sub_xx_1</sink_block_id>
+    <source_block_id>blocks_complex_to_real_1_0_0</source_block_id>
+    <sink_block_id>blocks_sub_xx_2_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
   <connection>
-    <source_block_id>blocks_complex_to_real_0</source_block_id>
+    <source_block_id>blocks_complex_to_real_1_0_0</source_block_id>
     <sink_block_id>qtgui_time_sink_x_0_1</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>blocks_delay_0</source_block_id>
-    <sink_block_id>blocks_multiply_xx_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>1</sink_key>
   </connection>
   <connection>
     <source_block_id>blocks_interleaved_short_to_complex_0</source_block_id>
@@ -7125,26 +5901,8 @@ class uf_frame_sync(gr.sync_block):
     <sink_key>1</sink_key>
   </connection>
   <connection>
-    <source_block_id>blocks_multiply_const_vxx_2</source_block_id>
-    <sink_block_id>qtgui_time_sink_x_0_1</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>1</sink_key>
-  </connection>
-  <connection>
     <source_block_id>blocks_multiply_const_xx_0</source_block_id>
     <sink_block_id>blocks_throttle_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>blocks_multiply_xx_0</source_block_id>
-    <sink_block_id>blocks_complex_to_real_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>blocks_multiply_xx_0</source_block_id>
-    <sink_block_id>blocks_rms_xx_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
@@ -7167,10 +5925,28 @@ class uf_frame_sync(gr.sync_block):
     <sink_key>0</sink_key>
   </connection>
   <connection>
+    <source_block_id>blocks_pdu_to_tagged_stream_1</source_block_id>
+    <sink_block_id>qtgui_time_raster_sink_x_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
     <source_block_id>blocks_rms_xx_0</source_block_id>
     <sink_block_id>blocks_multiply_const_vxx_2</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>blocks_rms_xx_1</source_block_id>
+    <sink_block_id>blocks_sub_xx_2_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>1</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>blocks_rms_xx_1</source_block_id>
+    <sink_block_id>qtgui_time_sink_x_0_1</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>1</sink_key>
   </connection>
   <connection>
     <source_block_id>blocks_skiphead_0</source_block_id>
@@ -7191,32 +5967,20 @@ class uf_frame_sync(gr.sync_block):
     <sink_key>0</sink_key>
   </connection>
   <connection>
+    <source_block_id>blocks_sub_xx_2_0</source_block_id>
+    <sink_block_id>digital_binary_slicer_fb_0_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
     <source_block_id>blocks_throttle_0</source_block_id>
     <sink_block_id>analog_agc2_xx_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
   <connection>
-    <source_block_id>digital_binary_slicer_fb_0</source_block_id>
-    <sink_block_id>digital_correlate_access_code_xx_ts_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>digital_binary_slicer_fb_0</source_block_id>
-    <sink_block_id>qtgui_number_sink_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>digital_binary_slicer_fb_1</source_block_id>
-    <sink_block_id>blocks_char_to_float_0_0_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>digital_clock_recovery_mm_xx_0</source_block_id>
-    <sink_block_id>digital_costas_loop_cc_0</sink_block_id>
+    <source_block_id>digital_binary_slicer_fb_0_0</source_block_id>
+    <sink_block_id>ais_invert_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
@@ -7233,14 +5997,14 @@ class uf_frame_sync(gr.sync_block):
     <sink_key>0</sink_key>
   </connection>
   <connection>
-    <source_block_id>digital_correlate_access_code_tag_xx_0_0_1_2_2</source_block_id>
-    <sink_block_id>epy_block_1</sink_block_id>
+    <source_block_id>digital_correlate_access_code_tag_xx_0_0_1_2_2_0_0_0</source_block_id>
+    <sink_block_id>blocks_char_to_float_0_1</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
   <connection>
-    <source_block_id>digital_correlate_access_code_xx_ts_0</source_block_id>
-    <sink_block_id>blocks_tag_debug_0</sink_block_id>
+    <source_block_id>digital_correlate_access_code_tag_xx_0_0_1_2_2_0_0_0</source_block_id>
+    <sink_block_id>epy_block_1</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
@@ -7269,16 +6033,34 @@ class uf_frame_sync(gr.sync_block):
     <sink_key>0</sink_key>
   </connection>
   <connection>
+    <source_block_id>digital_diff_phasor_cc_0</source_block_id>
+    <sink_block_id>blocks_complex_to_real_1_0_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>digital_diff_phasor_cc_0</source_block_id>
+    <sink_block_id>blocks_rms_xx_1</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
     <source_block_id>digital_pfb_clock_sync_xxx_0</source_block_id>
     <sink_block_id>digital_costas_loop_cc_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
   <connection>
-    <source_block_id>epy_block_1</source_block_id>
-    <sink_block_id>virtual_sink_0</sink_block_id>
+    <source_block_id>epy_block_0_0</source_block_id>
+    <sink_block_id>blocks_pdu_to_tagged_stream_1</sink_block_id>
     <source_key>out</source_key>
-    <sink_key>0</sink_key>
+    <sink_key>pdus</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>epy_block_1</source_block_id>
+    <sink_block_id>epy_block_0_0</sink_block_id>
+    <source_key>out</source_key>
+    <sink_key>in</sink_key>
   </connection>
   <connection>
     <source_block_id>es_handler_pdu_0</source_block_id>
@@ -7324,12 +6106,6 @@ class uf_frame_sync(gr.sync_block):
   </connection>
   <connection>
     <source_block_id>low_pass_filter_0_0</source_block_id>
-    <sink_block_id>digital_clock_recovery_mm_xx_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>low_pass_filter_0_0</source_block_id>
     <sink_block_id>digital_pfb_clock_sync_xxx_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
@@ -7339,12 +6115,6 @@ class uf_frame_sync(gr.sync_block):
     <sink_block_id>virtual_sink_5</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>pyqt_pdu_lambda_1</source_block_id>
-    <sink_block_id>pyqt_pdu_lambda_2</sink_block_id>
-    <source_key>pdus</source_key>
-    <sink_key>pdus</sink_key>
   </connection>
   <connection>
     <source_block_id>sigmf_source_0</source_block_id>
@@ -7377,12 +6147,6 @@ class uf_frame_sync(gr.sync_block):
     <sink_key>cpdus</sink_key>
   </connection>
   <connection>
-    <source_block_id>virtual_source_0</source_block_id>
-    <sink_block_id>digital_binary_slicer_fb_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
-  </connection>
-  <connection>
     <source_block_id>virtual_source_1</source_block_id>
     <sink_block_id>es_trigger_edge_f_0</sink_block_id>
     <source_key>0</source_key>
@@ -7413,33 +6177,9 @@ class uf_frame_sync(gr.sync_block):
     <sink_key>0</sink_key>
   </connection>
   <connection>
-    <source_block_id>virtual_source_4_0</source_block_id>
-    <sink_block_id>digital_correlate_access_code_tag_xx_0_0_1_2</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
-  </connection>
-  <connection>
     <source_block_id>virtual_source_4_0_0</source_block_id>
-    <sink_block_id>blocks_delay_0</sink_block_id>
+    <sink_block_id>digital_diff_phasor_cc_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>virtual_source_4_0_0</source_block_id>
-    <sink_block_id>blocks_multiply_xx_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>virtual_source_5</source_block_id>
-    <sink_block_id>blocks_message_debug_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>print_pdu</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>virtual_source_5</source_block_id>
-    <sink_block_id>epy_block_0_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>in</sink_key>
   </connection>
 </flow_graph>

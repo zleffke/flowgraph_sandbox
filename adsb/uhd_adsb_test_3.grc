@@ -242,7 +242,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>2e6</value>
+      <value>4e6</value>
     </param>
   </block>
   <block>
@@ -2995,7 +2995,7 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>True</value>
+      <value>0</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -4321,7 +4321,7 @@
     </param>
     <param>
       <key>dev_addr</key>
-      <value>"addr=192.168.10.4"</value>
+      <value></value>
     </param>
     <param>
       <key>dev_args</key>
@@ -4329,7 +4329,7 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>0</value>
+      <value>1</value>
     </param>
     <param>
       <key>_coordinate</key>

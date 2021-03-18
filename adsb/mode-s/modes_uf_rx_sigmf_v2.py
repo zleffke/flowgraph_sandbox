@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ##################################################
 # GNU Radio Python Flow Graph
-# Title: Modes Uf Rx Sigmf
+# Title: Modes Uf Rx Sigmf V2
 # GNU Radio version: 3.7.13.4
 ##################################################
 
@@ -29,6 +29,9 @@ from gnuradio.eng_option import eng_option
 from gnuradio.fft import window
 from gnuradio.filter import firdes
 from optparse import OptionParser
+import ais
+import epy_block_0_0
+import epy_block_1
 import es
 import gr_sigmf
 import numpy
@@ -41,12 +44,12 @@ import vcc
 from gnuradio import qtgui
 
 
-class modes_uf_rx_sigmf(gr.top_block, Qt.QWidget):
+class modes_uf_rx_sigmf_v2(gr.top_block, Qt.QWidget):
 
     def __init__(self):
-        gr.top_block.__init__(self, "Modes Uf Rx Sigmf")
+        gr.top_block.__init__(self, "Modes Uf Rx Sigmf V2")
         Qt.QWidget.__init__(self)
-        self.setWindowTitle("Modes Uf Rx Sigmf")
+        self.setWindowTitle("Modes Uf Rx Sigmf V2")
         qtgui.util.check_set_qss()
         try:
             self.setWindowIcon(Qt.QIcon.fromTheme('gnuradio-grc'))
@@ -64,20 +67,19 @@ class modes_uf_rx_sigmf(gr.top_block, Qt.QWidget):
         self.top_grid_layout = Qt.QGridLayout()
         self.top_layout.addLayout(self.top_grid_layout)
 
-        self.settings = Qt.QSettings("GNU Radio", "modes_uf_rx_sigmf")
+        self.settings = Qt.QSettings("GNU Radio", "modes_uf_rx_sigmf_v2")
         self.restoreGeometry(self.settings.value("geometry").toByteArray())
 
 
         ##################################################
         # Variables
         ##################################################
-        self.thresh_mult = thresh_mult = 1
-        self.sps = sps = 4000000
+        self.sps = sps = 2
         self.samp_rate = samp_rate = 8000000
 
         self.rrc_taps = rrc_taps = firdes.root_raised_cosine(1, 1, 0.5, 0.4, 32)
 
-        self.rms_alpha = rms_alpha = 1e-3
+        self.rms_alpha = rms_alpha = 1e-6
         self.rf_gain = rf_gain = 45
         self.qt_thresh = qt_thresh = 110
         self.es_thresh = es_thresh = 110
@@ -85,22 +87,12 @@ class modes_uf_rx_sigmf(gr.top_block, Qt.QWidget):
         self.det_avg_len = det_avg_len = 20
         self.cons_offset = cons_offset = 5
         self.burst_length = burst_length = 600
+        self.bit_thresh = bit_thresh = 5
         self.avg_len = avg_len = 20
 
         ##################################################
         # Blocks
         ##################################################
-        self._thresh_mult_tool_bar = Qt.QToolBar(self)
-        self._thresh_mult_tool_bar.addWidget(Qt.QLabel("thresh_mult"+": "))
-        self._thresh_mult_line_edit = Qt.QLineEdit(str(self.thresh_mult))
-        self._thresh_mult_tool_bar.addWidget(self._thresh_mult_line_edit)
-        self._thresh_mult_line_edit.returnPressed.connect(
-        	lambda: self.set_thresh_mult(eng_notation.str_to_num(str(self._thresh_mult_line_edit.text().toAscii()))))
-        self.top_grid_layout.addWidget(self._thresh_mult_tool_bar, 6, 4, 1, 1)
-        for r in range(6, 7):
-            self.top_grid_layout.setRowStretch(r, 1)
-        for c in range(4, 5):
-            self.top_grid_layout.setColumnStretch(c, 1)
         self._rms_alpha_tool_bar = Qt.QToolBar(self)
         self._rms_alpha_tool_bar.addWidget(Qt.QLabel("rms_alpha"+": "))
         self._rms_alpha_line_edit = Qt.QLineEdit(str(self.rms_alpha))
@@ -205,8 +197,8 @@ class modes_uf_rx_sigmf(gr.top_block, Qt.QWidget):
 
         self.qtgui_time_sink_x_1.enable_tags(-1, True)
         self.qtgui_time_sink_x_1.set_trigger_mode(qtgui.TRIG_MODE_AUTO, qtgui.TRIG_SLOPE_POS, qt_thresh, 1.0/samp_rate *100, 0, "")
-        self.qtgui_time_sink_x_1.enable_autoscale(False)
-        self.qtgui_time_sink_x_1.enable_grid(False)
+        self.qtgui_time_sink_x_1.enable_autoscale(True)
+        self.qtgui_time_sink_x_1.enable_grid(True)
         self.qtgui_time_sink_x_1.enable_axis_labels(True)
         self.qtgui_time_sink_x_1.enable_control_panel(False)
         self.qtgui_time_sink_x_1.enable_stem_plot(False)
@@ -255,7 +247,7 @@ class modes_uf_rx_sigmf(gr.top_block, Qt.QWidget):
 
         self.qtgui_time_sink_x_0_1.set_y_label('Amplitude', "")
 
-        self.qtgui_time_sink_x_0_1.enable_tags(-1, False)
+        self.qtgui_time_sink_x_0_1.enable_tags(-1, True)
         self.qtgui_time_sink_x_0_1.set_trigger_mode(qtgui.TRIG_MODE_TAG, qtgui.TRIG_SLOPE_POS, 0, 0, 0, "es::event_type")
         self.qtgui_time_sink_x_0_1.enable_autoscale(True)
         self.qtgui_time_sink_x_0_1.enable_grid(False)
@@ -274,9 +266,9 @@ class modes_uf_rx_sigmf(gr.top_block, Qt.QWidget):
                   "magenta", "yellow", "dark red", "dark green", "blue"]
         styles = [1, 2, 1, 1, 1,
                   1, 1, 1, 1, 1]
-        markers = [0, 0, 0, -1, -1,
+        markers = [0, -1, 0, -1, -1,
                    -1, -1, -1, -1, -1]
-        alphas = [1, 0.5, 1.0, 1.0, 1.0,
+        alphas = [1, 0.25, 1.0, 1.0, 1.0,
                   1.0, 1.0, 1.0, 1.0, 1.0]
 
         for i in xrange(3):
@@ -291,10 +283,45 @@ class modes_uf_rx_sigmf(gr.top_block, Qt.QWidget):
             self.qtgui_time_sink_x_0_1.set_line_alpha(i, alphas[i])
 
         self._qtgui_time_sink_x_0_1_win = sip.wrapinstance(self.qtgui_time_sink_x_0_1.pyqwidget(), Qt.QWidget)
-        self.top_grid_layout.addWidget(self._qtgui_time_sink_x_0_1_win, 3, 0, 3, 10)
+        self.top_grid_layout.addWidget(self._qtgui_time_sink_x_0_1_win, 3, 0, 3, 5)
         for r in range(3, 6):
             self.top_grid_layout.setRowStretch(r, 1)
-        for c in range(0, 10):
+        for c in range(0, 5):
+            self.top_grid_layout.setColumnStretch(c, 1)
+        self.qtgui_time_raster_sink_x_0 = qtgui.time_raster_sink_b(
+        	samp_rate / 2,
+        	20,
+        	56,
+        	([]),
+        	([]),
+        	"",
+        	1,
+        	)
+
+        self.qtgui_time_raster_sink_x_0.set_update_time(0.10)
+        self.qtgui_time_raster_sink_x_0.set_intensity_range(-1, 1)
+        self.qtgui_time_raster_sink_x_0.enable_grid(False)
+        self.qtgui_time_raster_sink_x_0.enable_axis_labels(True)
+
+        labels = ['', '', '', '', '',
+                  '', '', '', '', '']
+        colors = [1, 0, 0, 0, 0,
+                  0, 0, 0, 0, 0]
+        alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
+                  1.0, 1.0, 1.0, 1.0, 1.0]
+        for i in xrange(1):
+            if len(labels[i]) == 0:
+                self.qtgui_time_raster_sink_x_0.set_line_label(i, "Data {0}".format(i))
+            else:
+                self.qtgui_time_raster_sink_x_0.set_line_label(i, labels[i])
+            self.qtgui_time_raster_sink_x_0.set_color_map(i, colors[i])
+            self.qtgui_time_raster_sink_x_0.set_line_alpha(i, alphas[i])
+
+        self._qtgui_time_raster_sink_x_0_win = sip.wrapinstance(self.qtgui_time_raster_sink_x_0.pyqwidget(), Qt.QWidget)
+        self.top_grid_layout.addWidget(self._qtgui_time_raster_sink_x_0_win, 3, 5, 3, 5)
+        for r in range(3, 6):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(5, 10):
             self.top_grid_layout.setColumnStretch(c, 1)
         self.qtgui_const_sink_x_0 = qtgui.const_sink_c(
         	burst_length/2, #size
@@ -358,41 +385,54 @@ class modes_uf_rx_sigmf(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setColumnStretch(c, 1)
 
         self.low_pass_filter_0_0 = filter.fir_filter_ccf(1, firdes.low_pass(
-        	1, samp_rate, 3e6, 250e3, firdes.WIN_BLACKMAN, 6.76))
+        	1, samp_rate, 4e6, 250e3, firdes.WIN_BLACKMAN, 6.76))
         self.fosphor_glfw_sink_c_0 = fosphor.glfw_sink_c()
         self.fosphor_glfw_sink_c_0.set_fft_window(window.WIN_BLACKMAN_hARRIS)
         self.fosphor_glfw_sink_c_0.set_frequency_range(0, samp_rate)
         self.es_trigger_edge_f_0 = es.trigger_edge_f(es_thresh,burst_length,burst_length /3,gr.sizeof_gr_complex,300)
         self.es_sink_0 = es.sink(1*[gr.sizeof_gr_complex],4,64,0,2,0)
         self.es_handler_pdu_0 = es.es_make_handler_pdu(es.es_handler_print.TYPE_C32)
+        self.epy_block_1 = epy_block_1.uf_frame_sync(tag_name='sync', msg_len=112, samp_rate=samp_rate, sps=2)
+        self.epy_block_0_0 = epy_block_0_0.uf_decode(msg_filter='All Messages', verbose=True)
         self.digital_pfb_clock_sync_xxx_0 = digital.pfb_clock_sync_ccf(2, math.pi/200, (rrc_taps), 32, 16, 1.1, 1)
+        self.digital_diff_phasor_cc_0 = digital.diff_phasor_cc()
         self.digital_costas_loop_cc_0 = digital.costas_loop_cc(math.pi / 50, 2, False)
-        self.digital_binary_slicer_fb_1 = digital.binary_slicer_fb()
-        self.blocks_throttle_0 = blocks.throttle(gr.sizeof_gr_complex*1, samp_rate,True)
-        self.blocks_sub_xx_1 = blocks.sub_ff(1)
+        self.digital_correlate_access_code_tag_xx_0_0_1_2_2_0_0_0 = digital.correlate_access_code_tag_bb('00011111000111000001', 3, 'sync')
+        self.digital_binary_slicer_fb_0_0 = digital.binary_slicer_fb()
+        self.blocks_throttle_0 = blocks.throttle(gr.sizeof_gr_complex*1, samp_rate*2,True)
+        self.blocks_sub_xx_2_0 = blocks.sub_ff(1)
         self.blocks_sub_xx_0 = blocks.sub_ff(1)
         self.blocks_skiphead_0 = blocks.skiphead(gr.sizeof_float*1, 1)
-        self.blocks_rms_xx_0 = blocks.rms_cf(rms_alpha)
+        self.blocks_rms_xx_1 = blocks.rms_cf(rms_alpha)
+        self.blocks_pdu_to_tagged_stream_1 = blocks.pdu_to_tagged_stream(blocks.byte_t, 'packet_len')
         self.blocks_pdu_to_tagged_stream_0 = blocks.pdu_to_tagged_stream(blocks.complex_t, 'est_len')
         (self.blocks_pdu_to_tagged_stream_0).set_min_output_buffer(600)
         self.blocks_pdu_remove_0 = blocks.pdu_remove(pmt.intern("es::event_buffer"))
-        self.blocks_multiply_xx_0 = blocks.multiply_vcc(1)
         self.blocks_multiply_const_xx_0 = blocks.multiply_const_cc(1.0 / 65536.0)
-        self.blocks_multiply_const_vxx_2 = blocks.multiply_const_vff((thresh_mult, ))
         self.blocks_multiply_const_vxx_0 = blocks.multiply_const_vff((-1*det_mult, ))
         self.blocks_moving_average_xx_0_0 = blocks.moving_average_ff(int(det_avg_len), 1.0/det_avg_len, 4000, 1)
         self.blocks_moving_average_xx_0 = blocks.moving_average_ff(int(avg_len), 1.0/avg_len, 4000, 1)
         self.blocks_interleaved_short_to_complex_0 = blocks.interleaved_short_to_complex(True, False)
-        self.blocks_delay_0 = blocks.delay(gr.sizeof_gr_complex*1, 1)
-        self.blocks_complex_to_real_0 = blocks.complex_to_real(1)
+        self.blocks_complex_to_real_1_0_0 = blocks.complex_to_real(1)
         self.blocks_complex_to_mag_squared_0 = blocks.complex_to_mag_squared(1)
         self.blocks_complex_to_arg_0 = blocks.complex_to_arg(1)
-        self.blocks_char_to_float_0_0_0 = blocks.char_to_float(1, -1/20.0)
-        self.blocks_add_const_vxx_2 = blocks.add_const_vff((20, ))
+        self.blocks_char_to_float_0_1 = blocks.char_to_float(1, 1/10.0)
         self.blocks_add_const_vxx_0 = blocks.add_const_vff((cons_offset, ))
         self.blocks_abs_xx_0 = blocks.abs_ff(1)
+        self._bit_thresh_tool_bar = Qt.QToolBar(self)
+        self._bit_thresh_tool_bar.addWidget(Qt.QLabel("bit_thresh"+": "))
+        self._bit_thresh_line_edit = Qt.QLineEdit(str(self.bit_thresh))
+        self._bit_thresh_tool_bar.addWidget(self._bit_thresh_line_edit)
+        self._bit_thresh_line_edit.returnPressed.connect(
+        	lambda: self.set_bit_thresh(eng_notation.str_to_num(str(self._bit_thresh_line_edit.text().toAscii()))))
+        self.top_grid_layout.addWidget(self._bit_thresh_tool_bar, 6, 4, 1, 1)
+        for r in range(6, 7):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(4, 5):
+            self.top_grid_layout.setColumnStretch(c, 1)
         self.analog_agc2_xx_0 = analog.agc2_cc(1e-1, 1e-2, 1.0, 1.0)
         self.analog_agc2_xx_0.set_max_gain(65536)
+        self.ais_invert_0 = ais.invert()
 
 
 
@@ -400,6 +440,8 @@ class modes_uf_rx_sigmf(gr.top_block, Qt.QWidget):
         # Connections
         ##################################################
         self.msg_connect((self.blocks_pdu_remove_0, 'pdus'), (self.vcc_burst_snr_0, 'in'))
+        self.msg_connect((self.epy_block_0_0, 'out'), (self.blocks_pdu_to_tagged_stream_1, 'pdus'))
+        self.msg_connect((self.epy_block_1, 'out'), (self.epy_block_0_0, 'in'))
         self.msg_connect((self.es_handler_pdu_0, 'pdus_out'), (self.blocks_pdu_remove_0, 'pdus'))
         self.msg_connect((self.es_trigger_edge_f_0, 'edge_event'), (self.es_handler_pdu_0, 'handle_event'))
         self.msg_connect((self.es_trigger_edge_f_0, 'which_stream'), (self.es_sink_0, 'schedule_event'))
@@ -407,58 +449,50 @@ class modes_uf_rx_sigmf(gr.top_block, Qt.QWidget):
         self.msg_connect((self.vcc_es_tag_to_utc_0, 'out'), (self.blocks_pdu_to_tagged_stream_0, 'pdus'))
         self.msg_connect((self.vcc_es_tag_to_utc_0, 'out'), (self.pyqt_const_plot_0, 'cpdus'))
         self.msg_connect((self.vcc_es_tag_to_utc_0, 'out'), (self.pyqt_ctime_plot_0, 'cpdus'))
+        self.connect((self.ais_invert_0, 0), (self.digital_correlate_access_code_tag_xx_0_0_1_2_2_0_0_0, 0))
         self.connect((self.analog_agc2_xx_0, 0), (self.blocks_complex_to_arg_0, 0))
         self.connect((self.analog_agc2_xx_0, 0), (self.blocks_complex_to_mag_squared_0, 0))
         self.connect((self.analog_agc2_xx_0, 0), (self.es_trigger_edge_f_0, 1))
         self.connect((self.analog_agc2_xx_0, 0), (self.fosphor_glfw_sink_c_0, 0))
         self.connect((self.blocks_abs_xx_0, 0), (self.blocks_moving_average_xx_0_0, 0))
         self.connect((self.blocks_add_const_vxx_0, 0), (self.qtgui_time_sink_x_1, 2))
-        self.connect((self.blocks_add_const_vxx_2, 0), (self.qtgui_time_sink_x_0_1, 2))
-        self.connect((self.blocks_char_to_float_0_0_0, 0), (self.blocks_add_const_vxx_2, 0))
+        self.connect((self.blocks_char_to_float_0_1, 0), (self.qtgui_time_sink_x_0_1, 2))
         self.connect((self.blocks_complex_to_arg_0, 0), (self.blocks_skiphead_0, 0))
         self.connect((self.blocks_complex_to_arg_0, 0), (self.blocks_sub_xx_0, 0))
         self.connect((self.blocks_complex_to_arg_0, 0), (self.qtgui_time_sink_x_1, 1))
         self.connect((self.blocks_complex_to_mag_squared_0, 0), (self.blocks_moving_average_xx_0, 0))
-        self.connect((self.blocks_complex_to_real_0, 0), (self.blocks_sub_xx_1, 0))
-        self.connect((self.blocks_complex_to_real_0, 0), (self.qtgui_time_sink_x_0_1, 0))
-        self.connect((self.blocks_delay_0, 0), (self.blocks_multiply_xx_0, 1))
+        self.connect((self.blocks_complex_to_real_1_0_0, 0), (self.blocks_sub_xx_2_0, 0))
+        self.connect((self.blocks_complex_to_real_1_0_0, 0), (self.qtgui_time_sink_x_0_1, 0))
         self.connect((self.blocks_interleaved_short_to_complex_0, 0), (self.blocks_multiply_const_xx_0, 0))
         self.connect((self.blocks_moving_average_xx_0, 0), (self.es_trigger_edge_f_0, 0))
         self.connect((self.blocks_moving_average_xx_0, 0), (self.qtgui_time_sink_x_1, 0))
         self.connect((self.blocks_moving_average_xx_0_0, 0), (self.blocks_multiply_const_vxx_0, 0))
         self.connect((self.blocks_multiply_const_vxx_0, 0), (self.blocks_add_const_vxx_0, 0))
-        self.connect((self.blocks_multiply_const_vxx_2, 0), (self.blocks_sub_xx_1, 1))
-        self.connect((self.blocks_multiply_const_vxx_2, 0), (self.qtgui_time_sink_x_0_1, 1))
         self.connect((self.blocks_multiply_const_xx_0, 0), (self.blocks_throttle_0, 0))
-        self.connect((self.blocks_multiply_xx_0, 0), (self.blocks_complex_to_real_0, 0))
-        self.connect((self.blocks_multiply_xx_0, 0), (self.blocks_rms_xx_0, 0))
         self.connect((self.blocks_pdu_to_tagged_stream_0, 0), (self.low_pass_filter_0_0, 0))
-        self.connect((self.blocks_rms_xx_0, 0), (self.blocks_multiply_const_vxx_2, 0))
+        self.connect((self.blocks_pdu_to_tagged_stream_1, 0), (self.qtgui_time_raster_sink_x_0, 0))
+        self.connect((self.blocks_rms_xx_1, 0), (self.blocks_sub_xx_2_0, 1))
+        self.connect((self.blocks_rms_xx_1, 0), (self.qtgui_time_sink_x_0_1, 1))
         self.connect((self.blocks_skiphead_0, 0), (self.blocks_sub_xx_0, 1))
         self.connect((self.blocks_sub_xx_0, 0), (self.blocks_abs_xx_0, 0))
-        self.connect((self.blocks_sub_xx_1, 0), (self.digital_binary_slicer_fb_1, 0))
+        self.connect((self.blocks_sub_xx_2_0, 0), (self.digital_binary_slicer_fb_0_0, 0))
         self.connect((self.blocks_throttle_0, 0), (self.analog_agc2_xx_0, 0))
-        self.connect((self.digital_binary_slicer_fb_1, 0), (self.blocks_char_to_float_0_0_0, 0))
-        self.connect((self.digital_costas_loop_cc_0, 0), (self.blocks_delay_0, 0))
-        self.connect((self.digital_costas_loop_cc_0, 0), (self.blocks_multiply_xx_0, 0))
+        self.connect((self.digital_binary_slicer_fb_0_0, 0), (self.ais_invert_0, 0))
+        self.connect((self.digital_correlate_access_code_tag_xx_0_0_1_2_2_0_0_0, 0), (self.blocks_char_to_float_0_1, 0))
+        self.connect((self.digital_correlate_access_code_tag_xx_0_0_1_2_2_0_0_0, 0), (self.epy_block_1, 0))
+        self.connect((self.digital_costas_loop_cc_0, 0), (self.digital_diff_phasor_cc_0, 0))
         self.connect((self.digital_costas_loop_cc_0, 0), (self.qtgui_const_sink_x_0, 0))
+        self.connect((self.digital_diff_phasor_cc_0, 0), (self.blocks_complex_to_real_1_0_0, 0))
+        self.connect((self.digital_diff_phasor_cc_0, 0), (self.blocks_rms_xx_1, 0))
         self.connect((self.digital_pfb_clock_sync_xxx_0, 0), (self.digital_costas_loop_cc_0, 0))
         self.connect((self.es_trigger_edge_f_0, 0), (self.es_sink_0, 0))
         self.connect((self.low_pass_filter_0_0, 0), (self.digital_pfb_clock_sync_xxx_0, 0))
         self.connect((self.sigmf_source_0, 0), (self.blocks_interleaved_short_to_complex_0, 0))
 
     def closeEvent(self, event):
-        self.settings = Qt.QSettings("GNU Radio", "modes_uf_rx_sigmf")
+        self.settings = Qt.QSettings("GNU Radio", "modes_uf_rx_sigmf_v2")
         self.settings.setValue("geometry", self.saveGeometry())
         event.accept()
-
-    def get_thresh_mult(self):
-        return self.thresh_mult
-
-    def set_thresh_mult(self, thresh_mult):
-        self.thresh_mult = thresh_mult
-        Qt.QMetaObject.invokeMethod(self._thresh_mult_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.thresh_mult)))
-        self.blocks_multiply_const_vxx_2.set_k((self.thresh_mult, ))
 
     def get_sps(self):
         return self.sps
@@ -474,9 +508,10 @@ class modes_uf_rx_sigmf(gr.top_block, Qt.QWidget):
         self.qtgui_time_sink_x_1.set_samp_rate(self.samp_rate)
         self.qtgui_time_sink_x_1.set_trigger_mode(qtgui.TRIG_MODE_AUTO, qtgui.TRIG_SLOPE_POS, self.qt_thresh, 1.0/self.samp_rate *100, 0, "")
         self.qtgui_time_sink_x_0_1.set_samp_rate(self.samp_rate/2)
-        self.low_pass_filter_0_0.set_taps(firdes.low_pass(1, self.samp_rate, 3e6, 250e3, firdes.WIN_BLACKMAN, 6.76))
+        self.low_pass_filter_0_0.set_taps(firdes.low_pass(1, self.samp_rate, 4e6, 250e3, firdes.WIN_BLACKMAN, 6.76))
         self.fosphor_glfw_sink_c_0.set_frequency_range(0, self.samp_rate)
-        self.blocks_throttle_0.set_sample_rate(self.samp_rate)
+        self.epy_block_1.samp_rate = self.samp_rate
+        self.blocks_throttle_0.set_sample_rate(self.samp_rate*2)
 
     def get_rrc_taps(self):
         return self.rrc_taps
@@ -491,7 +526,7 @@ class modes_uf_rx_sigmf(gr.top_block, Qt.QWidget):
     def set_rms_alpha(self, rms_alpha):
         self.rms_alpha = rms_alpha
         Qt.QMetaObject.invokeMethod(self._rms_alpha_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.rms_alpha)))
-        self.blocks_rms_xx_0.set_alpha(self.rms_alpha)
+        self.blocks_rms_xx_1.set_alpha(self.rms_alpha)
 
     def get_rf_gain(self):
         return self.rf_gain
@@ -546,6 +581,13 @@ class modes_uf_rx_sigmf(gr.top_block, Qt.QWidget):
     def set_burst_length(self, burst_length):
         self.burst_length = burst_length
 
+    def get_bit_thresh(self):
+        return self.bit_thresh
+
+    def set_bit_thresh(self, bit_thresh):
+        self.bit_thresh = bit_thresh
+        Qt.QMetaObject.invokeMethod(self._bit_thresh_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.bit_thresh)))
+
     def get_avg_len(self):
         return self.avg_len
 
@@ -555,7 +597,7 @@ class modes_uf_rx_sigmf(gr.top_block, Qt.QWidget):
         self.blocks_moving_average_xx_0.set_length_and_scale(int(self.avg_len), 1.0/self.avg_len)
 
 
-def main(top_block_cls=modes_uf_rx_sigmf, options=None):
+def main(top_block_cls=modes_uf_rx_sigmf_v2, options=None):
 
     from distutils.version import StrictVersion
     if StrictVersion(Qt.qVersion()) >= StrictVersion("4.5.0"):

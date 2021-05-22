@@ -3036,7 +3036,7 @@
     </param>
     <param>
       <key>center_freq0</key>
-      <value>uhd.tune_request(rx_freq)</value>
+      <value>rx_freq</value>
     </param>
     <param>
       <key>dc_offs_enb0</key>
@@ -4204,7 +4204,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(40, 316)</value>
+      <value>(40, 372)</value>
     </param>
     <param>
       <key>_rotation</key>

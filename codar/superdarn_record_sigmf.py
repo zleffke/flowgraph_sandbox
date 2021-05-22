@@ -38,7 +38,7 @@ from gnuradio import qtgui
 
 class superdarn_record_sigmf(gr.top_block, Qt.QWidget):
 
-    def __init__(self, addr='addr=192.168.10.2', antenna_type='Active HF DIpole Balun, PGA-103 Variant', clock_rate=60e6, db_type='LFRX', output_format='Complex Float32', path="/captures/20200731", signal_type='SuperDARN', usrp_type='X310', wire_format='Automatic'):
+    def __init__(self, addr='addr=192.168.10.2', antenna_type='AH-710 T2FD', clock_rate=60e6, db_type='LFRX', output_format='Complex Float32', path="/captures/20200731", signal_type='CODAR', usrp_type='X310', wire_format='Automatic'):
         gr.top_block.__init__(self, "superdarn_record_sigmf")
         Qt.QWidget.__init__(self)
         self.setWindowTitle("superdarn_record_sigmf")
@@ -82,7 +82,7 @@ class superdarn_record_sigmf(gr.top_block, Qt.QWidget):
         self.ts_str = ts_str = dt.strftime(dt.utcnow(), "%Y-%m-%dT%H:%M:%SZ")
         self.fn = fn = "{:s}_{:s}".format(signal_type.upper(), ts_str)
         self.samp_rate = samp_rate = 250e3
-        self.rx_freq = rx_freq = 10.75e6
+        self.rx_freq = rx_freq = 4.68e6
         self.fp = fp = "{:s}/{:s}".format(path, fn)
 
         ##################################################
@@ -117,6 +117,7 @@ class superdarn_record_sigmf(gr.top_block, Qt.QWidget):
         		channels=range(1),
         	),
         )
+        self.uhd_usrp_source_1.set_clock_rate(clock_rate, uhd.ALL_MBOARDS)
         self.uhd_usrp_source_1.set_clock_source('gpsdo', 0)
         self.uhd_usrp_source_1.set_time_source('gpsdo', 0)
         self.uhd_usrp_source_1.set_subdev_spec('A:AB', 0)
@@ -346,7 +347,7 @@ def argument_parser():
         "", "--addr", dest="addr", type="string", default='addr=192.168.10.2',
         help="Set addr [default=%default]")
     parser.add_option(
-        "", "--antenna-type", dest="antenna_type", type="string", default='Active HF DIpole Balun, PGA-103 Variant',
+        "", "--antenna-type", dest="antenna_type", type="string", default='AH-710 T2FD',
         help="Set antenna_type [default=%default]")
     parser.add_option(
         "", "--clock-rate", dest="clock_rate", type="eng_float", default=eng_notation.num_to_str(60e6),
@@ -361,7 +362,7 @@ def argument_parser():
         "", "--path", dest="path", type="string", default="/captures/20200731",
         help="Set path [default=%default]")
     parser.add_option(
-        "", "--signal-type", dest="signal_type", type="string", default='SuperDARN',
+        "", "--signal-type", dest="signal_type", type="string", default='CODAR',
         help="Set signal_type [default=%default]")
     parser.add_option(
         "", "--usrp-type", dest="usrp_type", type="string", default='X310',

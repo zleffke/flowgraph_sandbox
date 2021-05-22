@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <?grc format='1' created='3.7.13'?>
 <flow_graph>
-  <timestamp>Thu Apr  7 21:10:19 2016</timestamp>
+  <timestamp>Thu Jun  4 22:49:22 2015</timestamp>
   <block>
     <key>options</key>
     <param>
@@ -10,7 +10,7 @@
     </param>
     <param>
       <key>window_size</key>
-      <value>4096,4096</value>
+      <value>1400, 650</value>
     </param>
     <param>
       <key>category</key>
@@ -22,15 +22,15 @@
     </param>
     <param>
       <key>description</key>
-      <value></value>
+      <value>Generic SigMF Recorder</value>
     </param>
     <param>
       <key>_enabled</key>
-      <value>1</value>
+      <value>True</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(8, 8)</value>
+      <value>(8, 4)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -46,7 +46,7 @@
     </param>
     <param>
       <key>id</key>
-      <value>modes_rx_fosphor</value>
+      <value>codar_record_sigmf</value>
     </param>
     <param>
       <key>max_nouts</key>
@@ -82,7 +82,7 @@
     </param>
     <param>
       <key>title</key>
-      <value>MODE-S Spectrum Monitor</value>
+      <value>codar_record_sigmf</value>
     </param>
     <param>
       <key>placement</key>
@@ -90,14 +90,10 @@
     </param>
   </block>
   <block>
-    <key>variable_qtgui_chooser</key>
+    <key>variable</key>
     <param>
       <key>comment</key>
       <value></value>
-    </param>
-    <param>
-      <key>value</key>
-      <value>0</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -105,11 +101,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(624, 228)</value>
-    </param>
-    <param>
-      <key>gui_hint</key>
-      <value>9,2,1,1</value>
+      <value>(1040, 68)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -117,114 +109,11 @@
     </param>
     <param>
       <key>id</key>
-      <value>band_select_qt</value>
-    </param>
-    <param>
-      <key>label0</key>
-      <value>1030 MHz</value>
-    </param>
-    <param>
-      <key>label1</key>
-      <value>1090 MHz</value>
-    </param>
-    <param>
-      <key>label2</key>
-      <value>CUSTOM</value>
-    </param>
-    <param>
-      <key>label3</key>
-      <value></value>
-    </param>
-    <param>
-      <key>label4</key>
-      <value></value>
-    </param>
-    <param>
-      <key>label</key>
-      <value>Channel Select</value>
-    </param>
-    <param>
-      <key>labels</key>
-      <value>[]</value>
-    </param>
-    <param>
-      <key>num_opts</key>
-      <value>3</value>
-    </param>
-    <param>
-      <key>option0</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>option1</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>option2</key>
-      <value>2</value>
-    </param>
-    <param>
-      <key>option3</key>
-      <value>3</value>
-    </param>
-    <param>
-      <key>option4</key>
-      <value>4</value>
-    </param>
-    <param>
-      <key>options</key>
-      <value>[0, 1, 2]</value>
-    </param>
-    <param>
-      <key>orient</key>
-      <value>Qt.QHBoxLayout</value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>int</value>
-    </param>
-    <param>
-      <key>widget</key>
-      <value>radio_buttons</value>
-    </param>
-  </block>
-  <block>
-    <key>variable_qtgui_entry</key>
-    <param>
-      <key>comment</key>
-      <value></value>
+      <value>fn</value>
     </param>
     <param>
       <key>value</key>
-      <value>915e6</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(496, 308)</value>
-    </param>
-    <param>
-      <key>gui_hint</key>
-      <value>9,1,1,1</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>custom_freq</value>
-    </param>
-    <param>
-      <key>label</key>
-      <value></value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>real</value>
+      <value>"{:s}_{:s}".format(signal_type.upper(), ts_str)</value>
     </param>
   </block>
   <block>
@@ -235,11 +124,11 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>1</value>
+      <value>True</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(240, 220)</value>
+      <value>(1040, 132)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -247,11 +136,11 @@
     </param>
     <param>
       <key>id</key>
-      <value>fc</value>
+      <value>fp</value>
     </param>
     <param>
       <key>value</key>
-      <value>[1030e6, 1090e6, custom_freq]</value>
+      <value>"{:s}/{:s}".format(path, fn)</value>
     </param>
   </block>
   <block>
@@ -262,7 +151,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>40</value>
+      <value>4.5e6</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -270,11 +159,11 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(504, 228)</value>
+      <value>(328, 12)</value>
     </param>
     <param>
       <key>gui_hint</key>
-      <value>9,0,1,1</value>
+      <value>1,4,1,2</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -282,11 +171,11 @@
     </param>
     <param>
       <key>id</key>
-      <value>gain_ota</value>
+      <value>rx_freq</value>
     </param>
     <param>
       <key>label</key>
-      <value>Gain (dB)</value>
+      <value>Freq [Hz]</value>
     </param>
     <param>
       <key>type</key>
@@ -301,181 +190,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>40</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(912, 236)</value>
-    </param>
-    <param>
-      <key>gui_hint</key>
-      <value>9,4,1,2</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>gain_wired</value>
-    </param>
-    <param>
-      <key>label</key>
-      <value>Gain (dB)</value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>real</value>
-    </param>
-  </block>
-  <block>
-    <key>variable</key>
-    <param>
-      <key>comment</key>
-      <value>RB1311 roof</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(8, 172)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>ota_serial</value>
-    </param>
-    <param>
-      <key>value</key>
-      <value>"serial=3070390"</value>
-    </param>
-  </block>
-  <block>
-    <key>variable</key>
-    <param>
-      <key>comment</key>
-      <value>flatscreen</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(8, 244)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>ota_serial</value>
-    </param>
-    <param>
-      <key>value</key>
-      <value>"serial=3070390"</value>
-    </param>
-  </block>
-  <block>
-    <key>variable</key>
-    <param>
-      <key>comment</key>
-      <value>flatscreen</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(8, 348)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>ota_serial</value>
-    </param>
-    <param>
-      <key>value</key>
-      <value>"serial=30C62B1"</value>
-    </param>
-  </block>
-  <block>
-    <key>variable</key>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(264, 332)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>ota_str</value>
-    </param>
-    <param>
-      <key>value</key>
-      <value>"Over The Air: {:3.1f} MHz".format(fc[band_select_qt]/1e6)</value>
-    </param>
-  </block>
-  <block>
-    <key>variable</key>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(912, 340)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>ota_str_0</value>
-    </param>
-    <param>
-      <key>value</key>
-      <value>"Over The Air: {:3.1f} MHz".format(fc[band_select_qt]/1e6)</value>
-    </param>
-  </block>
-  <block>
-    <key>variable_qtgui_entry</key>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>value</key>
-      <value>4e6</value>
+      <value>500e3</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -483,120 +198,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(496, 372)</value>
-    </param>
-    <param>
-      <key>gui_hint</key>
-      <value>9,3,1,1</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>samp_rate</value>
-    </param>
-    <param>
-      <key>label</key>
-      <value></value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>real</value>
-    </param>
-  </block>
-  <block>
-    <key>variable</key>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(408, 228)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>samp_rate</value>
-    </param>
-    <param>
-      <key>value</key>
-      <value>4e6</value>
-    </param>
-  </block>
-  <block>
-    <key>variable_qtgui_label</key>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>value</key>
-      <value>ota_str</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>formatter</key>
-      <value>None</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(336, 20)</value>
-    </param>
-    <param>
-      <key>gui_hint</key>
-      <value>0,0,1,4</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>variable_qtgui_label_0</value>
-    </param>
-    <param>
-      <key>label</key>
-      <value>Spectrum</value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>string</value>
-    </param>
-  </block>
-  <block>
-    <key>variable_qtgui_label</key>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>value</key>
-      <value>"TTR920 TJ1 1030 MHz Wired"</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>formatter</key>
-      <value>None</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(992, 36)</value>
+      <value>(184, 52)</value>
     </param>
     <param>
       <key>gui_hint</key>
@@ -608,30 +210,30 @@
     </param>
     <param>
       <key>id</key>
-      <value>variable_qtgui_label_0_0</value>
+      <value>samp_rate</value>
     </param>
     <param>
       <key>label</key>
-      <value>Spectrum:</value>
+      <value></value>
     </param>
     <param>
       <key>type</key>
-      <value>string</value>
+      <value>real</value>
     </param>
   </block>
   <block>
     <key>variable</key>
     <param>
       <key>comment</key>
-      <value>RB1311 roof</value>
+      <value></value>
     </param>
     <param>
       <key>_enabled</key>
-      <value>0</value>
+      <value>1</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1048, 236)</value>
+      <value>(1040, 4)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -639,29 +241,17 @@
     </param>
     <param>
       <key>id</key>
-      <value>wired_serial</value>
+      <value>ts_str</value>
     </param>
     <param>
       <key>value</key>
-      <value>"serial=30C629C"</value>
+      <value>dt.strftime(dt.utcnow(), "%Y-%m-%dT%H:%M:%SZ")</value>
     </param>
   </block>
   <block>
-    <key>fosphor_glfw_sink_c</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>freq_center</key>
-      <value>0</value>
-    </param>
+    <key>variable</key>
     <param>
       <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
       <value></value>
     </param>
     <param>
@@ -670,7 +260,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(640, 132)</value>
+      <value>(1224, 84)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -678,33 +268,21 @@
     </param>
     <param>
       <key>id</key>
-      <value>fosphor_glfw_sink_c_0</value>
+      <value>ts_str_0</value>
     </param>
     <param>
-      <key>freq_span</key>
-      <value>samp_rate</value>
-    </param>
-    <param>
-      <key>wintype</key>
-      <value>window.WIN_BLACKMAN_hARRIS</value>
+      <key>value</key>
+      <value>dt.strftime(dt.utcnow(), "%Y-%m-%dT%H:%M:%S.%fZ")</value>
     </param>
   </block>
   <block>
-    <key>fosphor_glfw_sink_c</key>
+    <key>parameter</key>
     <param>
       <key>alias</key>
       <value></value>
     </param>
     <param>
-      <key>freq_center</key>
-      <value>0</value>
-    </param>
-    <param>
       <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
       <value></value>
     </param>
     <param>
@@ -713,7 +291,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1288, 140)</value>
+      <value>(616, 12)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -721,15 +299,215 @@
     </param>
     <param>
       <key>id</key>
-      <value>fosphor_glfw_sink_c_0_0</value>
+      <value>addr</value>
     </param>
     <param>
-      <key>freq_span</key>
-      <value>samp_rate</value>
+      <key>label</key>
+      <value></value>
     </param>
     <param>
-      <key>wintype</key>
-      <value>window.WIN_BLACKMAN_hARRIS</value>
+      <key>short_id</key>
+      <value></value>
+    </param>
+    <param>
+      <key>hide</key>
+      <value>none</value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>serial=30CF9D2</value>
+    </param>
+  </block>
+  <block>
+    <key>parameter</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(616, 92)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>addr</value>
+    </param>
+    <param>
+      <key>label</key>
+      <value></value>
+    </param>
+    <param>
+      <key>short_id</key>
+      <value></value>
+    </param>
+    <param>
+      <key>hide</key>
+      <value>none</value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>addr=192.168.10.2</value>
+    </param>
+  </block>
+  <block>
+    <key>parameter</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(616, 252)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>antenna_type</value>
+    </param>
+    <param>
+      <key>label</key>
+      <value></value>
+    </param>
+    <param>
+      <key>short_id</key>
+      <value></value>
+    </param>
+    <param>
+      <key>hide</key>
+      <value>none</value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>AH-710 T2FD</value>
+    </param>
+  </block>
+  <block>
+    <key>parameter</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(848, 12)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>clock_rate</value>
+    </param>
+    <param>
+      <key>label</key>
+      <value></value>
+    </param>
+    <param>
+      <key>short_id</key>
+      <value></value>
+    </param>
+    <param>
+      <key>hide</key>
+      <value>none</value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>eng_float</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>60e6</value>
+    </param>
+  </block>
+  <block>
+    <key>parameter</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(768, 92)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>db_type</value>
+    </param>
+    <param>
+      <key>label</key>
+      <value></value>
+    </param>
+    <param>
+      <key>short_id</key>
+      <value></value>
+    </param>
+    <param>
+      <key>hide</key>
+      <value>none</value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>LFRX</value>
     </param>
   </block>
   <block>
@@ -752,15 +530,15 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>True</value>
+      <value>1</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(640, 60)</value>
+      <value>(392, 340)</value>
     </param>
     <param>
       <key>gui_hint</key>
-      <value>1,0,8,4</value>
+      <value>0,0,8,4</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -780,34 +558,22 @@
     </param>
   </block>
   <block>
-    <key>fosphor_qt_sink_c</key>
+    <key>import</key>
     <param>
       <key>alias</key>
       <value></value>
-    </param>
-    <param>
-      <key>freq_center</key>
-      <value>0</value>
     </param>
     <param>
       <key>comment</key>
       <value></value>
     </param>
     <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
       <key>_enabled</key>
-      <value>0</value>
+      <value>True</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1288, 60)</value>
-    </param>
-    <param>
-      <key>gui_hint</key>
-      <value>1,4,8,4</value>
+      <value>(184, 4)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -815,15 +581,105 @@
     </param>
     <param>
       <key>id</key>
-      <value>fosphor_qt_sink_c_0_0</value>
+      <value>import_0</value>
     </param>
     <param>
-      <key>freq_span</key>
-      <value>samp_rate</value>
+      <key>import</key>
+      <value>from datetime import datetime as dt; import string; import math</value>
+    </param>
+  </block>
+  <block>
+    <key>parameter</key>
+    <param>
+      <key>alias</key>
+      <value></value>
     </param>
     <param>
-      <key>wintype</key>
-      <value>window.WIN_BLACKMAN_hARRIS</value>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(840, 172)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>output_format</value>
+    </param>
+    <param>
+      <key>label</key>
+      <value></value>
+    </param>
+    <param>
+      <key>short_id</key>
+      <value></value>
+    </param>
+    <param>
+      <key>hide</key>
+      <value>none</value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>Complex Float32</value>
+    </param>
+  </block>
+  <block>
+    <key>parameter</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(1224, 4)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>path</value>
+    </param>
+    <param>
+      <key>label</key>
+      <value></value>
+    </param>
+    <param>
+      <key>short_id</key>
+      <value></value>
+    </param>
+    <param>
+      <key>hide</key>
+      <value>none</value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>"/captures/20210404"</value>
     </param>
   </block>
   <block>
@@ -842,7 +698,7 @@
     </param>
     <param>
       <key>bw</key>
-      <value>samp_rate</value>
+      <value>samp_rate / 5</value>
     </param>
     <param>
       <key>alias</key>
@@ -866,19 +722,19 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>True</value>
+      <value>1</value>
     </param>
     <param>
       <key>fftsize</key>
-      <value>2048</value>
+      <value>1024</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(640, 196)</value>
+      <value>(632, 412)</value>
     </param>
     <param>
       <key>gui_hint</key>
-      <value>10,0,1,4</value>
+      <value>3,4,2,4</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -886,7 +742,7 @@
     </param>
     <param>
       <key>grid</key>
-      <value>False</value>
+      <value>True</value>
     </param>
     <param>
       <key>id</key>
@@ -1114,7 +970,7 @@
     </param>
     <param>
       <key>ymax</key>
-      <value>10</value>
+      <value>-40</value>
     </param>
     <param>
       <key>ymin</key>
@@ -1123,6 +979,706 @@
     <param>
       <key>units</key>
       <value>dB</value>
+    </param>
+  </block>
+  <block>
+    <key>qtgui_waterfall_sink_x</key>
+    <param>
+      <key>axislabels</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>bw</key>
+      <value>samp_rate</value>
+    </param>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>fc</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>fftsize</key>
+      <value>1024</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(632, 492)</value>
+    </param>
+    <param>
+      <key>gui_hint</key>
+      <value>5,4,2,4</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>grid</key>
+      <value>False</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>qtgui_waterfall_sink_x_0</value>
+    </param>
+    <param>
+      <key>int_max</key>
+      <value>10</value>
+    </param>
+    <param>
+      <key>int_min</key>
+      <value>-140</value>
+    </param>
+    <param>
+      <key>legend</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>alpha1</key>
+      <value>1.0</value>
+    </param>
+    <param>
+      <key>color1</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>label1</key>
+      <value></value>
+    </param>
+    <param>
+      <key>alpha10</key>
+      <value>1.0</value>
+    </param>
+    <param>
+      <key>color10</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>label10</key>
+      <value></value>
+    </param>
+    <param>
+      <key>alpha2</key>
+      <value>1.0</value>
+    </param>
+    <param>
+      <key>color2</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>label2</key>
+      <value></value>
+    </param>
+    <param>
+      <key>alpha3</key>
+      <value>1.0</value>
+    </param>
+    <param>
+      <key>color3</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>label3</key>
+      <value></value>
+    </param>
+    <param>
+      <key>alpha4</key>
+      <value>1.0</value>
+    </param>
+    <param>
+      <key>color4</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>label4</key>
+      <value></value>
+    </param>
+    <param>
+      <key>alpha5</key>
+      <value>1.0</value>
+    </param>
+    <param>
+      <key>color5</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>label5</key>
+      <value></value>
+    </param>
+    <param>
+      <key>alpha6</key>
+      <value>1.0</value>
+    </param>
+    <param>
+      <key>color6</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>label6</key>
+      <value></value>
+    </param>
+    <param>
+      <key>alpha7</key>
+      <value>1.0</value>
+    </param>
+    <param>
+      <key>color7</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>label7</key>
+      <value></value>
+    </param>
+    <param>
+      <key>alpha8</key>
+      <value>1.0</value>
+    </param>
+    <param>
+      <key>color8</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>label8</key>
+      <value></value>
+    </param>
+    <param>
+      <key>alpha9</key>
+      <value>1.0</value>
+    </param>
+    <param>
+      <key>color9</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>label9</key>
+      <value></value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>name</key>
+      <value>""</value>
+    </param>
+    <param>
+      <key>nconnections</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>showports</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>freqhalf</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>complex</value>
+    </param>
+    <param>
+      <key>update_time</key>
+      <value>0.010</value>
+    </param>
+    <param>
+      <key>wintype</key>
+      <value>firdes.WIN_BLACKMAN_hARRIS</value>
+    </param>
+  </block>
+  <block>
+    <key>rational_resampler_xxx</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>decim</key>
+      <value>5</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>fbw</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(392, 404)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>rational_resampler_xxx_0</value>
+    </param>
+    <param>
+      <key>interp</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>taps</key>
+      <value></value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>ccc</value>
+    </param>
+  </block>
+  <block>
+    <key>sigmf_sink</key>
+    <param>
+      <key>author</key>
+      <value>Zach Leffke, KJ4QLP</value>
+    </param>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>description</key>
+      <value>CODAR HF Recorder</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>num_extra_fields</key>
+      <value>8</value>
+    </param>
+    <param>
+      <key>field_1_key</key>
+      <value>"uhd:usrp_type"</value>
+    </param>
+    <param>
+      <key>field_1_type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>field_1_value</key>
+      <value>usrp_type</value>
+    </param>
+    <param>
+      <key>field_10_key</key>
+      <value></value>
+    </param>
+    <param>
+      <key>field_10_type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>field_10_value</key>
+      <value></value>
+    </param>
+    <param>
+      <key>field_11_key</key>
+      <value></value>
+    </param>
+    <param>
+      <key>field_11_type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>field_11_value</key>
+      <value></value>
+    </param>
+    <param>
+      <key>field_12_key</key>
+      <value></value>
+    </param>
+    <param>
+      <key>field_12_type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>field_12_value</key>
+      <value></value>
+    </param>
+    <param>
+      <key>field_13_key</key>
+      <value></value>
+    </param>
+    <param>
+      <key>field_13_type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>field_13_value</key>
+      <value></value>
+    </param>
+    <param>
+      <key>field_14_key</key>
+      <value></value>
+    </param>
+    <param>
+      <key>field_14_type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>field_14_value</key>
+      <value></value>
+    </param>
+    <param>
+      <key>field_15_key</key>
+      <value></value>
+    </param>
+    <param>
+      <key>field_15_type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>field_15_value</key>
+      <value></value>
+    </param>
+    <param>
+      <key>field_16_key</key>
+      <value></value>
+    </param>
+    <param>
+      <key>field_16_type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>field_16_value</key>
+      <value></value>
+    </param>
+    <param>
+      <key>field_17_key</key>
+      <value></value>
+    </param>
+    <param>
+      <key>field_17_type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>field_17_value</key>
+      <value></value>
+    </param>
+    <param>
+      <key>field_18_key</key>
+      <value></value>
+    </param>
+    <param>
+      <key>field_18_type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>field_18_value</key>
+      <value></value>
+    </param>
+    <param>
+      <key>field_19_key</key>
+      <value></value>
+    </param>
+    <param>
+      <key>field_19_type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>field_19_value</key>
+      <value></value>
+    </param>
+    <param>
+      <key>field_2_key</key>
+      <value>"uhd:db_type"</value>
+    </param>
+    <param>
+      <key>field_2_type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>field_2_value</key>
+      <value>db_type</value>
+    </param>
+    <param>
+      <key>field_20_key</key>
+      <value></value>
+    </param>
+    <param>
+      <key>field_20_type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>field_20_value</key>
+      <value></value>
+    </param>
+    <param>
+      <key>field_21_key</key>
+      <value></value>
+    </param>
+    <param>
+      <key>field_21_type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>field_21_value</key>
+      <value></value>
+    </param>
+    <param>
+      <key>field_22_key</key>
+      <value></value>
+    </param>
+    <param>
+      <key>field_22_type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>field_22_value</key>
+      <value></value>
+    </param>
+    <param>
+      <key>field_23_key</key>
+      <value></value>
+    </param>
+    <param>
+      <key>field_23_type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>field_23_value</key>
+      <value></value>
+    </param>
+    <param>
+      <key>field_24_key</key>
+      <value></value>
+    </param>
+    <param>
+      <key>field_24_type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>field_24_value</key>
+      <value></value>
+    </param>
+    <param>
+      <key>field_25_key</key>
+      <value></value>
+    </param>
+    <param>
+      <key>field_25_type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>field_25_value</key>
+      <value></value>
+    </param>
+    <param>
+      <key>field_3_key</key>
+      <value>"misc:signal_type"</value>
+    </param>
+    <param>
+      <key>field_3_type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>field_3_value</key>
+      <value>signal_type</value>
+    </param>
+    <param>
+      <key>field_4_key</key>
+      <value>"misc:antenna_type"</value>
+    </param>
+    <param>
+      <key>field_4_type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>field_4_value</key>
+      <value>antenna_type</value>
+    </param>
+    <param>
+      <key>field_5_key</key>
+      <value>"uhd:time_source"</value>
+    </param>
+    <param>
+      <key>field_5_type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>field_5_value</key>
+      <value>"O/B GPSDO"</value>
+    </param>
+    <param>
+      <key>field_6_key</key>
+      <value>"uhd:clock_source"</value>
+    </param>
+    <param>
+      <key>field_6_type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>field_6_value</key>
+      <value>"O/B GPSDO"</value>
+    </param>
+    <param>
+      <key>field_7_key</key>
+      <value>"uhd:sync"</value>
+    </param>
+    <param>
+      <key>field_7_type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>field_7_value</key>
+      <value>"unknown PPS"</value>
+    </param>
+    <param>
+      <key>field_8_key</key>
+      <value>"uhd:subdev_spec"</value>
+    </param>
+    <param>
+      <key>field_8_type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>field_8_value</key>
+      <value>"A:AB"</value>
+    </param>
+    <param>
+      <key>field_9_key</key>
+      <value></value>
+    </param>
+    <param>
+      <key>field_9_type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>field_9_value</key>
+      <value></value>
+    </param>
+    <param>
+      <key>filename</key>
+      <value>fp</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(392, 188)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>hardware</key>
+      <value></value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>sigmf_sink_1</value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>fc32</value>
+    </param>
+    <param>
+      <key>license</key>
+      <value></value>
+    </param>
+    <param>
+      <key>append</key>
+      <value>False</value>
+    </param>
+    <param>
+      <key>samp_rate</key>
+      <value>samp_rate</value>
+    </param>
+    <param>
+      <key>time_mode</key>
+      <value>gr_sigmf.sigmf_time_mode_relative</value>
+    </param>
+  </block>
+  <block>
+    <key>parameter</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(616, 172)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>signal_type</value>
+    </param>
+    <param>
+      <key>label</key>
+      <value></value>
+    </param>
+    <param>
+      <key>short_id</key>
+      <value></value>
+    </param>
+    <param>
+      <key>hide</key>
+      <value>none</value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>CODAR</value>
     </param>
   </block>
   <block>
@@ -1141,7 +1697,7 @@
     </param>
     <param>
       <key>center_freq0</key>
-      <value>uhd.tune_request(fc[band_select_qt], samp_rate/2)</value>
+      <value>uhd.tune_request(rx_freq+fine, samp_rate/2)</value>
     </param>
     <param>
       <key>dc_offs_enb0</key>
@@ -1157,7 +1713,7 @@
     </param>
     <param>
       <key>gain0</key>
-      <value>gain_ota</value>
+      <value>rx_gain</value>
     </param>
     <param>
       <key>lo_export0</key>
@@ -2285,7 +2841,7 @@
     </param>
     <param>
       <key>clock_rate</key>
-      <value>0.0</value>
+      <value>60e6</value>
     </param>
     <param>
       <key>comment</key>
@@ -2297,19 +2853,19 @@
     </param>
     <param>
       <key>dev_addr</key>
-      <value>""</value>
+      <value>addr</value>
     </param>
     <param>
       <key>dev_args</key>
-      <value>ota_serial</value>
+      <value>""</value>
     </param>
     <param>
       <key>_enabled</key>
-      <value>True</value>
+      <value>0</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(256, 108)</value>
+      <value>(40, 156)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2325,7 +2881,7 @@
     </param>
     <param>
       <key>clock_source0</key>
-      <value></value>
+      <value>external</value>
     </param>
     <param>
       <key>sd_spec0</key>
@@ -2457,7 +3013,7 @@
     </param>
     <param>
       <key>sync</key>
-      <value></value>
+      <value>pc_clock</value>
     </param>
     <param>
       <key>otw</key>
@@ -2472,7 +3028,7 @@
     </param>
     <param>
       <key>ant0</key>
-      <value>RX2</value>
+      <value></value>
     </param>
     <param>
       <key>bw0</key>
@@ -2480,7 +3036,7 @@
     </param>
     <param>
       <key>center_freq0</key>
-      <value>uhd.tune_request(1030e6, samp_rate/2)</value>
+      <value>uhd.tune_request(rx_freq, samp_rate/2)</value>
     </param>
     <param>
       <key>dc_offs_enb0</key>
@@ -2496,7 +3052,7 @@
     </param>
     <param>
       <key>gain0</key>
-      <value>gain_wired</value>
+      <value>0</value>
     </param>
     <param>
       <key>lo_export0</key>
@@ -3624,7 +4180,7 @@
     </param>
     <param>
       <key>clock_rate</key>
-      <value>0.0</value>
+      <value>clock_rate</value>
     </param>
     <param>
       <key>comment</key>
@@ -3636,19 +4192,19 @@
     </param>
     <param>
       <key>dev_addr</key>
-      <value>""</value>
+      <value>addr</value>
     </param>
     <param>
       <key>dev_args</key>
-      <value>wired_serial</value>
+      <value>""</value>
     </param>
     <param>
       <key>_enabled</key>
-      <value>0</value>
+      <value>True</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(904, 116)</value>
+      <value>(40, 364)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -3656,7 +4212,7 @@
     </param>
     <param>
       <key>id</key>
-      <value>uhd_usrp_source_0_0</value>
+      <value>uhd_usrp_source_1</value>
     </param>
     <param>
       <key>maxoutbuf</key>
@@ -3664,15 +4220,15 @@
     </param>
     <param>
       <key>clock_source0</key>
-      <value></value>
+      <value>gpsdo</value>
     </param>
     <param>
       <key>sd_spec0</key>
-      <value></value>
+      <value>A:AB</value>
     </param>
     <param>
       <key>time_source0</key>
-      <value></value>
+      <value>gpsdo</value>
     </param>
     <param>
       <key>clock_source1</key>
@@ -3796,16 +4352,116 @@
     </param>
     <param>
       <key>sync</key>
-      <value></value>
+      <value>sync</value>
     </param>
     <param>
       <key>otw</key>
       <value></value>
     </param>
   </block>
+  <block>
+    <key>parameter</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(760, 12)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>usrp_type</value>
+    </param>
+    <param>
+      <key>label</key>
+      <value></value>
+    </param>
+    <param>
+      <key>short_id</key>
+      <value></value>
+    </param>
+    <param>
+      <key>hide</key>
+      <value>none</value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>N210</value>
+    </param>
+  </block>
+  <block>
+    <key>parameter</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(728, 172)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>wire_format</value>
+    </param>
+    <param>
+      <key>label</key>
+      <value></value>
+    </param>
+    <param>
+      <key>short_id</key>
+      <value></value>
+    </param>
+    <param>
+      <key>hide</key>
+      <value>none</value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>Automatic</value>
+    </param>
+  </block>
   <connection>
-    <source_block_id>uhd_usrp_source_0</source_block_id>
-    <sink_block_id>fosphor_glfw_sink_c_0</sink_block_id>
+    <source_block_id>rational_resampler_xxx_0</source_block_id>
+    <sink_block_id>qtgui_freq_sink_x_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>rational_resampler_xxx_0</source_block_id>
+    <sink_block_id>qtgui_waterfall_sink_x_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
@@ -3817,19 +4473,31 @@
   </connection>
   <connection>
     <source_block_id>uhd_usrp_source_0</source_block_id>
-    <sink_block_id>qtgui_freq_sink_x_0</sink_block_id>
+    <sink_block_id>rational_resampler_xxx_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
   <connection>
-    <source_block_id>uhd_usrp_source_0_0</source_block_id>
-    <sink_block_id>fosphor_glfw_sink_c_0_0</sink_block_id>
+    <source_block_id>uhd_usrp_source_0</source_block_id>
+    <sink_block_id>sigmf_sink_1</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
   <connection>
-    <source_block_id>uhd_usrp_source_0_0</source_block_id>
-    <sink_block_id>fosphor_qt_sink_c_0_0</sink_block_id>
+    <source_block_id>uhd_usrp_source_1</source_block_id>
+    <sink_block_id>fosphor_qt_sink_c_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>uhd_usrp_source_1</source_block_id>
+    <sink_block_id>rational_resampler_xxx_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>uhd_usrp_source_1</source_block_id>
+    <sink_block_id>sigmf_sink_1</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ##################################################
 # GNU Radio Python Flow Graph
-# Title: superdarn_record_sigmf
+# Title: codar_record_sigmf
 # Author: Zach Leffke
 # Description: Generic SigMF Recorder
 # GNU Radio version: 3.7.13.4
@@ -30,18 +30,19 @@ from gnuradio.eng_option import eng_option
 from gnuradio.fft import window
 from gnuradio.filter import firdes
 from optparse import OptionParser
+import gr_sigmf
 import sip
 import sys
 import time
 from gnuradio import qtgui
 
 
-class superdarn_record_sigmf(gr.top_block, Qt.QWidget):
+class codar_record_sigmf(gr.top_block, Qt.QWidget):
 
-    def __init__(self, addr='addr=192.168.10.2', antenna_type='Active HF DIpole Balun, PGA-103 Variant', clock_rate=60e6, db_type='LFRX', output_format='Complex Float32', path="/captures/20200731", signal_type='SuperDARN', usrp_type='X310', wire_format='Automatic'):
-        gr.top_block.__init__(self, "superdarn_record_sigmf")
+    def __init__(self, addr='addr=192.168.10.2', antenna_type='AH-710 T2FD', clock_rate=60e6, db_type='LFRX', output_format='Complex Float32', path="/captures/20210404", signal_type='CODAR', usrp_type='N210', wire_format='Automatic'):
+        gr.top_block.__init__(self, "codar_record_sigmf")
         Qt.QWidget.__init__(self)
-        self.setWindowTitle("superdarn_record_sigmf")
+        self.setWindowTitle("codar_record_sigmf")
         qtgui.util.check_set_qss()
         try:
             self.setWindowIcon(Qt.QIcon.fromTheme('gnuradio-grc'))
@@ -59,7 +60,7 @@ class superdarn_record_sigmf(gr.top_block, Qt.QWidget):
         self.top_grid_layout = Qt.QGridLayout()
         self.top_layout.addLayout(self.top_grid_layout)
 
-        self.settings = Qt.QSettings("GNU Radio", "superdarn_record_sigmf")
+        self.settings = Qt.QSettings("GNU Radio", "codar_record_sigmf")
         self.restoreGeometry(self.settings.value("geometry").toByteArray())
 
 
@@ -81,8 +82,8 @@ class superdarn_record_sigmf(gr.top_block, Qt.QWidget):
         ##################################################
         self.ts_str = ts_str = dt.strftime(dt.utcnow(), "%Y-%m-%dT%H:%M:%SZ")
         self.fn = fn = "{:s}_{:s}".format(signal_type.upper(), ts_str)
-        self.samp_rate = samp_rate = 250e3
-        self.rx_freq = rx_freq = 10.75e6
+        self.samp_rate = samp_rate = 500e3
+        self.rx_freq = rx_freq = 4.5e6
         self.fp = fp = "{:s}/{:s}".format(path, fn)
 
         ##################################################
@@ -117,15 +118,31 @@ class superdarn_record_sigmf(gr.top_block, Qt.QWidget):
         		channels=range(1),
         	),
         )
+        self.uhd_usrp_source_1.set_clock_rate(clock_rate, uhd.ALL_MBOARDS)
         self.uhd_usrp_source_1.set_clock_source('gpsdo', 0)
         self.uhd_usrp_source_1.set_time_source('gpsdo', 0)
         self.uhd_usrp_source_1.set_subdev_spec('A:AB', 0)
         self.uhd_usrp_source_1.set_samp_rate(samp_rate)
         self.uhd_usrp_source_1.set_time_unknown_pps(uhd.time_spec())
-        self.uhd_usrp_source_1.set_center_freq(rx_freq, 0)
+        self.uhd_usrp_source_1.set_center_freq(uhd.tune_request(rx_freq, samp_rate/2), 0)
         self.uhd_usrp_source_1.set_gain(0, 0)
         self.uhd_usrp_source_1.set_auto_dc_offset(True, 0)
         self.uhd_usrp_source_1.set_auto_iq_balance(True, 0)
+        self.sigmf_sink_1 = gr_sigmf.sink("cf32", fp, gr_sigmf.sigmf_time_mode_relative, False)
+        self.sigmf_sink_1.set_global_meta("core:sample_rate", samp_rate)
+        self.sigmf_sink_1.set_global_meta("core:description", 'CODAR HF Recorder')
+        self.sigmf_sink_1.set_global_meta("core:author", 'Zach Leffke, KJ4QLP')
+        self.sigmf_sink_1.set_global_meta("core:license", '')
+        self.sigmf_sink_1.set_global_meta("core:hw", '')
+        self.sigmf_sink_1.set_global_meta('uhd:usrp_type', 'N210')
+        self.sigmf_sink_1.set_global_meta('uhd:db_type', 'LFRX')
+        self.sigmf_sink_1.set_global_meta('misc:signal_type', 'CODAR')
+        self.sigmf_sink_1.set_global_meta('misc:antenna_type', 'AH-710 T2FD')
+        self.sigmf_sink_1.set_global_meta('uhd:time_source', 'O/B GPSDO')
+        self.sigmf_sink_1.set_global_meta('uhd:clock_source', 'O/B GPSDO')
+        self.sigmf_sink_1.set_global_meta('uhd:sync', 'unknown PPS')
+        self.sigmf_sink_1.set_global_meta('uhd:subdev_spec', 'A:AB')
+
         self.rational_resampler_xxx_0 = filter.rational_resampler_ccc(
                 interpolation=1,
                 decimation=5,
@@ -238,9 +255,10 @@ class superdarn_record_sigmf(gr.top_block, Qt.QWidget):
         self.connect((self.rational_resampler_xxx_0, 0), (self.qtgui_waterfall_sink_x_0, 0))
         self.connect((self.uhd_usrp_source_1, 0), (self.fosphor_qt_sink_c_0, 0))
         self.connect((self.uhd_usrp_source_1, 0), (self.rational_resampler_xxx_0, 0))
+        self.connect((self.uhd_usrp_source_1, 0), (self.sigmf_sink_1, 0))
 
     def closeEvent(self, event):
-        self.settings = Qt.QSettings("GNU Radio", "superdarn_record_sigmf")
+        self.settings = Qt.QSettings("GNU Radio", "codar_record_sigmf")
         self.settings.setValue("geometry", self.saveGeometry())
         event.accept()
 
@@ -320,6 +338,7 @@ class superdarn_record_sigmf(gr.top_block, Qt.QWidget):
         self.samp_rate = samp_rate
         Qt.QMetaObject.invokeMethod(self._samp_rate_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.samp_rate)))
         self.uhd_usrp_source_1.set_samp_rate(self.samp_rate)
+        self.uhd_usrp_source_1.set_center_freq(uhd.tune_request(self.rx_freq, self.samp_rate/2), 0)
         self.qtgui_waterfall_sink_x_0.set_frequency_range(0, self.samp_rate)
         self.qtgui_freq_sink_x_0.set_frequency_range(0, self.samp_rate / 5)
         self.fosphor_qt_sink_c_0.set_frequency_range(0, self.samp_rate)
@@ -330,7 +349,7 @@ class superdarn_record_sigmf(gr.top_block, Qt.QWidget):
     def set_rx_freq(self, rx_freq):
         self.rx_freq = rx_freq
         Qt.QMetaObject.invokeMethod(self._rx_freq_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.rx_freq)))
-        self.uhd_usrp_source_1.set_center_freq(self.rx_freq, 0)
+        self.uhd_usrp_source_1.set_center_freq(uhd.tune_request(self.rx_freq, self.samp_rate/2), 0)
 
     def get_fp(self):
         return self.fp
@@ -346,7 +365,7 @@ def argument_parser():
         "", "--addr", dest="addr", type="string", default='addr=192.168.10.2',
         help="Set addr [default=%default]")
     parser.add_option(
-        "", "--antenna-type", dest="antenna_type", type="string", default='Active HF DIpole Balun, PGA-103 Variant',
+        "", "--antenna-type", dest="antenna_type", type="string", default='AH-710 T2FD',
         help="Set antenna_type [default=%default]")
     parser.add_option(
         "", "--clock-rate", dest="clock_rate", type="eng_float", default=eng_notation.num_to_str(60e6),
@@ -358,13 +377,13 @@ def argument_parser():
         "", "--output-format", dest="output_format", type="string", default='Complex Float32',
         help="Set output_format [default=%default]")
     parser.add_option(
-        "", "--path", dest="path", type="string", default="/captures/20200731",
+        "", "--path", dest="path", type="string", default="/captures/20210404",
         help="Set path [default=%default]")
     parser.add_option(
-        "", "--signal-type", dest="signal_type", type="string", default='SuperDARN',
+        "", "--signal-type", dest="signal_type", type="string", default='CODAR',
         help="Set signal_type [default=%default]")
     parser.add_option(
-        "", "--usrp-type", dest="usrp_type", type="string", default='X310',
+        "", "--usrp-type", dest="usrp_type", type="string", default='N210',
         help="Set usrp_type [default=%default]")
     parser.add_option(
         "", "--wire-format", dest="wire_format", type="string", default='Automatic',
@@ -372,7 +391,7 @@ def argument_parser():
     return parser
 
 
-def main(top_block_cls=superdarn_record_sigmf, options=None):
+def main(top_block_cls=codar_record_sigmf, options=None):
     if options is None:
         options, _ = argument_parser().parse_args()
 

@@ -3,7 +3,7 @@
 ##################################################
 # GNU Radio Python Flow Graph
 # Title: Uhd Hf Ssb
-# Generated: Sat Jan 19 16:49:47 2019
+# GNU Radio version: 3.7.13.4
 ##################################################
 
 if __name__ == '__main__':
@@ -121,7 +121,7 @@ class uhd_hf_ssb(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setRowStretch(r, 1)
         for c in range(5, 6):
             self.top_grid_layout.setColumnStretch(c, 1)
-        self._rx_freq_range = Range(1e6, 50e6, 100e3, 3.9e6, 200)
+        self._rx_freq_range = Range(1e6, 100e6, 100e3, 3.9e6, 200)
         self._rx_freq_win = RangeWidget(self._rx_freq_range, self.set_rx_freq, "rx_freq", "counter_slider", float)
         self.top_grid_layout.addWidget(self._rx_freq_win, 4, 0, 1, 4)
         for r in range(4, 5):
@@ -233,18 +233,22 @@ class uhd_hf_ssb(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setRowStretch(r, 1)
         for c in range(1, 2):
             self.top_grid_layout.setColumnStretch(c, 1)
-        self.uhd_usrp_source_0 = uhd.usrp_source(
-        	",".join(("addr=192.168.10.13", "")),
+        self.uhd_usrp_source_1 = uhd.usrp_source(
+        	",".join(("", "")),
         	uhd.stream_args(
         		cpu_format="fc32",
         		channels=range(1),
         	),
         )
-        self.uhd_usrp_source_0.set_samp_rate(samp_rate)
-        self.uhd_usrp_source_0.set_time_now(uhd.time_spec(time.time()), uhd.ALL_MBOARDS)
-        self.uhd_usrp_source_0.set_center_freq(rx_freq, 0)
-        self.uhd_usrp_source_0.set_gain(0, 0)
-        self.uhd_usrp_source_0.set_antenna('RX1', 0)
+        self.uhd_usrp_source_1.set_clock_source('gpsdo', 0)
+        self.uhd_usrp_source_1.set_time_source('gpsdo', 0)
+        self.uhd_usrp_source_1.set_subdev_spec('A:AB', 0)
+        self.uhd_usrp_source_1.set_samp_rate(samp_rate)
+        self.uhd_usrp_source_1.set_time_unknown_pps(uhd.time_spec())
+        self.uhd_usrp_source_1.set_center_freq(uhd.tune_request(rx_freq), 0)
+        self.uhd_usrp_source_1.set_gain(0, 0)
+        self.uhd_usrp_source_1.set_auto_dc_offset(True, 0)
+        self.uhd_usrp_source_1.set_auto_iq_balance(True, 0)
         self.rational_resampler_xxx_1 = filter.rational_resampler_ccc(
                 interpolation=1,
                 decimation=4,
@@ -582,7 +586,7 @@ class uhd_hf_ssb(gr.top_block, Qt.QWidget):
         self.connect((self.rational_resampler_xxx_0, 0), (self.qtgui_freq_sink_x_0, 0))
         self.connect((self.rational_resampler_xxx_0_0, 0), (self.fosphor_qt_sink_c_0, 0))
         self.connect((self.rational_resampler_xxx_1, 0), (self.blocks_complex_to_mag_squared_0, 0))
-        self.connect((self.uhd_usrp_source_0, 0), (self.analog_agc2_xx_0, 0))
+        self.connect((self.uhd_usrp_source_1, 0), (self.analog_agc2_xx_0, 0))
 
     def closeEvent(self, event):
         self.settings = Qt.QSettings("GNU Radio", "uhd_hf_ssb")
@@ -595,7 +599,7 @@ class uhd_hf_ssb(gr.top_block, Qt.QWidget):
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
         self.set_decim(self.samp_rate/1e3)
-        self.uhd_usrp_source_0.set_samp_rate(self.samp_rate)
+        self.uhd_usrp_source_1.set_samp_rate(self.samp_rate)
         self.qtgui_time_sink_x_0_0.set_samp_rate(self.samp_rate/self.decim*self.interp/3/4)
         self.qtgui_time_sink_x_0.set_samp_rate(self.samp_rate/self.decim*self.interp/3)
         self.qtgui_freq_sink_x_0_0.set_frequency_range(0, self.samp_rate/self.decim * self.interp/3)
@@ -614,7 +618,7 @@ class uhd_hf_ssb(gr.top_block, Qt.QWidget):
 
     def set_rx_freq(self, rx_freq):
         self.rx_freq = rx_freq
-        self.uhd_usrp_source_0.set_center_freq(self.rx_freq, 0)
+        self.uhd_usrp_source_1.set_center_freq(uhd.tune_request(self.rx_freq), 0)
         self.set_freq_label(self._freq_label_formatter(self.rx_freq+self.fine_freq+self.coarse_freq))
         self.fosphor_qt_sink_c_0.set_frequency_range(self.rx_freq, self.samp_rate/int(self.samp_rate/1e3)*200)
         self.fosphor_glfw_sink_c_0.set_frequency_range(self.rx_freq, self.samp_rate)

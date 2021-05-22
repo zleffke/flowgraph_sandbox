@@ -22,6 +22,7 @@ from PyQt4.QtCore import QObject, pyqtSlot
 from gnuradio import eng_notation
 from gnuradio import fosphor
 from gnuradio import gr
+from gnuradio import qtgui
 from gnuradio import uhd
 from gnuradio.eng_option import eng_option
 from gnuradio.fft import window
@@ -63,30 +64,42 @@ class modes_rx_fosphor(gr.top_block, Qt.QWidget):
         ##################################################
         # Variables
         ##################################################
-        self.fc = fc = [1030e6, 1090e6]
+        self.custom_freq = custom_freq = 915e6
+        self.fc = fc = [1030e6, 1090e6, custom_freq]
         self.band_select_qt = band_select_qt = 0
         self.ota_str = ota_str = "Over The Air: {:3.1f} MHz".format(fc[band_select_qt]/1e6)
         self.variable_qtgui_label_0 = variable_qtgui_label_0 = ota_str
         self.samp_rate = samp_rate = 4e6
-        self.ota_serial = ota_serial = "serial=307038C"
+        self.ota_serial = ota_serial = "serial=3070390"
         self.gain_ota = gain_ota = 40
 
         ##################################################
         # Blocks
         ##################################################
+        self._samp_rate_tool_bar = Qt.QToolBar(self)
+        self._samp_rate_tool_bar.addWidget(Qt.QLabel("samp_rate"+": "))
+        self._samp_rate_line_edit = Qt.QLineEdit(str(self.samp_rate))
+        self._samp_rate_tool_bar.addWidget(self._samp_rate_line_edit)
+        self._samp_rate_line_edit.returnPressed.connect(
+        	lambda: self.set_samp_rate(eng_notation.str_to_num(str(self._samp_rate_line_edit.text().toAscii()))))
+        self.top_grid_layout.addWidget(self._samp_rate_tool_bar, 9, 3, 1, 1)
+        for r in range(9, 10):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(3, 4):
+            self.top_grid_layout.setColumnStretch(c, 1)
         self._gain_ota_tool_bar = Qt.QToolBar(self)
         self._gain_ota_tool_bar.addWidget(Qt.QLabel('Gain (dB)'+": "))
         self._gain_ota_line_edit = Qt.QLineEdit(str(self.gain_ota))
         self._gain_ota_tool_bar.addWidget(self._gain_ota_line_edit)
         self._gain_ota_line_edit.returnPressed.connect(
         	lambda: self.set_gain_ota(eng_notation.str_to_num(str(self._gain_ota_line_edit.text().toAscii()))))
-        self.top_grid_layout.addWidget(self._gain_ota_tool_bar, 9, 0, 1, 2)
+        self.top_grid_layout.addWidget(self._gain_ota_tool_bar, 9, 0, 1, 1)
         for r in range(9, 10):
             self.top_grid_layout.setRowStretch(r, 1)
-        for c in range(0, 2):
+        for c in range(0, 1):
             self.top_grid_layout.setColumnStretch(c, 1)
-        self._band_select_qt_options = (0, 1, )
-        self._band_select_qt_labels = ('1030 MHz', '1090 MHz', )
+        self._band_select_qt_options = (0, 1, 2, )
+        self._band_select_qt_labels = ('1030 MHz', '1090 MHz', 'CUSTOM', )
         self._band_select_qt_group_box = Qt.QGroupBox('Channel Select')
         self._band_select_qt_box = Qt.QHBoxLayout()
         class variable_chooser_button_group(Qt.QButtonGroup):
@@ -138,6 +151,53 @@ class modes_rx_fosphor(gr.top_block, Qt.QWidget):
         self.uhd_usrp_source_0.set_antenna('RX2', 0)
         self.uhd_usrp_source_0.set_auto_dc_offset(True, 0)
         self.uhd_usrp_source_0.set_auto_iq_balance(True, 0)
+        self.qtgui_freq_sink_x_0 = qtgui.freq_sink_c(
+        	2048, #size
+        	firdes.WIN_BLACKMAN_hARRIS, #wintype
+        	0, #fc
+        	samp_rate, #bw
+        	"", #name
+        	1 #number of inputs
+        )
+        self.qtgui_freq_sink_x_0.set_update_time(0.010)
+        self.qtgui_freq_sink_x_0.set_y_axis(-140, 10)
+        self.qtgui_freq_sink_x_0.set_y_label('Relative Gain', 'dB')
+        self.qtgui_freq_sink_x_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, 0.0, 0, "")
+        self.qtgui_freq_sink_x_0.enable_autoscale(False)
+        self.qtgui_freq_sink_x_0.enable_grid(False)
+        self.qtgui_freq_sink_x_0.set_fft_average(1.0)
+        self.qtgui_freq_sink_x_0.enable_axis_labels(True)
+        self.qtgui_freq_sink_x_0.enable_control_panel(False)
+
+        if not True:
+          self.qtgui_freq_sink_x_0.disable_legend()
+
+        if "complex" == "float" or "complex" == "msg_float":
+          self.qtgui_freq_sink_x_0.set_plot_pos_half(not True)
+
+        labels = ['', '', '', '', '',
+                  '', '', '', '', '']
+        widths = [1, 1, 1, 1, 1,
+                  1, 1, 1, 1, 1]
+        colors = ["blue", "red", "green", "black", "cyan",
+                  "magenta", "yellow", "dark red", "dark green", "dark blue"]
+        alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
+                  1.0, 1.0, 1.0, 1.0, 1.0]
+        for i in xrange(1):
+            if len(labels[i]) == 0:
+                self.qtgui_freq_sink_x_0.set_line_label(i, "Data {0}".format(i))
+            else:
+                self.qtgui_freq_sink_x_0.set_line_label(i, labels[i])
+            self.qtgui_freq_sink_x_0.set_line_width(i, widths[i])
+            self.qtgui_freq_sink_x_0.set_line_color(i, colors[i])
+            self.qtgui_freq_sink_x_0.set_line_alpha(i, alphas[i])
+
+        self._qtgui_freq_sink_x_0_win = sip.wrapinstance(self.qtgui_freq_sink_x_0.pyqwidget(), Qt.QWidget)
+        self.top_grid_layout.addWidget(self._qtgui_freq_sink_x_0_win, 10, 0, 1, 4)
+        for r in range(10, 11):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(0, 4):
+            self.top_grid_layout.setColumnStretch(c, 1)
         self.fosphor_qt_sink_c_0 = fosphor.qt_sink_c()
         self.fosphor_qt_sink_c_0.set_fft_window(window.WIN_BLACKMAN_hARRIS)
         self.fosphor_qt_sink_c_0.set_frequency_range(0, samp_rate)
@@ -147,6 +207,17 @@ class modes_rx_fosphor(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setRowStretch(r, 1)
         for c in range(0, 4):
             self.top_grid_layout.setColumnStretch(c, 1)
+        self._custom_freq_tool_bar = Qt.QToolBar(self)
+        self._custom_freq_tool_bar.addWidget(Qt.QLabel("custom_freq"+": "))
+        self._custom_freq_line_edit = Qt.QLineEdit(str(self.custom_freq))
+        self._custom_freq_tool_bar.addWidget(self._custom_freq_line_edit)
+        self._custom_freq_line_edit.returnPressed.connect(
+        	lambda: self.set_custom_freq(eng_notation.str_to_num(str(self._custom_freq_line_edit.text().toAscii()))))
+        self.top_grid_layout.addWidget(self._custom_freq_tool_bar, 9, 1, 1, 1)
+        for r in range(9, 10):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(1, 2):
+            self.top_grid_layout.setColumnStretch(c, 1)
 
 
 
@@ -154,11 +225,20 @@ class modes_rx_fosphor(gr.top_block, Qt.QWidget):
         # Connections
         ##################################################
         self.connect((self.uhd_usrp_source_0, 0), (self.fosphor_qt_sink_c_0, 0))
+        self.connect((self.uhd_usrp_source_0, 0), (self.qtgui_freq_sink_x_0, 0))
 
     def closeEvent(self, event):
         self.settings = Qt.QSettings("GNU Radio", "modes_rx_fosphor")
         self.settings.setValue("geometry", self.saveGeometry())
         event.accept()
+
+    def get_custom_freq(self):
+        return self.custom_freq
+
+    def set_custom_freq(self, custom_freq):
+        self.custom_freq = custom_freq
+        self.set_fc([1030e6, 1090e6, self.custom_freq])
+        Qt.QMetaObject.invokeMethod(self._custom_freq_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.custom_freq)))
 
     def get_fc(self):
         return self.fc
@@ -196,8 +276,10 @@ class modes_rx_fosphor(gr.top_block, Qt.QWidget):
 
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
+        Qt.QMetaObject.invokeMethod(self._samp_rate_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.samp_rate)))
         self.uhd_usrp_source_0.set_samp_rate(self.samp_rate)
         self.uhd_usrp_source_0.set_center_freq(uhd.tune_request(self.fc[self.band_select_qt], self.samp_rate/2), 0)
+        self.qtgui_freq_sink_x_0.set_frequency_range(0, self.samp_rate)
         self.fosphor_qt_sink_c_0.set_frequency_range(0, self.samp_rate)
 
     def get_ota_serial(self):

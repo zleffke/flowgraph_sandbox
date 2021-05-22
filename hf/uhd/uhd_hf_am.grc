@@ -913,7 +913,7 @@
     </param>
     <param>
       <key>stop</key>
-      <value>50e6</value>
+      <value>100e6</value>
     </param>
     <param>
       <key>rangeType</key>

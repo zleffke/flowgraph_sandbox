@@ -150,7 +150,7 @@ class uhd_hf_am(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setRowStretch(r, 1)
         for c in range(4, 5):
             self.top_grid_layout.setColumnStretch(c, 1)
-        self._rx_freq_range = Range(.2e6, 50e6, 100e3, 1.0e6, 200)
+        self._rx_freq_range = Range(.2e6, 100e6, 100e3, 1.0e6, 200)
         self._rx_freq_win = RangeWidget(self._rx_freq_range, self.set_rx_freq, "rx_freq", "counter_slider", float)
         self.top_grid_layout.addWidget(self._rx_freq_win, 4, 0, 1, 4)
         for r in range(4, 5):

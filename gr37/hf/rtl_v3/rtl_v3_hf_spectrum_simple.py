@@ -23,9 +23,11 @@ from gnuradio import analog
 from gnuradio import blocks
 from gnuradio import eng_notation
 from gnuradio import filter
+from gnuradio import fosphor
 from gnuradio import gr
 from gnuradio import qtgui
 from gnuradio.eng_option import eng_option
+from gnuradio.fft import window
 from gnuradio.filter import firdes
 from optparse import OptionParser
 import osmosdr
@@ -66,15 +68,17 @@ class rtl_v3_hf_spectrum_simple(gr.top_block, Qt.QWidget):
         # Variables
         ##################################################
         self.ts_str = ts_str = dt.strftime(dt.utcnow(), "%Y-%m-%dT%H:%M:%S.%fZ")
-        self.samp_rate = samp_rate = 2e6
-        self.y_min = y_min = -100
-        self.y_max = y_max = -50
+        self.samp_rate = samp_rate = 2048000
+        self.y_min = y_min = -120
+        self.y_max = y_max = -60
         self.variable_qtgui_label_0 = variable_qtgui_label_0 = ts_str
-        self.rx_freq = rx_freq = 5e6
+        self.rx_freq = rx_freq = 17.45e6
         self.rf_gain = rf_gain = 10
+        self.lpf_cut = lpf_cut = 1e6
         self.if_gain = if_gain = 20
         self.filter_taps = filter_taps = firdes.low_pass(1.0, samp_rate,samp_rate/4,100e3,firdes.WIN_HAMMING)
-        self.decim = decim = 40
+        self.dev_args = dev_args = "rtl=0,direct_samp=2"
+        self.decim = decim = 20
         self.bb_gain = bb_gain = 20
         self.ahfd_ant = ahfd_ant = 'A'
 
@@ -136,6 +140,17 @@ class rtl_v3_hf_spectrum_simple(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setRowStretch(r, 1)
         for c in range(0, 1):
             self.top_grid_layout.setColumnStretch(c, 1)
+        self._lpf_cut_tool_bar = Qt.QToolBar(self)
+        self._lpf_cut_tool_bar.addWidget(Qt.QLabel('lpf_cut'+": "))
+        self._lpf_cut_line_edit = Qt.QLineEdit(str(self.lpf_cut))
+        self._lpf_cut_tool_bar.addWidget(self._lpf_cut_line_edit)
+        self._lpf_cut_line_edit.returnPressed.connect(
+        	lambda: self.set_lpf_cut(eng_notation.str_to_num(str(self._lpf_cut_line_edit.text().toAscii()))))
+        self.top_grid_layout.addWidget(self._lpf_cut_tool_bar, 9, 4, 1, 1)
+        for r in range(9, 10):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(4, 5):
+            self.top_grid_layout.setColumnStretch(c, 1)
         self._if_gain_tool_bar = Qt.QToolBar(self)
         self._if_gain_tool_bar.addWidget(Qt.QLabel('IF Gain'+": "))
         self._if_gain_line_edit = Qt.QLineEdit(str(self.if_gain))
@@ -173,7 +188,7 @@ class rtl_v3_hf_spectrum_simple(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setRowStretch(r, 1)
         for c in range(6, 8):
             self.top_grid_layout.setColumnStretch(c, 1)
-        self.rtlsdr_source_0 = osmosdr.source( args="numchan=" + str(1) + " " + 'rtl=0,direct_samp=2' )
+        self.rtlsdr_source_0 = osmosdr.source( args="numchan=" + str(1) + " " + dev_args )
         self.rtlsdr_source_0.set_time_now(osmosdr.time_spec_t(time.time()), osmosdr.ALL_MBOARDS)
         self.rtlsdr_source_0.set_sample_rate(samp_rate)
         self.rtlsdr_source_0.set_center_freq(rx_freq+samp_rate/2, 0)
@@ -281,7 +296,16 @@ class rtl_v3_hf_spectrum_simple(gr.top_block, Qt.QWidget):
         for c in range(0, 4):
             self.top_grid_layout.setColumnStretch(c, 1)
         self.low_pass_filter_0 = filter.fir_filter_ccf(1, firdes.low_pass(
-        	1, samp_rate, 1e6, 100e3, firdes.WIN_HAMMING, 6.76))
+        	1, samp_rate, lpf_cut, 1e3, firdes.WIN_HAMMING, 6.76))
+        self.fosphor_qt_sink_c_0 = fosphor.qt_sink_c()
+        self.fosphor_qt_sink_c_0.set_fft_window(window.WIN_BLACKMAN_hARRIS)
+        self.fosphor_qt_sink_c_0.set_frequency_range(0, samp_rate)
+        self._fosphor_qt_sink_c_0_win = sip.wrapinstance(self.fosphor_qt_sink_c_0.pyqwidget(), Qt.QWidget)
+        self.top_grid_layout.addWidget(self._fosphor_qt_sink_c_0_win, 0, 4, 6, 4)
+        for r in range(0, 6):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(4, 8):
+            self.top_grid_layout.setColumnStretch(c, 1)
         self.blocks_multiply_xx_0 = blocks.multiply_vcc(1)
         self.analog_sig_source_x_0 = analog.sig_source_c(samp_rate, analog.GR_COS_WAVE, -samp_rate/2, 1, 0)
         self._ahfd_ant_options = ('A', 'B', )
@@ -308,6 +332,7 @@ class rtl_v3_hf_spectrum_simple(gr.top_block, Qt.QWidget):
         ##################################################
         self.connect((self.analog_sig_source_x_0, 0), (self.blocks_multiply_xx_0, 1))
         self.connect((self.blocks_multiply_xx_0, 0), (self.low_pass_filter_0, 0))
+        self.connect((self.low_pass_filter_0, 0), (self.fosphor_qt_sink_c_0, 0))
         self.connect((self.low_pass_filter_0, 0), (self.rational_resampler_xxx_0_0, 0))
         self.connect((self.rational_resampler_xxx_0_0, 0), (self.qtgui_freq_sink_x_0, 0))
         self.connect((self.rational_resampler_xxx_0_0, 0), (self.qtgui_waterfall_sink_x_0, 0))
@@ -335,7 +360,8 @@ class rtl_v3_hf_spectrum_simple(gr.top_block, Qt.QWidget):
         self.rtlsdr_source_0.set_center_freq(self.rx_freq+self.samp_rate/2, 0)
         self.qtgui_waterfall_sink_x_0.set_frequency_range(self.rx_freq, self.samp_rate / self.decim)
         self.qtgui_freq_sink_x_0.set_frequency_range(self.rx_freq, self.samp_rate / self.decim)
-        self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.samp_rate, 1e6, 100e3, firdes.WIN_HAMMING, 6.76))
+        self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.samp_rate, self.lpf_cut, 1e3, firdes.WIN_HAMMING, 6.76))
+        self.fosphor_qt_sink_c_0.set_frequency_range(0, self.samp_rate)
         self.set_filter_taps(firdes.low_pass(1.0, self.samp_rate,self.samp_rate/4,100e3,firdes.WIN_HAMMING))
         self.analog_sig_source_x_0.set_sampling_freq(self.samp_rate)
         self.analog_sig_source_x_0.set_frequency(-self.samp_rate/2)
@@ -381,6 +407,14 @@ class rtl_v3_hf_spectrum_simple(gr.top_block, Qt.QWidget):
         Qt.QMetaObject.invokeMethod(self._rf_gain_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.rf_gain)))
         self.rtlsdr_source_0.set_gain(self.rf_gain, 0)
 
+    def get_lpf_cut(self):
+        return self.lpf_cut
+
+    def set_lpf_cut(self, lpf_cut):
+        self.lpf_cut = lpf_cut
+        Qt.QMetaObject.invokeMethod(self._lpf_cut_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.lpf_cut)))
+        self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.samp_rate, self.lpf_cut, 1e3, firdes.WIN_HAMMING, 6.76))
+
     def get_if_gain(self):
         return self.if_gain
 
@@ -394,6 +428,12 @@ class rtl_v3_hf_spectrum_simple(gr.top_block, Qt.QWidget):
 
     def set_filter_taps(self, filter_taps):
         self.filter_taps = filter_taps
+
+    def get_dev_args(self):
+        return self.dev_args
+
+    def set_dev_args(self, dev_args):
+        self.dev_args = dev_args
 
     def get_decim(self):
         return self.decim

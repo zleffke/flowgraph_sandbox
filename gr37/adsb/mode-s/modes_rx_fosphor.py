@@ -70,7 +70,7 @@ class modes_rx_fosphor(gr.top_block, Qt.QWidget):
         self.ota_str = ota_str = "Over The Air: {:3.1f} MHz".format(fc[band_select_qt]/1e6)
         self.variable_qtgui_label_0 = variable_qtgui_label_0 = ota_str
         self.samp_rate = samp_rate = 4e6
-        self.ota_serial = ota_serial = "serial=3070390"
+        self.ota_serial = ota_serial = "serial=30CF9D2"
         self.gain_ota = gain_ota = 40
 
         ##################################################

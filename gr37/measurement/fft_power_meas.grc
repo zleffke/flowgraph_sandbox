@@ -97,7 +97,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>401.04e6</value>
+      <value>1089.74e6</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -136,7 +136,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>0</value>
+      <value>16</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -215,7 +215,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>250e3</value>
+      <value>4e6</value>
     </param>
   </block>
   <block>
@@ -1348,7 +1348,7 @@
     </param>
     <param>
       <key>ant0</key>
-      <value>TX/RX</value>
+      <value>RX2</value>
     </param>
     <param>
       <key>bw0</key>

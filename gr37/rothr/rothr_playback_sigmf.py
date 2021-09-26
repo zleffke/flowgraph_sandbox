@@ -24,9 +24,11 @@ from gnuradio import analog
 from gnuradio import blocks
 from gnuradio import eng_notation
 from gnuradio import filter
+from gnuradio import fosphor
 from gnuradio import gr
 from gnuradio import qtgui
 from gnuradio.eng_option import eng_option
+from gnuradio.fft import window
 from gnuradio.filter import firdes
 from optparse import OptionParser
 import gr_sigmf
@@ -332,6 +334,9 @@ class rothr_playback_sigmf(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setColumnStretch(c, 1)
         self.low_pass_filter_0 = filter.fir_filter_ccf(1, firdes.low_pass(
         	1, samp_rate/decim, cutoff, 1e3, firdes.WIN_HAMMING, 6.76))
+        self.fosphor_glfw_sink_c_0 = fosphor.glfw_sink_c()
+        self.fosphor_glfw_sink_c_0.set_fft_window(window.WIN_BLACKMAN_hARRIS)
+        self.fosphor_glfw_sink_c_0.set_frequency_range(9.25e6 + coarse_freq, samp_rate / decim)
         self.blocks_throttle_0 = blocks.throttle(gr.sizeof_gr_complex*1, samp_rate*(1/throttle_rate),True)
         self.blocks_nlog10_ff_0 = blocks.nlog10_ff(10, 1, 0)
         self.blocks_multiply_xx_0 = blocks.multiply_vcc(1)
@@ -359,6 +364,7 @@ class rothr_playback_sigmf(gr.top_block, Qt.QWidget):
         self.connect((self.low_pass_filter_0, 0), (self.qtgui_freq_sink_x_0_0, 1))
         self.connect((self.low_pass_filter_0, 0), (self.rational_resampler_xxx_0_0, 0))
         self.connect((self.rational_resampler_xxx_0, 0), (self.analog_agc2_xx_0, 0))
+        self.connect((self.rational_resampler_xxx_0, 0), (self.fosphor_glfw_sink_c_0, 0))
         self.connect((self.rational_resampler_xxx_0, 0), (self.qtgui_freq_sink_x_0, 0))
         self.connect((self.rational_resampler_xxx_0, 0), (self.qtgui_waterfall_sink_x_0, 0))
         self.connect((self.rational_resampler_xxx_0_0, 0), (self.blocks_complex_to_mag_squared_0, 0))
@@ -396,6 +402,7 @@ class rothr_playback_sigmf(gr.top_block, Qt.QWidget):
         self.qtgui_freq_sink_x_0_0.set_frequency_range(0, self.samp_rate/self.decim)
         self.qtgui_freq_sink_x_0.set_frequency_range(0, self.samp_rate / self.decim)
         self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.samp_rate/self.decim, self.cutoff, 1e3, firdes.WIN_HAMMING, 6.76))
+        self.fosphor_glfw_sink_c_0.set_frequency_range(9.25e6 + self.coarse_freq, self.samp_rate / self.decim)
         self.blocks_throttle_0.set_sample_rate(self.samp_rate*(1/self.throttle_rate))
         self.analog_sig_source_x_0.set_sampling_freq(self.samp_rate)
 
@@ -415,6 +422,7 @@ class rothr_playback_sigmf(gr.top_block, Qt.QWidget):
         self.qtgui_freq_sink_x_0_0.set_frequency_range(0, self.samp_rate/self.decim)
         self.qtgui_freq_sink_x_0.set_frequency_range(0, self.samp_rate / self.decim)
         self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.samp_rate/self.decim, self.cutoff, 1e3, firdes.WIN_HAMMING, 6.76))
+        self.fosphor_glfw_sink_c_0.set_frequency_range(9.25e6 + self.coarse_freq, self.samp_rate / self.decim)
 
     def get_cutoff(self):
         return self.cutoff
@@ -430,6 +438,7 @@ class rothr_playback_sigmf(gr.top_block, Qt.QWidget):
     def set_coarse_freq(self, coarse_freq):
         self.coarse_freq = coarse_freq
         Qt.QMetaObject.invokeMethod(self._coarse_freq_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.coarse_freq)))
+        self.fosphor_glfw_sink_c_0.set_frequency_range(9.25e6 + self.coarse_freq, self.samp_rate / self.decim)
         self.analog_sig_source_x_0.set_frequency(-1*self.coarse_freq)
 
 

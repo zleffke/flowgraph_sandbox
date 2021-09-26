@@ -105,7 +105,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(624, 228)</value>
+      <value>(640, 276)</value>
     </param>
     <param>
       <key>gui_hint</key>
@@ -270,7 +270,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(504, 228)</value>
+      <value>(344, 396)</value>
     </param>
     <param>
       <key>gui_hint</key>
@@ -383,7 +383,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>"serial=3070390"</value>
+      <value>"serial=30CF9D2"</value>
     </param>
   </block>
   <block>

@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 ##################################################
 # GNU Radio Python Flow Graph
-# Title: Radio Jove USRP Receiver
+# Title: Radio Jove RTL-SDR Receiver
 # Author: Zach Leffke, KJ4QLP
-# Description: Receive Jupiter Emissions with N210 USRP on 20.1 MHz
+# Description: Receive Jupiter Emissions with RTL-SDR on 20.1MHz
 # GNU Radio version: 3.7.13.4
 ##################################################
 
@@ -23,24 +23,26 @@ from datetime import datetime as dt; import string; import math
 from gnuradio import blocks
 from gnuradio import eng_notation
 from gnuradio import filter
+from gnuradio import fosphor
 from gnuradio import gr
 from gnuradio import qtgui
-from gnuradio import uhd
 from gnuradio.eng_option import eng_option
+from gnuradio.fft import window
 from gnuradio.filter import firdes
 from optparse import OptionParser
+import osmosdr
 import sip
 import sys
 import time
 from gnuradio import qtgui
 
 
-class radio_jove_rtlsdr(gr.top_block, Qt.QWidget):
+class radio_jove_dual_rtlsdr_sigmf(gr.top_block, Qt.QWidget):
 
     def __init__(self, path="/captures/radio_jove", signal_type='RADIO-JOVE'):
-        gr.top_block.__init__(self, "Radio Jove USRP Receiver")
+        gr.top_block.__init__(self, "Radio Jove RTL-SDR Receiver")
         Qt.QWidget.__init__(self)
-        self.setWindowTitle("Radio Jove USRP Receiver")
+        self.setWindowTitle("Radio Jove RTL-SDR Receiver")
         qtgui.util.check_set_qss()
         try:
             self.setWindowIcon(Qt.QIcon.fromTheme('gnuradio-grc'))
@@ -58,7 +60,7 @@ class radio_jove_rtlsdr(gr.top_block, Qt.QWidget):
         self.top_grid_layout = Qt.QGridLayout()
         self.top_layout.addLayout(self.top_grid_layout)
 
-        self.settings = Qt.QSettings("GNU Radio", "radio_jove_rtlsdr")
+        self.settings = Qt.QSettings("GNU Radio", "radio_jove_dual_rtlsdr_sigmf")
         self.restoreGeometry(self.settings.value("geometry").toByteArray())
 
 
@@ -72,14 +74,13 @@ class radio_jove_rtlsdr(gr.top_block, Qt.QWidget):
         # Variables
         ##################################################
         self.ts_str = ts_str = dt.strftime(dt.utcnow(), "%Y-%m-%dT%H:%M:%SZ")
-        self.antenna = antenna = "T2FD-EW"
-        self.fn = fn = "{:s}_{:s}_{:s}".format(signal_type.upper(),antenna.upper(), ts_str)
+        self.fn = fn = "{:s}_{:s}".format(signal_type.upper(), ts_str)
         self.samp_rate = samp_rate = 2000000
         self.rx_freq = rx_freq = 20.1e6
-        self.keep_n = keep_n = 2000
+        self.keep_n = keep_n = 20000
         self.fp = fp = "{:s}/{:s}".format(path, fn)
         self.decim = decim = 1
-        self.avg_len = avg_len = 10000.0
+        self.avg_len = avg_len = 20000.0
 
         ##################################################
         # Blocks
@@ -117,22 +118,6 @@ class radio_jove_rtlsdr(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setRowStretch(r, 1)
         for c in range(4, 5):
             self.top_grid_layout.setColumnStretch(c, 1)
-        self.uhd_usrp_source_1 = uhd.usrp_source(
-        	",".join(('', "")),
-        	uhd.stream_args(
-        		cpu_format="fc32",
-        		channels=range(1),
-        	),
-        )
-        self.uhd_usrp_source_1.set_clock_source('gpsdo', 0)
-        self.uhd_usrp_source_1.set_time_source('gpsdo', 0)
-        self.uhd_usrp_source_1.set_subdev_spec('A:AB', 0)
-        self.uhd_usrp_source_1.set_samp_rate(samp_rate)
-        self.uhd_usrp_source_1.set_time_unknown_pps(uhd.time_spec())
-        self.uhd_usrp_source_1.set_center_freq(uhd.tune_request(rx_freq, samp_rate/2), 0)
-        self.uhd_usrp_source_1.set_gain(0, 0)
-        self.uhd_usrp_source_1.set_auto_dc_offset(True, 0)
-        self.uhd_usrp_source_1.set_auto_iq_balance(True, 0)
         self.qtgui_waterfall_sink_x_0 = qtgui.waterfall_sink_c(
         	1024, #size
         	firdes.WIN_BLACKMAN_hARRIS, #wintype
@@ -307,6 +292,22 @@ class radio_jove_rtlsdr(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setRowStretch(r, 1)
         for c in range(0, 4):
             self.top_grid_layout.setColumnStretch(c, 1)
+        self.osmosdr_source_0 = osmosdr.source( args="numchan=" + str(1) + " " + "rtl=0,direct_samp=2" )
+        self.osmosdr_source_0.set_sample_rate(samp_rate)
+        self.osmosdr_source_0.set_center_freq(rx_freq, 0)
+        self.osmosdr_source_0.set_freq_corr(0, 0)
+        self.osmosdr_source_0.set_dc_offset_mode(0, 0)
+        self.osmosdr_source_0.set_iq_balance_mode(0, 0)
+        self.osmosdr_source_0.set_gain_mode(False, 0)
+        self.osmosdr_source_0.set_gain(10, 0)
+        self.osmosdr_source_0.set_if_gain(20, 0)
+        self.osmosdr_source_0.set_bb_gain(20, 0)
+        self.osmosdr_source_0.set_antenna('', 0)
+        self.osmosdr_source_0.set_bandwidth(0, 0)
+
+        self.fosphor_glfw_sink_c_0 = fosphor.glfw_sink_c()
+        self.fosphor_glfw_sink_c_0.set_fft_window(window.WIN_BLACKMAN_hARRIS)
+        self.fosphor_glfw_sink_c_0.set_frequency_range(0, samp_rate)
         self.dc_blocker_xx_0 = filter.dc_blocker_cc(256, True)
         self.blocks_nlog10_ff_0 = blocks.nlog10_ff(10, 1, 0)
         self.blocks_multiply_const_vxx_1_0 = blocks.multiply_const_vff((1/avg_len, ))
@@ -326,12 +327,13 @@ class radio_jove_rtlsdr(gr.top_block, Qt.QWidget):
         self.connect((self.blocks_nlog10_ff_0, 0), (self.blocks_keep_one_in_n_0, 0))
         self.connect((self.blocks_nlog10_ff_0, 0), (self.qtgui_number_sink_0, 0))
         self.connect((self.dc_blocker_xx_0, 0), (self.blocks_complex_to_mag_squared_0, 0))
+        self.connect((self.dc_blocker_xx_0, 0), (self.fosphor_glfw_sink_c_0, 0))
         self.connect((self.dc_blocker_xx_0, 0), (self.qtgui_freq_sink_x_0, 0))
         self.connect((self.dc_blocker_xx_0, 0), (self.qtgui_waterfall_sink_x_0, 0))
-        self.connect((self.uhd_usrp_source_1, 0), (self.dc_blocker_xx_0, 0))
+        self.connect((self.osmosdr_source_0, 0), (self.dc_blocker_xx_0, 0))
 
     def closeEvent(self, event):
-        self.settings = Qt.QSettings("GNU Radio", "radio_jove_rtlsdr")
+        self.settings = Qt.QSettings("GNU Radio", "radio_jove_dual_rtlsdr_sigmf")
         self.settings.setValue("geometry", self.saveGeometry())
         event.accept()
 
@@ -353,13 +355,7 @@ class radio_jove_rtlsdr(gr.top_block, Qt.QWidget):
 
     def set_ts_str(self, ts_str):
         self.ts_str = ts_str
-        self.set_fn("{:s}_{:s}_{:s}".format(signal_type.upper(),antenna.upper(), self.ts_str))
-
-    def get_antenna(self):
-        return self.antenna
-
-    def set_antenna(self, antenna):
-        self.antenna = antenna
+        self.set_fn("{:s}_{:s}".format(signal_type.upper(), self.ts_str))
 
     def get_fn(self):
         return self.fn
@@ -373,11 +369,11 @@ class radio_jove_rtlsdr(gr.top_block, Qt.QWidget):
 
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
-        self.uhd_usrp_source_1.set_samp_rate(self.samp_rate)
-        self.uhd_usrp_source_1.set_center_freq(uhd.tune_request(self.rx_freq, self.samp_rate/2), 0)
         self.qtgui_waterfall_sink_x_0.set_frequency_range(self.rx_freq, self.samp_rate/self.decim)
         self.qtgui_time_sink_x_0.set_samp_rate(self.samp_rate / self.keep_n)
         self.qtgui_freq_sink_x_0.set_frequency_range(self.rx_freq, self.samp_rate / self.decim)
+        self.osmosdr_source_0.set_sample_rate(self.samp_rate)
+        self.fosphor_glfw_sink_c_0.set_frequency_range(0, self.samp_rate)
 
     def get_rx_freq(self):
         return self.rx_freq
@@ -385,9 +381,9 @@ class radio_jove_rtlsdr(gr.top_block, Qt.QWidget):
     def set_rx_freq(self, rx_freq):
         self.rx_freq = rx_freq
         Qt.QMetaObject.invokeMethod(self._rx_freq_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.rx_freq)))
-        self.uhd_usrp_source_1.set_center_freq(uhd.tune_request(self.rx_freq, self.samp_rate/2), 0)
         self.qtgui_waterfall_sink_x_0.set_frequency_range(self.rx_freq, self.samp_rate/self.decim)
         self.qtgui_freq_sink_x_0.set_frequency_range(self.rx_freq, self.samp_rate / self.decim)
+        self.osmosdr_source_0.set_center_freq(self.rx_freq, 0)
 
     def get_keep_n(self):
         return self.keep_n
@@ -423,7 +419,7 @@ class radio_jove_rtlsdr(gr.top_block, Qt.QWidget):
 
 
 def argument_parser():
-    description = 'Receive Jupiter Emissions with N210 USRP on 20.1 MHz'
+    description = 'Receive Jupiter Emissions with RTL-SDR on 20.1MHz'
     parser = OptionParser(usage="%prog: [options]", option_class=eng_option, description=description)
     parser.add_option(
         "", "--path", dest="path", type="string", default="/captures/radio_jove",
@@ -434,7 +430,7 @@ def argument_parser():
     return parser
 
 
-def main(top_block_cls=radio_jove_rtlsdr, options=None):
+def main(top_block_cls=radio_jove_dual_rtlsdr_sigmf, options=None):
     if options is None:
         options, _ = argument_parser().parse_args()
 

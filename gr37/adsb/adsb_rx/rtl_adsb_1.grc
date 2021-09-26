@@ -101,6 +101,33 @@
     </param>
     <param>
       <key>_coordinate</key>
+      <value>(616, 76)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>decim</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>256</value>
+    </param>
+  </block>
+  <block>
+    <key>variable</key>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
       <value>(296, 4)</value>
     </param>
     <param>
@@ -114,6 +141,33 @@
     <param>
       <key>value</key>
       <value>1090e6</value>
+    </param>
+  </block>
+  <block>
+    <key>variable</key>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(696, 76)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>interp</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>250</value>
     </param>
   </block>
   <block>
@@ -242,7 +296,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>2e6</value>
+      <value>2048e3</value>
     </param>
   </block>
   <block>
@@ -375,7 +429,7 @@
     </param>
     <param>
       <key>fs</key>
-      <value>samp_rate</value>
+      <value>samp_rate / decim*interp</value>
     </param>
   </block>
   <block>
@@ -422,7 +476,7 @@
     </param>
     <param>
       <key>fs</key>
-      <value>samp_rate</value>
+      <value>samp_rate / decim * interp</value>
     </param>
   </block>
   <block>
@@ -453,7 +507,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(368, 156)</value>
+      <value>(272, 156)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -983,7 +1037,7 @@
     </param>
     <param>
       <key>samp_rate</key>
-      <value>samp_rate</value>
+      <value>samp_rate/ decim * interp</value>
     </param>
     <param>
       <key>width</key>
@@ -3047,7 +3101,7 @@
     </param>
     <param>
       <key>srate</key>
-      <value>int(samp_rate*1)</value>
+      <value>int(samp_rate*1) / decim * interp</value>
     </param>
     <param>
       <key>stemplot</key>
@@ -3100,6 +3154,65 @@
     <param>
       <key>ymin</key>
       <value>0</value>
+    </param>
+  </block>
+  <block>
+    <key>rational_resampler_xxx</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>decim</key>
+      <value>decim</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>fbw</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(432, 164)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>rational_resampler_xxx_0</value>
+    </param>
+    <param>
+      <key>interp</key>
+      <value>interp</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>taps</key>
+      <value></value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>ccc</value>
     </param>
   </block>
   <block>
@@ -3322,7 +3435,7 @@
   </connection>
   <connection>
     <source_block_id>analog_agc2_xx_0</source_block_id>
-    <sink_block_id>low_pass_filter_0</sink_block_id>
+    <sink_block_id>rational_resampler_xxx_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
@@ -3383,6 +3496,12 @@
   <connection>
     <source_block_id>osmosdr_source_0</source_block_id>
     <sink_block_id>analog_agc2_xx_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>rational_resampler_xxx_0</source_block_id>
+    <sink_block_id>low_pass_filter_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>

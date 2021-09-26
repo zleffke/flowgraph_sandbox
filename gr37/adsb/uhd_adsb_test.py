@@ -71,10 +71,10 @@ class uhd_adsb_test(gr.top_block, Qt.QWidget):
         ##################################################
         self.threshold = threshold = 15
         self.samp_rate = samp_rate = 4e6
-        self.rx_offset = rx_offset = -250e3
+        self.rx_offset = rx_offset = 0
         self.rx_gain = rx_gain = 12
         self.lpf_cutoff = lpf_cutoff = 2e6
-        self.freq = freq = 1090e6
+        self.freq = freq = 915e6
 
         ##################################################
         # Blocks

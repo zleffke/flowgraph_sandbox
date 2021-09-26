@@ -71,14 +71,14 @@ class fft_power_meas(gr.top_block, Qt.QWidget):
         ##################################################
         # Variables
         ##################################################
-        self.samp_rate = samp_rate = 250e3
-        self.rx_gain = rx_gain = 0
-        self.rx_freq = rx_freq = 401.04e6
+        self.samp_rate = samp_rate = 4e6
+        self.rx_gain = rx_gain = 16
+        self.rx_freq = rx_freq = 1089.74e6
 
         ##################################################
         # Blocks
         ##################################################
-        self._rx_gain_range = Range(0, 90, 1, 0, 200)
+        self._rx_gain_range = Range(0, 90, 1, 16, 200)
         self._rx_gain_win = RangeWidget(self._rx_gain_range, self.set_rx_gain, "rx_gain", "counter_slider", float)
         self.top_grid_layout.addWidget(self._rx_gain_win, 4, 0, 1, 4)
         for r in range(4, 5):
@@ -107,7 +107,7 @@ class fft_power_meas(gr.top_block, Qt.QWidget):
         self.uhd_usrp_source_1.set_time_now(uhd.time_spec(time.time()), uhd.ALL_MBOARDS)
         self.uhd_usrp_source_1.set_center_freq(uhd.tune_request(rx_freq, samp_rate/2), 0)
         self.uhd_usrp_source_1.set_gain(rx_gain, 0)
-        self.uhd_usrp_source_1.set_antenna('TX/RX', 0)
+        self.uhd_usrp_source_1.set_antenna('RX2', 0)
         self.uhd_usrp_source_1.set_auto_dc_offset(True, 0)
         self.uhd_usrp_source_1.set_auto_iq_balance(True, 0)
         self.qtgui_number_sink_0 = qtgui.number_sink(
